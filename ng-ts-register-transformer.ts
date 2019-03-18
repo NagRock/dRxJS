@@ -7,7 +7,7 @@ function findAngularCompilerPlugin(webpackCfg): AngularCompilerPlugin | null {
 
 // The AngularCompilerPlugin has nog public API to add transformations, user private API _transformers instead.
 function addTransformerToAngularCompilerPlugin(acp, transformer): void {
-  acp._transformers = [transformer, ctx => (sf => sf) , ...acp._transformers];
+  acp._transformers = [transformer, ...acp._transformers];
 }
 
 export default {
