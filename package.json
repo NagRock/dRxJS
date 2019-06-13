@@ -7,7 +7,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "doit": "tsc --skipLibCheck --module umd && ng serve --aot --plugin ~dist/out-tsc/ng-ts-register-transformer.js\n"
   },
   "private": true,
   "dependencies": {
