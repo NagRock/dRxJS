@@ -13,7 +13,7 @@ if (environment.production) {
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
 
-const streamsByLocation: {[location: string]: Observable<any>[]} = (window as any).__streams__ = {};
+const streamsByLocation: { [location: string]: Observable<any>[] } = (window as any).__streams__ = {};
 
 const getStreamsByLocation = (fileName: any, line: any, char: any) => {
   const location = `${fileName}:${line}:${char}`;
@@ -33,16 +33,25 @@ let id = 0;
 
 (window as any).__instrument__ = (operator, fileName, expr, line, char) => {
   return (stream) => {
-    addStreamByLocation(fileName, line, char, stream);
-    stream.__interactions__ = stream.__interactions__ || [];
-    stream.__id__ = stream.__id__ || id++;
-    console.log('created stream', stream, stream.__id__);
     let before;
     let after;
     return pipe(
-      (x) => {before = x; return x;},
+      (x) => {
+        before = x;
+        before.__interactions__ = before.__interactions__ || [];
+        before.__id__ = before.__id__ || id++;
+        return before;
+      },
       operator,
-      (x) => {after = (x as any).pipe(tap((value) => console.log({before, after, value}))); return after;},
+      (x) => {
+        after = (x as any).pipe(tap((value) => {
+          before.__interactions__.push({next: after, value});
+          after.__emmits__ = after.__emmits__ || [];
+          after.__emmits__.push({value});
+        }));
+        addStreamByLocation(fileName, line, char, after);
+        return after;
+      },
     )(stream);
   };
 };
