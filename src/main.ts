@@ -29,26 +29,33 @@ const addStreamByLocation = (fileName: any, line: any, char: any, stream: any) =
   getStreamsByLocation(fileName, line, char).push(stream);
 };
 
-let id = 0;
+let ID = 0;
 
 (window as any).__instrument__ = (operator, fileName, expr, line, char) => {
   return (stream) => {
+    console.log('creating operator: ', expr);
     let before;
     let after;
     return pipe(
       (x) => {
         before = x;
-        before.__interactions__ = before.__interactions__ || [];
-        before.__id__ = before.__id__ || id++;
+        before.__id__ = before.__id__ || ID++;
         return before;
       },
       operator,
       (x) => {
         after = (x as any).pipe(tap((value) => {
-          before.__interactions__.push({next: after, value});
-          after.__emmits__ = after.__emmits__ || [];
-          after.__emmits__.push({value});
+          const val = {stream: after,  value};
+          if (before.__values__) {
+            const lastValue = before.__values__[before.__values__.length - 1];
+            lastValue.caused = lastValue.caused || [];
+            lastValue.caused.push(val);
+          }
+          after.__values__.push(val);
         }));
+        after.__values__ = [];
+        after.__location__ = `${fileName}:${line}:${char}`;
+        after.__expression__ = expr;
         addStreamByLocation(fileName, line, char, after);
         return after;
       },
