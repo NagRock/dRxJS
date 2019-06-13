@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {SampleService} from './sample.service';
-import {debounceTime, delay, filter, map, tap, throttleTime} from 'rxjs/operators';
+import {filter, map, throttleTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
