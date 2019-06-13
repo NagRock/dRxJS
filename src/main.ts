@@ -15,5 +15,5 @@ platformBrowserDynamic().bootstrapModule(AppModule)
 
 
 (window as any).__instrument__ = (operator, fileName, expr, line, char) => {
-  return pipe(operator, tap((x => console.log(`${fileName}(${line}:${char}) ${expr}`, x))));
+  return pipe(operator, tap((x => console.log(`${fileName} (${line}:${char}) | ${expr}`, x))));
 };

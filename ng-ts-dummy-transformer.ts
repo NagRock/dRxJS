@@ -53,7 +53,7 @@ function createTap() {
 }
 
 function createInstrumentCall(rootNode: ts.SourceFile, expression: ts.Expression) {
-  const pos = rootNode.getLineAndCharacterOfPosition(expression.pos);
+  const pos = rootNode.getLineAndCharacterOfPosition(expression.getStart());
   return ts.createCall(
     ts.createPropertyAccess(
       ts.createIdentifier('window'),
@@ -64,8 +64,8 @@ function createInstrumentCall(rootNode: ts.SourceFile, expression: ts.Expression
       expression,
       ts.createStringLiteral(rootNode.fileName),
       ts.createStringLiteral(expression.getText()),
-      ts.createNumericLiteral(pos.line.toString()),
-      ts.createNumericLiteral(pos.character.toString())
+      ts.createNumericLiteral(`${pos.line + 1}`),
+      ts.createNumericLiteral(`${pos.character + 1}`)
     ]
   );
 }
