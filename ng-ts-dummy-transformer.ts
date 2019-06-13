@@ -72,6 +72,9 @@ function createInstrumentCall(rootNode: ts.SourceFile, expression: ts.Expression
 
 export const dummyTransformer = <T extends ts.Node>(context: ts.TransformationContext) => {
   return (rootNode: ts.SourceFile) => {
+    if (rootNode.fileName.endsWith('main.ts')) {
+      return rootNode;
+    }
 
     function visitor(node) {
       if (ts.isCallExpression(node)) {

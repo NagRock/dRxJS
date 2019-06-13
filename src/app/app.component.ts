@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {SampleService} from './sample.service';
-import {map} from 'rxjs/operators';
+import {debounceTime, delay, filter, map, throttleTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -12,12 +12,10 @@ export class AppComponent {
 
   constructor(private sample: SampleService) {
     this.sample.mousePos$.pipe(
-      map(pos => pos.x),
-      map(pos => pos),
-      map(pos => pos),
-      map(pos => pos),
+      /*s1 ->*/ map(pos => pos.x) /*-> s2*/,
+      throttleTime(1000),
+      filter((x) => x > window.innerWidth / 2),
+      /*s2 ->*/ map(pos => pos) /*-> s3*/,
     ).subscribe(x => console.log(x));
   }
 }
-
-
