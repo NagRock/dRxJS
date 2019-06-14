@@ -46,7 +46,8 @@ let id = 0;
         x.__expr__ = expr;
         x.__line__ = line;
         x.__char__ = char;
-        console.log('Before', expr, fileName + ':' + line, 'Value:', x.__value__, 'Id:', x.__id__);
+        const fileNameToDisplay = fileName.split('/').pop();
+        console.log('Before', expr, fileNameToDisplay + ':' + line, 'Value:', x.__value__, 'Id:', x.__id__);
         return x;
       }),
       switchMap((prevValue: any) => {
@@ -69,7 +70,8 @@ let id = 0;
         if (isLast === 'true') {
           return x.__value__;
         }
-        console.log('After', x.__expr__, x.__file__ + ':' + x.__line__, 'Value:', x.__value__, 'Id:', x.__id__);
+        const fileNameToDisplay = x.__file__.split('/').pop();
+        console.log('After', x.__expr__, fileNameToDisplay + ':' + x.__line__, 'Value:', x.__value__, 'Id:', x.__id__);
 
         return {
           __id__: x.__id__,
