@@ -52,7 +52,7 @@ function createTap() {
   ]);
 }
 
-function createInstrumentCall(rootNode: ts.SourceFile, expression: ts.Expression) {
+function createInstrumentCall(rootNode: ts.SourceFile, expression: ts.Expression, isLast: boolean) {
   const pos = rootNode.getLineAndCharacterOfPosition(expression.getStart());
   return ts.createCall(
     ts.createPropertyAccess(
@@ -65,7 +65,8 @@ function createInstrumentCall(rootNode: ts.SourceFile, expression: ts.Expression
       ts.createStringLiteral(rootNode.fileName),
       ts.createStringLiteral(expression.getText()),
       ts.createNumericLiteral(`${pos.line + 1}`),
-      ts.createNumericLiteral(`${pos.character + 1}`)
+      ts.createNumericLiteral(`${pos.character + 1}`),
+      ts.createLiteral(String(isLast)),
     ]
   );
 }
@@ -85,7 +86,10 @@ export const dummyTransformer = <T extends ts.Node>(context: ts.TransformationCo
             node = ts.createCall(
               node.expression,
               node.typeArguments,
-              node.arguments.map((expr) => createInstrumentCall(rootNode, expr)));
+              node.arguments.map((expr, index) => {
+                const isLast = index + 1 === node.arguments.length;
+                return createInstrumentCall(rootNode, expr, isLast);
+              }));
           }
         }
       }

@@ -8,7 +8,7 @@ export class SampleService {
   private subj = new Subject<{ x: number, y: number }>();
 
   constructor() {
-    fromEvent<MouseEvent>(window, 'mousemove').subscribe(
+    fromEvent<MouseEvent>(window, 'click').subscribe(
       e => this.subj.next({x: e.clientX, y: e.clientY}),
     );
   }

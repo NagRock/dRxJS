@@ -4,7 +4,7 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {AppModule} from './app/app.module';
 import {environment} from './environments/environment';
 import {Observable, of, pipe} from 'rxjs';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 
 if (environment.production) {
   enableProdMode();
@@ -31,44 +31,61 @@ const addStreamByLocation = (fileName: any, line: any, char: any, stream: any) =
 
 let id = 0;
 
-(window as any).__instrument__ = (operator, fileName, expr, line, char) => {
+(window as any).__instrument__ = (operator, fileName, expr, line, char, isLast: string) => {
   return (stream) => {
     return pipe(
       map((x: any) => {
         if (!x.__id__) {
-          // console.log('WITHOUD ID', x);
+          console.log('WITHOUD ID', x);
           x = {
             __value__: x,
           };
           x.__id__ = GENERATE_ID();
         }
-        // console.log('before', x);
+        x.__file__ = fileName;
+        x.__expr__ = expr;
+        x.__line__ = line;
+        x.__char__ = char;
+        console.log('Before', expr, fileName + ':' + line, 'Value:', x.__value__, 'Id:', x.__id__);
         return x;
       }),
       switchMap((prevValue: any) => {
         // console.log('CREATE FUNC');
         return of(prevValue.__value__).pipe(
-          // tap(x => console.log('SWITCH', x)),
           operator,
           map(x => {
-            // console.log('After operator:', x);
             return {
               __id__: prevValue.__id__,
               __value__: x,
+              __file__: prevValue.__file__,
+              __expr__: prevValue.__expr__,
+              __line__: prevValue.__line__,
+              __char__: prevValue.__char__,
             };
           })
         );
       }),
       map((x: any) => {
-        // console.log('after:', x);
-        return {__value__: x.__value__, __id__: x.__id__};
+        if (isLast === 'true') {
+          return x.__value__;
+        }
+        console.log('After', x.__expr__, x.__file__ + ':' + x.__line__, 'Value:', x.__value__, 'Id:', x.__id__);
+
+        return {
+          __id__: x.__id__,
+          __value__: x.__value__,
+          __file__: x.__file__,
+          __expr__: x.__expr__,
+          __line__: x.__line__,
+          __char__: x.__char__,
+        };
       })
     )(stream);
 
   };
 };
 
-const GENERATE_ID = function () {
+const GENERATE_ID = function() {
   // Math.random should be unique because of its seeding algorithm.
   // Convert it to base 36 (numbers + letters), and grab the first 9 characters
   // after the decimal.
