@@ -76,9 +76,6 @@ let id = 0;
         );
       }),
       map((x: any) => {
-        if (isLast === 'true') {
-          return x.__value__;
-        }
         const fileNameToDisplay = x.__file__.split('/').pop();
         console.log(
           'After operator: \n' +
@@ -89,6 +86,10 @@ let id = 0;
           'color: #990000',
           'color: #009900',
           'color: #009999');
+
+        if (isLast === 'true') {
+          return x.__value__;
+        }
 
         return {
           __id__: x.__id__,
