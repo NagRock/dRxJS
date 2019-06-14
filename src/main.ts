@@ -31,35 +31,134 @@ const addStreamByLocation = (fileName: any, line: any, char: any, stream: any) =
 
 let ID = 0;
 
+function getDestination(observer: any) {
+  return observer.__id__ !== undefined
+    ? observer
+    : observer.destination !== undefined
+      ? getDestination(observer.destination)
+      : undefined;
+}
+
 (window as any).__instrument__ = (operator, fileName, expr, line, char) => {
-  return (stream) => {
-    console.log('creating operator: ', expr);
-    let before;
-    let after;
-    return pipe(
-      (x) => {
-        before = x;
-        before.__id__ = before.__id__ || ID++;
-        return before;
-      },
-      operator,
-      (x) => {
-        after = (x as any).pipe(tap((value) => {
-          const val = {stream: after,  value};
-          if (before.__values__) {
-            const lastValue = before.__values__[before.__values__.length - 1];
-            lastValue.caused = lastValue.caused || [];
-            lastValue.caused.push(val);
-          }
-          after.__values__.push(val);
-        }));
-        after.__values__ = [];
-        after.__location__ = `${fileName}:${line}:${char}`;
-        after.__expression__ = expr;
-        addStreamByLocation(fileName, line, char, after);
-        return after;
-      },
-    )(stream);
-  };
+  return pipe(
+    operator,
+    (stream) => {
+      return Observable.create((observer) => {
+        const destination = getDestination(observer);
+        const id = ID++;
+        const location = `${fileName}:${line}:${char}`;
+        observer.__id__ = id;
+        observer.__location__ = location;
+        observer.__expression__ = expr;
+        observer.__values__ = [];
+        observer.__source_values__ = [];
+        console.log('instrumenting operator: ', expr, observer);
+        addStreamByLocation(fileName, line, char, observer);
+        const sub = stream
+          .pipe(
+            tap((x) => {
+              // in
+              const value = {
+                value: x,
+                stream: {
+                  id, location, expr,
+                },
+                caused: [],
+              };
+
+              if (observer.__source_values__.length !== 0) {
+                observer.__source_values__.shift().caused.push(value);
+              }
+
+              observer.__values__.push(value);
+
+
+
+              // out
+              if (destination) {
+                destination.__source_values__.push(value);
+              }
+              // console.log(`${expr} (${id}) -- (${x}) -> ${destination ? `${destination.__expression__} (${destination.__id__})` : 'DONE'}`);
+            })
+          )
+          .subscribe(observer);
+
+        return () => sub.unsubscribe();
+      });
+    });
 };
 
+
+// (window as any).__instrument__ = (operator, fileName, expr, line, char) => {
+//   return pipe(
+//     operator,
+//     (stream) => {
+//       return Observable.create((observer) => {
+//         const destination = getDestination(observer);
+//         const id = ID++;
+//         const location = `${fileName}:${line}:${char}`;
+//         observer.__id__ = id;
+//         observer.__location__ = location;
+//         observer.__expression__ = expr;
+//         observer.__values__ = [];
+//         console.log('instrumenting operator: ', expr, observer);
+//         addStreamByLocation(fileName, line, char, observer);
+//         const sub = stream
+//           .pipe(
+//             tap((x) => {
+//               // in
+//               const value = {
+//                 value: x,
+//                 caused: [],
+//               };
+//
+//               if (observer.__source_value__) {
+//                 observer.__source_value__.caused.push(value);
+//                 observer.__source_value__ = undefined;
+//               }
+//
+//               observer.__values__.push(value);
+//
+//
+//
+//
+//               // out
+//               if (destination) {
+//                 destination.__source_value__ = value;
+//               }
+//               // console.log(`${expr} (${id}) -- (${x}) -> ${destination ? `${destination.__expression__} (${destination.__id__})` : 'DONE'}`);
+//             })
+//           )
+//           .subscribe(observer);
+//
+//         return () => sub.unsubscribe();
+//       });
+//     });
+// };
+
+
+// return (stream) => {
+//   return Observable.create((observer) => {
+//     const destination = getDestination(observer);
+//     const id = ID++;
+//     const location = `${fileName}:${line}:${char}`;
+//     observer.__id__ = id;
+//     observer.__location__ = location;
+//     observer.__expression__ = expr;
+//     observer.__values__ = [];
+//     console.log('instrumenting operator: ', expr, observer);
+//     const sub = stream
+//       .pipe(
+//         operator,
+//         tap((x) => {
+//           const value = {
+//             value: x,
+//           };
+//           console.log(`${expr} (${id}) -- (${x}) -> ${destination ? `${destination.__expression__} (${destination.__id__})` : 'DONE'}`);
+//         })
+//       )
+//       .subscribe(observer);
+//
+//     return () => sub.unsubscribe();
+//   });
+// };
