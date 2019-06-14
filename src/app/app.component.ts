@@ -1,18 +1,43 @@
 import {Component} from '@angular/core';
 import {SampleService} from './sample.service';
-import {
-  debounceTime,
-  delay,
-  distinctUntilChanged,
-  expand,
-  filter,
-  map,
-  shareReplay,
-  switchMap,
-  tap,
-  throttleTime
-} from 'rxjs/operators';
-import {EMPTY, of} from "rxjs";
+import {delay, distinctUntilChanged, filter, map, shareReplay, throttleTime} from 'rxjs/operators';
+import {of} from "rxjs";
+import {Data, data as DATA, StreamData} from "../main";
+
+const mapValues = <V0, V1>(object: { [key: string]: V0 }, mapper: (streams: V0) => V1) => {
+  return Object.entries(object)
+    .map(([k, v]) => [k, mapper(v)])
+    .reduce(((o, [k, v]: [string, V1]) => {
+      o[k] = v;
+      return o;
+    }), {});
+};
+
+const getStreamsByChar = (streams: StreamData[]) => {
+  return streams.reduce((streamsByChar, stream) => {
+    const group = streamsByChar[stream.location.file] || (streamsByChar[stream.location.file] = []);
+    group.push(stream);
+    return streamsByChar;
+  }, {});
+};
+
+const getStreamsByLineChar = (streams: StreamData[]) => {
+  const groups = streams.reduce((streamsByLine, stream) => {
+    const group = streamsByLine[stream.location.file] || (streamsByLine[stream.location.file] = []);
+    group.push(stream);
+    return streamsByLine;
+  }, {});
+  return mapValues(groups, getStreamsByChar);
+};
+
+const getStreamsByFileLineChar = (streams: StreamData[]) => {
+  const groups = streams.reduce((streamsByFile, stream) => {
+    const group = streamsByFile[stream.location.file] || (streamsByFile[stream.location.file] = []);
+    group.push(stream);
+    return streamsByFile;
+  }, {});
+  return mapValues(groups, getStreamsByLineChar);
+};
 
 @Component({
   selector: 'app-root',
@@ -20,12 +45,19 @@ import {EMPTY, of} from "rxjs";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'ng-ts-transformer';
+
+  data = DATA;
+  streams = getStreamsByFileLineChar(DATA.streams);
 
   constructor(private sample: SampleService) {
-    // this.runSimpleExampleWithPrimitives();
+    this.runSimpleExampleWithPrimitives();
     // this.runSimpleExample();
     // this.runMousePositionExample();
+  }
+
+  refresh() {
+    this.data = DATA;
+    this.streams = getStreamsByFileLineChar(DATA.streams);
   }
 
   private runSimpleExample() {

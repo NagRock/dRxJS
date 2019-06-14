@@ -13,7 +13,7 @@ if (environment.production) {
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
 
-interface StreamData {
+export interface StreamData {
   id: number;
   location: {
     file: string,
@@ -24,7 +24,7 @@ interface StreamData {
   values: number[];
 }
 
-interface ValueData {
+export interface ValueData {
   id: number;
   timestamp: number;
   value: unknown;
@@ -32,12 +32,12 @@ interface ValueData {
   to: number;
 }
 
-interface Data {
+export interface Data {
   streams: StreamData[];
   values: ValueData[];
 }
 
-const data: Data = (window as any).__data__ = {
+export const data: Data = (window as any).__data__ = {
   streams: [],
   values: [],
 };
@@ -57,13 +57,15 @@ function trackStreamData(expr, file, line, char) {
 
 let valueDataId = 0;
 function trackValueData(value, from, to) {
-  return {
+  const valueData = {
     id: valueDataId++,
     timestamp: Date.now(),
     value,
     from,
     to,
   };
+  data.values[valueData.id] = valueData;
+  return valueData;
 }
 
 function getDestination(observer: any) {
