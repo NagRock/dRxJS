@@ -47,7 +47,16 @@ let id = 0;
         x.__line__ = line;
         x.__char__ = char;
         const fileNameToDisplay = fileName.split('/').pop();
-        console.log('Before', expr, fileNameToDisplay + ':' + line, 'Value:', x.__value__, 'Id:', x.__id__);
+
+        console.log(
+          'Before operator: \n' +
+          expr +
+          '\n %c ' + fileNameToDisplay + ':' + x.__line__ +
+          '%c | Value:' + JSON.stringify(x.__value__) +
+          '%c | Id:' + x.__id__,
+          'color: #990000',
+          'color: #009900',
+          'color: #009999');
         return x;
       }),
       switchMap((prevValue: any) => {
@@ -71,7 +80,15 @@ let id = 0;
           return x.__value__;
         }
         const fileNameToDisplay = x.__file__.split('/').pop();
-        console.log('After', x.__expr__, fileNameToDisplay + ':' + x.__line__, 'Value:', x.__value__, 'Id:', x.__id__);
+        console.log(
+          'After operator: \n' +
+          x.__expr__ +
+          '\n %c ' + fileNameToDisplay + ':' + x.__line__ +
+          '%c | Value:' + JSON.stringify(x.__value__) +
+          '%c | Id:' + x.__id__,
+          'color: #990000',
+          'color: #009900',
+          'color: #009999');
 
         return {
           __id__: x.__id__,
