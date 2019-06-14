@@ -36,7 +36,7 @@ let id = 0;
     return pipe(
       map((x: any) => {
         if (!x.__id__) {
-          console.log('WITHOUD ID', x);
+          // console.log('WITHOUD ID', x);
           x = {
             __value__: x,
           };
