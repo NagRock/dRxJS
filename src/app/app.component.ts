@@ -13,13 +13,14 @@ export class AppComponent {
 
   constructor(private sample: SampleService) {
     this.sample.mousePos$.pipe(
-      /*s1 ->*/ map(pos => pos.x) /*-> s2*/,
-      // throttleTime(1000),
+      map(pos => pos.x),
       switchMap((x) => timer(Math.random() * 3000).pipe(
         mapTo(x),
       )),
       filter((x) => x > window.innerWidth / 2),
-      /*s2 ->*/ map(pos => pos) /*-> s3*/,
+      map(pos => {
+        return {mouseX: pos};
+      }),
     ).subscribe(x => console.log('RESULT:', x));
   }
 }
