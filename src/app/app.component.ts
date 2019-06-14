@@ -1,6 +1,17 @@
 import {Component} from '@angular/core';
 import {SampleService} from './sample.service';
-import {debounceTime, delay, expand, filter, map, shareReplay, switchMap, tap, throttleTime} from 'rxjs/operators';
+import {
+  debounceTime,
+  delay,
+  distinctUntilChanged,
+  expand,
+  filter,
+  map,
+  shareReplay,
+  switchMap,
+  tap,
+  throttleTime
+} from 'rxjs/operators';
 import {EMPTY, of} from "rxjs";
 
 @Component({
@@ -12,7 +23,8 @@ export class AppComponent {
   title = 'ng-ts-transformer';
 
   constructor(private sample: SampleService) {
-    this.runSimpleExample();
+    // this.runSimpleExampleWithPrimitives();
+    // this.runSimpleExample();
     // this.runMousePositionExample();
   }
 
@@ -26,6 +38,16 @@ export class AppComponent {
       );
 
     stream$.subscribe(((x) => console.log('result:', x)));
+    stream$.subscribe(((x) => console.log('result:', x)));
+  }
+
+  private runSimpleExampleWithPrimitives() {
+    const stream$ = of('a', 'a', 'a', 'b', 'a', 'c', 'd')
+      .pipe(
+        distinctUntilChanged(),
+        map((x) => new String(x)),
+      );
+
     stream$.subscribe(((x) => console.log('result:', x)));
   }
 

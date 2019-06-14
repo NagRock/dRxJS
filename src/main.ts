@@ -13,73 +13,85 @@ if (environment.production) {
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
 
-const streamsByLocation: { [location: string]: Observable<any>[] } = (window as any).__streams__ = {};
+interface StreamData {
+  id: number;
+  location: {
+    file: string,
+    line: number,
+    char: number,
+  };
+  expression: string;
+  values: number[];
+}
 
-const getStreamsByLocation = (fileName: any, line: any, char: any) => {
-  const location = `${fileName}:${line}:${char}`;
-  const streams = streamsByLocation[location];
-  if (streams !== undefined) {
-    return streams;
-  } else {
-    return streamsByLocation[location] = [];
-  }
+interface ValueData {
+  id: number;
+  timestamp: number;
+  value: unknown;
+  from: number;
+  to: number;
+}
+
+interface Data {
+  streams: StreamData[];
+  values: ValueData[];
+}
+
+const data: Data = (window as any).__data__ = {
+  streams: [],
+  values: [],
 };
 
-const addStreamByLocation = (fileName: any, line: any, char: any, stream: any) => {
-  getStreamsByLocation(fileName, line, char).push(stream);
-};
 
-let ID = 0;
+let streamDataId = 0;
+function trackStreamData(expr, file, line, char) {
+  const streamData = {
+    id: streamDataId++,
+    expression: expr,
+    location: {file, line, char},
+    values: [],
+  };
+  data.streams[streamData.id] = streamData;
+  return streamData;
+}
+
+let valueDataId = 0;
+function trackValueData(value, from, to) {
+  return {
+    id: valueDataId++,
+    timestamp: Date.now(),
+    value,
+    from,
+    to,
+  };
+}
 
 function getDestination(observer: any) {
   return observer.__id__ !== undefined
-    ? observer
+    ? data.streams[observer.__id__]
     : observer.destination !== undefined
       ? getDestination(observer.destination)
-      : undefined;
+      : trackStreamData('unknown', 'unknown', 0, 0);
 }
 
-(window as any).__instrument__ = (operator, fileName, expr, line, char) => {
+(window as any).__instrument__ = (operator, file, expr, line, char) => {
   return pipe(
     operator,
-    (stream) => {
+    (stream: Observable<any>) => {
       return Observable.create((observer) => {
-        const destination = getDestination(observer);
-        const id = ID++;
-        const location = `${fileName}:${line}:${char}`;
-        observer.__id__ = id;
-        observer.__location__ = location;
-        observer.__expression__ = expr;
-        observer.__values__ = [];
-        observer.__source_values__ = [];
-        console.log('instrumenting operator: ', expr, observer);
-        addStreamByLocation(fileName, line, char, observer);
+        console.log('instrumenting operator: ', expr);
+        const source: StreamData = trackStreamData(expr, file, line, char);
+        const destination: StreamData = getDestination(observer);
+        observer.__id__ = source.id;
         const sub = stream
           .pipe(
             tap((x) => {
-              // in
-              const value = {
-                value: x,
-                stream: {
-                  id, location, expr,
-                },
-                caused: [],
-              };
 
-              if (observer.__source_values__.length !== 0) {
-                observer.__source_values__.shift().caused.push(value);
+                const value = trackValueData(x, source.id, destination.id);
+                source.values.push(value.id);
+
               }
-
-              observer.__values__.push(value);
-
-
-
-              // out
-              if (destination) {
-                destination.__source_values__.push(value);
-              }
-              // console.log(`${expr} (${id}) -- (${x}) -> ${destination ? `${destination.__expression__} (${destination.__id__})` : 'DONE'}`);
-            })
+            )
           )
           .subscribe(observer);
 
@@ -88,77 +100,3 @@ function getDestination(observer: any) {
     });
 };
 
-
-// (window as any).__instrument__ = (operator, fileName, expr, line, char) => {
-//   return pipe(
-//     operator,
-//     (stream) => {
-//       return Observable.create((observer) => {
-//         const destination = getDestination(observer);
-//         const id = ID++;
-//         const location = `${fileName}:${line}:${char}`;
-//         observer.__id__ = id;
-//         observer.__location__ = location;
-//         observer.__expression__ = expr;
-//         observer.__values__ = [];
-//         console.log('instrumenting operator: ', expr, observer);
-//         addStreamByLocation(fileName, line, char, observer);
-//         const sub = stream
-//           .pipe(
-//             tap((x) => {
-//               // in
-//               const value = {
-//                 value: x,
-//                 caused: [],
-//               };
-//
-//               if (observer.__source_value__) {
-//                 observer.__source_value__.caused.push(value);
-//                 observer.__source_value__ = undefined;
-//               }
-//
-//               observer.__values__.push(value);
-//
-//
-//
-//
-//               // out
-//               if (destination) {
-//                 destination.__source_value__ = value;
-//               }
-//               // console.log(`${expr} (${id}) -- (${x}) -> ${destination ? `${destination.__expression__} (${destination.__id__})` : 'DONE'}`);
-//             })
-//           )
-//           .subscribe(observer);
-//
-//         return () => sub.unsubscribe();
-//       });
-//     });
-// };
-
-
-// return (stream) => {
-//   return Observable.create((observer) => {
-//     const destination = getDestination(observer);
-//     const id = ID++;
-//     const location = `${fileName}:${line}:${char}`;
-//     observer.__id__ = id;
-//     observer.__location__ = location;
-//     observer.__expression__ = expr;
-//     observer.__values__ = [];
-//     console.log('instrumenting operator: ', expr, observer);
-//     const sub = stream
-//       .pipe(
-//         operator,
-//         tap((x) => {
-//           const value = {
-//             value: x,
-//           };
-//           console.log(`${expr} (${id}) -- (${x}) -> ${destination ? `${destination.__expression__} (${destination.__id__})` : 'DONE'}`);
-//         })
-//       )
-//       .subscribe(observer);
-//
-//     return () => sub.unsubscribe();
-//   });
-// };
