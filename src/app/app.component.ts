@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
 import {SampleService} from './sample.service';
 import {delay, distinctUntilChanged, filter, map, shareReplay, throttleTime} from 'rxjs/operators';
-import {of} from "rxjs";
-import {Data, data as DATA, StreamData} from "../main";
+import {of} from 'rxjs';
+import {StreamData} from '../__instrument__/streams';
+import {data as DATA} from '../__instrument__/data';
 
 const mapValues = <V0, V1>(object: { [key: string]: V0 }, mapper: (streams: V0) => V1) => {
   return Object.entries(object)

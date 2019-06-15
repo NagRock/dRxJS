@@ -1,57 +1,5 @@
 import * as ts from 'typescript';
 
-function addConsoleLog(rootNode: ts.SourceFile, log: string) {
-  return ts.updateSourceFileNode(rootNode, [
-    ...rootNode.statements,
-    ts.createExpressionStatement(
-      ts.createCall(
-        ts.createPropertyAccess(
-          ts.createIdentifier('console'),
-          ts.createIdentifier('log')
-        ),
-        undefined,
-        [ts.createStringLiteral(log)]
-      )
-    )
-  ]);
-}
-
-function createTap() {
-  return ts.createCall(ts.createIdentifier('tap'), undefined, [
-    ts.createArrowFunction(
-      undefined,
-      undefined,
-      [
-        ts.createParameter(
-          undefined,
-          undefined,
-          undefined,
-          ts.createIdentifier('x'),
-          undefined,
-          undefined,
-          undefined
-        )
-      ],
-      undefined,
-      ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-      ts.createCall(
-        ts.createPropertyAccess(
-          ts.createIdentifier('console'),
-          ts.createIdentifier('log')
-        ),
-        undefined,
-        [
-          ts.createBinary(
-            ts.createStringLiteral('added in transformer:'),
-            ts.createToken(ts.SyntaxKind.PlusToken),
-            ts.createIdentifier('x')
-          )
-        ]
-      )
-    )
-  ]);
-}
-
 function createInstrumentCall(rootNode: ts.SourceFile, expression: ts.Expression) {
   const pos = rootNode.getLineAndCharacterOfPosition(expression.getStart());
   return ts.createCall(
@@ -72,7 +20,7 @@ function createInstrumentCall(rootNode: ts.SourceFile, expression: ts.Expression
 
 export const dummyTransformer = <T extends ts.Node>(context: ts.TransformationContext) => {
   return (rootNode: ts.SourceFile) => {
-    if (rootNode.fileName.endsWith('main.ts')) {
+    if (rootNode.fileName.includes('__instrument__')) {
       return rootNode;
     }
 
