@@ -42,7 +42,7 @@ const instrument = (operator, file, expr, line, char) => {
     });
 };
 
-export const registerInstrument = () => {
+export const enableInstrumentation = () => {
   (window as any).__instrument__ = instrument;
 };
 

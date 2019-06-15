@@ -1,18 +1,24 @@
 <div>
   <button (click)="refresh()">Refresh</button>
 </div>
-
-<!--<div>-->
-<!--  {{data | json}}-->
-<!--</div>-->
-
-<!--<div *ngFor="streams as streamsByFile">-->
-<!--  <div>-->
-<!--    {{streams}}-->
-<!--  </div>-->
-<!--  <div *ngFor="streamsByFile as streamsByLine">-->
-<!--    <div *ngFor="streamsByLine as streamsByChar">-->
-
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
+<div *ngFor="let streamsByFile of streams"  style="border: 1px solid black; padding: 8px;">
+  <div>
+    File: {{streamsByFile[0]}}
+  </div>
+  <div *ngFor="let streamsByLine of streamsByFile[1]" style="border: 1px solid black; padding: 8px;">
+    <div>
+      Line: {{streamsByLine[0]}}
+    </div>
+    <div>
+      {{streamsByLine[1] | json}}
+    </div>
+    <div *ngFor="let streamsByChar of streamsByLine[1]" style="border: 1px solid black; padding: 8px;">
+      <div>
+        Char: {{streamsByChar[0]}}
+      </div>
+      <div *ngFor="let stream of streamsByChar[1]" style="border: 1px solid black; padding: 8px;">
+          {{stream | json}}
+      </div>
+    </div>
+  </div>
+</div>

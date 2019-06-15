@@ -3,7 +3,7 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 import {AppModule} from './app/app.module';
 import {environment} from './environments/environment';
-import {registerInstrument} from './__instrument__/instrument';
+import {enableInstrumentation} from './__instrument__/instrument';
 
 if (environment.production) {
   enableProdMode();
@@ -12,4 +12,4 @@ if (environment.production) {
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
 
-registerInstrument();
+enableInstrumentation();

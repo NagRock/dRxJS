@@ -1,30 +1,31 @@
 import {Component} from '@angular/core';
 import {SampleService} from './sample.service';
-import {delay, distinctUntilChanged, filter, map, shareReplay, throttleTime} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {delay, filter, map, shareReplay, throttleTime} from 'rxjs/operators';
+import {identity, of} from 'rxjs';
 import {StreamData} from '../__instrument__/streams';
 import {data as DATA} from '../__instrument__/data';
 
 const mapValues = <V0, V1>(object: { [key: string]: V0 }, mapper: (streams: V0) => V1) => {
   return Object.entries(object)
-    .map(([k, v]) => [k, mapper(v)])
-    .reduce(((o, [k, v]: [string, V1]) => {
-      o[k] = v;
-      return o;
-    }), {});
+    .map(([k, v]) => [k, mapper(v)]);
+    // .reduce(((o, [k, v]: [string, V1]) => {
+    //   o[k] = v;
+    //   return o;
+    // }), {});
 };
 
 const getStreamsByChar = (streams: StreamData[]) => {
-  return streams.reduce((streamsByChar, stream) => {
-    const group = streamsByChar[stream.location.file] || (streamsByChar[stream.location.file] = []);
+  const groups = streams.reduce((streamsByChar, stream) => {
+    const group = streamsByChar[stream.location.char] || (streamsByChar[stream.location.char] = []);
     group.push(stream);
     return streamsByChar;
   }, {});
+  return mapValues(groups, identity);
 };
 
 const getStreamsByLineChar = (streams: StreamData[]) => {
   const groups = streams.reduce((streamsByLine, stream) => {
-    const group = streamsByLine[stream.location.file] || (streamsByLine[stream.location.file] = []);
+    const group = streamsByLine[stream.location.line] || (streamsByLine[stream.location.line] = []);
     group.push(stream);
     return streamsByLine;
   }, {});
@@ -77,8 +78,8 @@ export class AppComponent {
   private runSimpleExampleWithPrimitives() {
     const stream$ = of('a', 'a', 'a', 'b', 'a', 'c', 'd')
       .pipe(
-        distinctUntilChanged(),
-        map((x) => new String(x)),
+        map((FIRST) => FIRST),
+        map((LAST) => LAST),
       );
 
     stream$.subscribe(((x) => console.log('result:', x)));
