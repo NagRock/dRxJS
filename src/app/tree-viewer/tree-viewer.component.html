@@ -1,4 +1,8 @@
-<svg *ngIf="layout$ | async as layout" [attr.width]="width" [attr.height]="height">
+<svg
+  *ngIf="layout$ | async as layout"
+  style="background-color: rebeccapurple; border-radius: 3px"
+  [attr.width]="width"
+  [attr.height]="height">
 
   <path
     *ngFor="let d of layout.links"
