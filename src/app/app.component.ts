@@ -25,6 +25,7 @@ export class AppComponent {
 
   treeControl = new NestedTreeControl<any>(node => node.instances);
   dataSource = new MatTreeNestedDataSource<any>();
+  streams: StreamData[] = [];
 
   constructor() {
     this.dataSource.data = getStreamsLocation(DATA.streams);
@@ -36,6 +37,7 @@ export class AppComponent {
   hasChild = (_: number, node: any) => !!node.instances && node.instances.length > 0;
 
   refresh() {
+    this.streams = DATA.streams;
     this.dataSource.data = getStreamsLocation(DATA.streams);
   }
 

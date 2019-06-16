@@ -1,13 +1,12 @@
 <div>
-  <button (click)="refresh()">Refresh</button>
+  <button mat-raised-button (click)="refresh()">Refresh</button>
 </div>
 
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
 
   <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
     <li class="mat-tree-node">
-      {{node.id}}
-      <button mat-button>Analyze flow to here</button>
+      <button mat-raised-button>Analyze flow to stream #{{node.id}}</button>
     </li>
   </mat-tree-node>
 
@@ -28,3 +27,5 @@
   </mat-nested-tree-node>
 
 </mat-tree>
+
+<app-tree-viewer [streams]="streams"></app-tree-viewer>
