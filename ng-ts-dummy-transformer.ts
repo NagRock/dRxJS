@@ -1,15 +1,40 @@
 import * as ts from 'typescript';
 
-function createInstrumentCall(rootNode: ts.SourceFile, expression: ts.Expression) {
+function instrumentOperatorExpression(rootNode: ts.SourceFile, expression: ts.Expression) {
   const pos = rootNode.getLineAndCharacterOfPosition(expression.getStart());
   return ts.createCall(
     ts.createPropertyAccess(
-      ts.createIdentifier('window'),
-      ts.createIdentifier('__instrument__')
+      ts.createPropertyAccess(
+        ts.createIdentifier('window'),
+        ts.createIdentifier('__instrument__')
+      ),
+      ts.createIdentifier('operator'),
     ),
     undefined,
     [
       expression,
+      ts.createStringLiteral(rootNode.fileName),
+      ts.createStringLiteral(expression.getText()),
+      ts.createNumericLiteral(`${pos.line + 1}`),
+      ts.createNumericLiteral(`${pos.character + 1}`)
+    ]
+  );
+}
+
+function instrumentOperatorCallExpression(rootNode: ts.SourceFile, expression: ts.CallExpression) {
+  const pos = rootNode.getLineAndCharacterOfPosition(expression.getStart());
+  return ts.createCall(
+    ts.createPropertyAccess(
+      ts.createPropertyAccess(
+        ts.createIdentifier('window'),
+        ts.createIdentifier('__instrument__')
+      ),
+      ts.createIdentifier('operatorCall'),
+    ),
+    undefined,
+    [
+      expression.expression,
+      ts.createArrayLiteral(expression.arguments),
       ts.createStringLiteral(rootNode.fileName),
       ts.createStringLiteral(expression.getText()),
       ts.createNumericLiteral(`${pos.line + 1}`),
@@ -33,7 +58,9 @@ export const dummyTransformer = <T extends ts.Node>(context: ts.TransformationCo
             node = ts.createCall(
               node.expression,
               node.typeArguments,
-              node.arguments.map((expr) => createInstrumentCall(rootNode, expr)));
+              node.arguments.map((expr) => ts.isCallExpression(expr)
+                ? instrumentOperatorCallExpression(rootNode, expr)
+                : instrumentOperatorExpression(rootNode, expr)));
           }
         }
       }

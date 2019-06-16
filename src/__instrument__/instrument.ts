@@ -12,7 +12,7 @@ function getDestination(observer: any) {
       : trackStreamData('unknown', 'unknown', 0, 0, -1);
 }
 
-const instrument = (operator, file, expr, line, char) => {
+const instrumentOperator = (operator, file, expr, line, char) => {
   return pipe(
     operator,
     (stream: Observable<any>) => {
@@ -42,7 +42,14 @@ const instrument = (operator, file, expr, line, char) => {
     });
 };
 
+const instrumentOperatorCall = (operator, args, file, expr, line, char) => {
+  return instrumentOperator(operator.apply(undefined, args), file, expr, line, char);
+};
+
 export const enableInstrumentation = () => {
-  (window as any).__instrument__ = instrument;
+  (window as any).__instrument__ = {
+    operator: instrumentOperator,
+    operatorCall: instrumentOperatorCall,
+  };
 };
 
