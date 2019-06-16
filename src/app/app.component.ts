@@ -1,44 +1,19 @@
 import {Component} from '@angular/core';
-import {SampleService} from './sample.service';
-import {delay, filter, map, shareReplay, throttleTime} from 'rxjs/operators';
-import {identity, of} from 'rxjs';
+import {delay, map, shareReplay} from 'rxjs/operators';
+import {of} from 'rxjs';
 import {StreamData} from '../__instrument__/streams';
 import {data as DATA} from '../__instrument__/data';
+import {MatTreeNestedDataSource} from '@angular/material';
+import {NestedTreeControl} from '@angular/cdk/tree';
 
-const mapValues = <V0, V1>(object: { [key: string]: V0 }, mapper: (streams: V0) => V1) => {
-  return Object.entries(object)
-    .map(([k, v]) => [k, mapper(v)]);
-    // .reduce(((o, [k, v]: [string, V1]) => {
-    //   o[k] = v;
-    //   return o;
-    // }), {});
-};
-
-const getStreamsByChar = (streams: StreamData[]) => {
-  const groups = streams.reduce((streamsByChar, stream) => {
-    const group = streamsByChar[stream.location.char] || (streamsByChar[stream.location.char] = []);
-    group.push(stream);
-    return streamsByChar;
-  }, {});
-  return mapValues(groups, identity);
-};
-
-const getStreamsByLineChar = (streams: StreamData[]) => {
-  const groups = streams.reduce((streamsByLine, stream) => {
-    const group = streamsByLine[stream.location.line] || (streamsByLine[stream.location.line] = []);
-    group.push(stream);
-    return streamsByLine;
-  }, {});
-  return mapValues(groups, getStreamsByChar);
-};
-
-const getStreamsByFileLineChar = (streams: StreamData[]) => {
+const getStreamsLocation = (streams: StreamData[]) => {
   const groups = streams.reduce((streamsByFile, stream) => {
-    const group = streamsByFile[stream.location.file] || (streamsByFile[stream.location.file] = []);
+    const location = `${stream.location.file} (${stream.location.line}:${stream.location.char})`;
+    const group = streamsByFile[location] || (streamsByFile[location] = []);
     group.push(stream);
     return streamsByFile;
   }, {});
-  return mapValues(groups, getStreamsByLineChar);
+  return Object.entries(groups).map(([location, instances]) => ({location, instances}));
 };
 
 @Component({
@@ -48,18 +23,20 @@ const getStreamsByFileLineChar = (streams: StreamData[]) => {
 })
 export class AppComponent {
 
-  data = DATA;
-  streams = getStreamsByFileLineChar(DATA.streams);
+  treeControl = new NestedTreeControl<any>(node => node.instances);
+  dataSource = new MatTreeNestedDataSource<any>();
 
-  constructor(private sample: SampleService) {
+  constructor() {
+    this.dataSource.data = getStreamsLocation(DATA.streams);
     this.runSimpleExampleWithPrimitives();
     // this.runSimpleExample();
     // this.runMousePositionExample();
   }
 
+  hasChild = (_: number, node: any) => !!node.instances && node.instances.length > 0;
+
   refresh() {
-    this.data = DATA;
-    this.streams = getStreamsByFileLineChar(DATA.streams);
+    this.dataSource.data = getStreamsLocation(DATA.streams);
   }
 
   private runSimpleExample() {
@@ -83,29 +60,5 @@ export class AppComponent {
       );
 
     stream$.subscribe(((x) => console.log('result:', x)));
-  }
-
-  private runMousePositionExample() {
-    const observable = this.sample.mousePos$.pipe(
-      /*s1 ->*/ map(firstMap => firstMap.x) /*-> s2*/,
-      throttleTime(1000),
-
-      // tap(x => console.log('tap:', x)),
-      // switchMap((x) => of('a', 'b').pipe(map((y) => `${y}: ${x}`))),
-
-      filter((x) => x > window.innerWidth / 2),
-
-      // expand((x) =>
-      //   typeof (x) === 'number'
-      //     ? of('a', 'b').pipe(map((s) => `${s}: ${x}`))
-      //     : EMPTY),
-
-      /*s2 ->*/ map(lastMap => lastMap) /*-> s3*/,
-      // shareReplay(1),
-    );
-    observable.subscribe(x => console.log(x));
-    // observable.subscribe(x => console.log(x));
-    // observable.subscribe(x => console.log(x));
-    // observable.subscribe(x => console.log(x));
   }
 }
