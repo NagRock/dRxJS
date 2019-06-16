@@ -1,1 +1,19 @@
-{{streams | json}}
+<svg *ngIf="layout$ | async as layout" [attr.width]="width" [attr.height]="height">
+
+  <path
+    *ngFor="let d of layout.links"
+    stroke="black"
+    stroke-width="4"
+    [attr.d]="'M' + getX(d.source) + ',' + getY(d.source) + 'C' + getX(d.source) + ',' + (getY(d.source) + getY(d.target)) / 2 + ' ' + getX(d.target) + ',' +  (getY(d.source) + getY(d.target)) / 2 + ' ' + getX(d.target) + ',' + getY(d.target)">
+  </path>
+
+  <g
+    *ngFor="let node of layout.nodes"
+    [attr.transform]="'translate(' + getX(node) + ',' + getY(node) + ')'">
+    <circle r="16" fill="darkgrey" stroke="black" stroke-width="4"></circle>
+<!--    <text dy=".35em" y="32" style="text-anchor: middle">-->
+<!--      {{node.data.stream.expression}}-->
+<!--    </text>-->
+  </g>
+
+</svg>

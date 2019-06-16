@@ -10,6 +10,7 @@ export interface StreamData {
     char: number,
   };
   expression: string;
+  destination: number;
   values: number[];
 }
 
