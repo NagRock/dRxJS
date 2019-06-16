@@ -6,6 +6,7 @@ import {CommonModule} from '@angular/common';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatIconModule, MatTreeModule} from '@angular/material';
 import {TreeViewerModule} from './tree-viewer/tree-viewer.module';
+import {OverlayModule} from '@angular/cdk/overlay';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import {TreeViewerModule} from './tree-viewer/tree-viewer.module';
     MatIconModule,
     MatButtonModule,
     TreeViewerModule,
+    OverlayModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

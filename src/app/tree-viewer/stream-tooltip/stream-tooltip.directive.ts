@@ -1,0 +1,48 @@
+import {ComponentRef, Directive, ElementRef, HostListener, Input, OnInit} from '@angular/core';
+import {StreamData} from '../../../__instrument__/streams';
+import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
+import {ComponentPortal} from '@angular/cdk/portal';
+import {StreamTooltipComponent} from './stream-tooltip.component';
+
+@Directive({
+  selector: '[appStreamTooltip]'
+})
+export class StreamTooltipDirective implements OnInit {
+
+  private overlayRef: OverlayRef;
+
+  @Input('appStreamTooltip')
+  data: StreamData;
+
+  constructor(
+    private readonly elementRef: ElementRef,
+    private readonly overlayPositionBuilder: OverlayPositionBuilder,
+    private readonly overlay: Overlay,
+  ) {
+  }
+
+  ngOnInit() {
+    const positionStrategy = this.overlayPositionBuilder
+      .flexibleConnectedTo(this.elementRef)
+      .withPositions([{
+        originX: 'center',
+        originY: 'top',
+        overlayX: 'center',
+        overlayY: 'bottom',
+      }]);
+    this.overlayRef = this.overlay.create({positionStrategy});
+  }
+
+  @HostListener('mouseenter')
+  show() {
+    const tooltipPortal = new ComponentPortal(StreamTooltipComponent);
+    const tooltipRef: ComponentRef<StreamTooltipComponent> = this.overlayRef.attach(tooltipPortal);
+    tooltipRef.instance.data = this.data;
+  }
+
+  @HostListener('mouseout')
+  hide() {
+    this.overlayRef.detach();
+  }
+
+}
