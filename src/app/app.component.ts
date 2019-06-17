@@ -46,7 +46,7 @@ export class AppComponent {
     const stream$ = of('a', 'b', 'c', 'd')
       .pipe(
         map((firstMap) => `${firstMap}:${firstMap}`),
-        delay(1000),
+        // delay(1000),
         shareReplay(1),
         map((lastMap) => `${lastMap}:${lastMap}`),
       );

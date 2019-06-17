@@ -1,5 +1,5 @@
 import {Observable, pipe} from 'rxjs';
-import {map, share, shareReplay, startWith, tap} from 'rxjs/operators';
+import {share, shareReplay, tap} from 'rxjs/operators';
 import {data} from './data';
 import {StreamData, trackStreamData} from './streams';
 import {trackSubscribeEventData, trackUnsubscribeEventData, trackValueEventData} from './events';
@@ -47,19 +47,11 @@ const instrumentOperator = (operator, file, expr, line, char) => {
 };
 
 const instrumentShareOperator = (operator, file, expr, line, char) => {
-  let id: number | undefined;
-  return pipe(
+  return (sharedStream) => sharedStream.pipe(
     (stream: Observable<any>) => {
       return Observable.create((observer) => {
-        console.log('instrumenting share operator: ', expr);
-        // const destination: StreamData = getDestination(observer);
-        const source: StreamData = trackStreamData(expr, file, line, char, []);
-        // trackSubscribeEventData(source.id, destination.id);
-        observer.__id__ = source.id;
-        id = source.id;
-        const sub = stream.pipe(
-          map((value) => ({value, sourceId: source.id})),
-        ).subscribe(observer);
+        observer.__id__ = sharedStream.__id__;
+        const sub = stream.subscribe(observer);
 
         return () => {
           sub.unsubscribe();
@@ -69,29 +61,29 @@ const instrumentShareOperator = (operator, file, expr, line, char) => {
     operator,
     (stream: Observable<any>) => {
       return Observable.create((observer) => {
-        // console.log('instrumenting operator: ', expr);
+        let source: StreamData;
+        if (sharedStream.__id__ === undefined) {
+          console.log('instrumenting share operator: ', expr);
+          source = trackStreamData(expr, file, line, char, []);
+          sharedStream.__id__ = source.id;
+        } else {
+          source = getSource(sharedStream.__id__);
+        }
         const destination: StreamData = getDestination(observer);
-        // const source: StreamData = trackStreamData(expr, file, line, char, [destination.id]);
-        // trackSubscribeEventData(source.id, destination.id);
-        // observer.__id__ = source.id;
-        // id = source.id;
+        trackSubscribeEventData(sharedStream.__id__, destination.id);
+        source.subscribers.push(destination.id);
         const sub = stream
           .pipe(
-            map(({value, sourceId}) => {
-                const source = getSource(sourceId);
-                const valueEventData = trackValueEventData(value, sourceId, destination.id);
+            tap((value) => {
+                const valueEventData = trackValueEventData(value, source.id, destination.id);
                 source.values.push(valueEventData.id);
-                if (!source.subscribers.includes(destination.id)) {
-                  source.subscribers.push(destination.id);
-                }
-                return value;
               }
             )
           )
           .subscribe(observer);
 
         return () => {
-          // trackUnsubscribeEventData(source.id, destination.id);
+          trackUnsubscribeEventData(source.id, destination.id);
           sub.unsubscribe();
         };
       });
