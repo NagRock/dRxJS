@@ -30,8 +30,8 @@ export class AppComponent {
 
   constructor() {
     this.dataSource.data = getStreamsLocation(DATA.streams);
-    this.runSimpleExampleWithPrimitives();
-    // this.runSimpleExample();
+    // this.runSimpleExampleWithPrimitives();
+    this.runSimpleExample();
     // this.runMousePositionExample();
   }
 
@@ -47,8 +47,8 @@ export class AppComponent {
       .pipe(
         map((firstMap) => `${firstMap}:${firstMap}`),
         delay(1000),
-        map((lastMap) => `${lastMap}:${lastMap}`),
         shareReplay(1),
+        map((lastMap) => `${lastMap}:${lastMap}`),
       );
 
     stream$.subscribe(((x) => console.log('result:', x)));

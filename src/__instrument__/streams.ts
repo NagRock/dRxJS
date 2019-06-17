@@ -10,17 +10,17 @@ export interface StreamData {
     char: number,
   };
   expression: string;
-  destination: number;
+  subscribers: number[];
   values: number[];
 }
 
-export function trackStreamData(expr, file, line, char, destination: number) {
+export function trackStreamData(expr, file, line, char, subscribers: number[]) {
   const streamData = {
     id: streamDataId++,
     expression: expr,
     location: {file, line, char},
     values: [],
-    destination,
+    subscribers,
   };
   data.streams[streamData.id] = streamData;
   return streamData;

@@ -17,7 +17,7 @@ interface FlowLayout {
 
 function createIncomingFlowNode(stream: StreamData, output: number, streams: StreamData[]): IncomingFlowNode {
   const inputs = streams
-    .filter((s) => s.destination === stream.id)
+    .filter((s) => s.subscribers.includes(stream.id))
     .map((s) => createIncomingFlowNode(s, stream.id, streams));
   return {
     stream,
