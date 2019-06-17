@@ -4,10 +4,16 @@ import {hierarchy, HierarchyPointLink, HierarchyPointNode, tree} from 'd3';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-interface IncomingFlowNode {
+interface FlowToNode {
   stream: StreamData;
-  inputs: IncomingFlowNode[];
+  inputs: FlowToNode[];
   output: number;
+}
+
+interface FlowFromNode {
+  stream: StreamData;
+  input: number;
+  outputs: FlowFromNode[];
 }
 
 interface FlowLayout {
@@ -15,14 +21,24 @@ interface FlowLayout {
   links: HierarchyPointLink<any>[];
 }
 
-function createIncomingFlowNode(stream: StreamData, output: number, streams: StreamData[]): IncomingFlowNode {
+function flowToNode(stream: StreamData, output: number, streams: StreamData[]): FlowToNode {
   const inputs = streams
     .filter((s) => s.subscribers.includes(stream.id))
-    .map((s) => createIncomingFlowNode(s, stream.id, streams));
+    .map((s) => flowToNode(s, stream.id, streams));
   return {
     stream,
     inputs,
     output,
+  };
+}
+
+function flowFromNode(stream: StreamData, input: number, streams: StreamData[]): FlowFromNode {
+  const outputs = stream.subscribers
+    .map((s) => flowFromNode(streams[s], stream.id, streams));
+  return {
+    stream,
+    input,
+    outputs,
   };
 }
 
@@ -46,13 +62,8 @@ export class TreeViewerComponent {
       if (streams[origin] === undefined) {
         return {nodes: [], links: []};
       } else {
-        const root = createIncomingFlowNode(streams[origin], undefined, streams);
-        const nodes = hierarchy(root, (node) => node.inputs);
-        const layoutResult = this.layout(nodes);
-        return {
-          nodes: layoutResult.descendants(),
-          links: layoutResult.links(),
-        };
+        // return this.layoutFlowToNode(streams, origin);
+        return this.layoutFlowFromNode(streams, origin);
       }
     })
   );
@@ -80,5 +91,25 @@ export class TreeViewerComponent {
 
   getY(node: HierarchyPointNode<any>): number {
     return this.margin + node.x * (this.height - 2 * this.margin);
+  }
+
+  private layoutFlowToNode(streams, origin) {
+    const root = flowToNode(streams[origin], undefined, streams);
+    const nodes = hierarchy(root, (node) => node.inputs);
+    const layoutResult = this.layout(nodes);
+    return {
+      nodes: layoutResult.descendants(),
+      links: layoutResult.links(),
+    };
+  }
+
+  private layoutFlowFromNode(streams, origin) {
+    const root = flowFromNode(streams[origin], undefined, streams);
+    const nodes = hierarchy(root, (node) => node.outputs);
+    const layoutResult = this.layout(nodes);
+    return {
+      nodes: layoutResult.descendants(),
+      links: layoutResult.links(),
+    };
   }
 }

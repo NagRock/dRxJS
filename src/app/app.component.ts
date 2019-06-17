@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {delay, map, shareReplay} from 'rxjs/operators';
+import {map, shareReplay} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {StreamData} from '../__instrument__/streams';
 import {data as DATA} from '../__instrument__/data';
