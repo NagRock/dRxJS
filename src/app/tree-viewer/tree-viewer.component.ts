@@ -83,14 +83,14 @@ export class TreeViewerComponent {
         const incomingNodeOffset = incoming.nodes[0].x - width / 2;
         incoming.nodes.forEach((n) => {
           const {x, y} = n;
-          n.x = (incoming.height - y) / height;
-          n.y = x / width - incomingNodeOffset;
+          n.x = height === 0 ? 0 : (incoming.height - y) / height;
+          n.y = width === 0 ? 0 : x / width - incomingNodeOffset;
         });
         const outgoingNodeOffset = outgoing.nodes[0].x - width / 2;
         outgoing.nodes.forEach((n) => {
           const {x, y} = n;
-          n.x = 1 - (outgoing.height - y) / height;
-          n.y = x / width - outgoingNodeOffset;
+          n.x = height === 0 ? 0 : 1 - (outgoing.height - y) / height;
+          n.y = width === 0 ? 0 : x / width - outgoingNodeOffset;
         });
 
         const root = incoming.nodes[0];
@@ -104,7 +104,9 @@ export class TreeViewerComponent {
         const nodes = [...incoming.nodes, ...outgoing.nodes.slice(1)];
         const links = [...incoming.links, ...outgoing.links];
 
-        return {nodes, links, width, height};
+        const newVar = {nodes, links, width, height};
+        console.log(newVar)
+        return newVar;
       }
     })
   );
