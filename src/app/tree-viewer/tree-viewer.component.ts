@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {StreamData} from '../../__instrument__/streams';
 import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, tree} from 'd3';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
-import {map, shareReplay} from 'rxjs/operators';
+import {delay, map} from 'rxjs/operators';
+import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
 
 interface FlowToNode {
   stream: StreamData;
@@ -68,8 +69,10 @@ const distance = 2 * margin;
 export class TreeViewerComponent {
   private readonly originSubject = new BehaviorSubject<number>(0);
   private readonly streamsSubject = new BehaviorSubject<StreamData[]>([]);
+  private readonly widthSubject = new BehaviorSubject<number>(this.elementRef.nativeElement.clientWidth);
   private readonly layout = tree();
 
+  readonly width$ = this.widthSubject.asObservable().pipe(delay(0, animationFrame));
   readonly layout$: Observable<FlowLayout> = combineLatest(
     this.originSubject,
     this.streamsSubject,
@@ -114,11 +117,10 @@ export class TreeViewerComponent {
   @Output()
   readonly originChange = new EventEmitter<number>();
 
-  @Input()
-  width = 800;
-
-  @Input()
-  height = 600;
+  constructor(
+    private readonly elementRef: ElementRef,
+  ) {
+  }
 
   @Input()
   set origin(origin: number) {
@@ -134,6 +136,11 @@ export class TreeViewerComponent {
     this.streamsSubject.next(streams);
   }
 
+  @HostListener('window:resize')
+  onWindowResize() {
+    this.widthSubject.next(this.elementRef.nativeElement.clientWidth);
+  }
+
   getX(node: HierarchyPointNode<any>, width: number): number {
     return margin + node.x * (width - 2 * margin);
   }
@@ -147,16 +154,23 @@ export class TreeViewerComponent {
     this.originChange.emit(stream.id);
   }
 
-  getLinkPath$(link: HierarchyPointLink<any>, height: number) {
-    return of(this.getLinkPath(link, this.width, this.getHeight(height)));
-  }
-
-  getNodeTransform$(node: HierarchyPointNode<any>, height: number) {
-    return of(this.getNodeTransform(node, this.width, this.getHeight(height)));
-  }
-
   getHeight(height: number) {
     return (height + 1) * distance;
+  }
+
+  getLinkPath(link: HierarchyPointLink<any>, width: number, height: number) {
+    const sx = this.getX(link.source, width);
+    const sy = this.getY(link.source, height);
+    const tx = this.getX(link.target, width);
+    const ty = this.getY(link.target, height);
+    return `M${sx},${sy}C${(sx + tx) / 2},${sy} ${(sx + tx) / 2},${ty} ${tx},${ty}`;
+  }
+
+  getNodeTransform(node: HierarchyPointNode<any>, width: number, height: number) {
+    const nx = this.getX(node, width);
+    const ny = this.getY(node, height);
+
+    return `translate(${nx},${ny})`;
   }
 
   private layoutFlowToNode(streams, origin): FlowLayout {
@@ -183,20 +197,5 @@ export class TreeViewerComponent {
       width,
       height,
     };
-  }
-
-  private getLinkPath(link: HierarchyPointLink<any>, width: number, height: number) {
-    const sx = this.getX(link.source, width);
-    const sy = this.getY(link.source, height);
-    const tx = this.getX(link.target, width);
-    const ty = this.getY(link.target, height);
-    return `M${sx},${sy}C${(sx + tx) / 2},${sy} ${(sx + tx) / 2},${ty} ${tx},${ty}`;
-  }
-
-  private getNodeTransform(node: HierarchyPointNode<any>, width: number, height: number) {
-    const nx = this.getX(node, width);
-    const ny = this.getY(node, height);
-
-    return `translate(${nx},${ny})`;
   }
 }

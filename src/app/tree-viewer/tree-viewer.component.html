@@ -1,27 +1,30 @@
-<svg
-  *ngIf="layout$ | async as layout"
-  style="background-color: rebeccapurple; border-radius: 3px"
-  [attr.width]="width"
-  [attr.height]="getHeight(layout.height)">
+<ng-container
+*ngIf="width$ | async as width">
+  <svg
+    *ngIf="layout$ | async as layout"
+    style="background-color: rebeccapurple; border-radius: 3px"
+    [attr.width]="width"
+    [attr.height]="getHeight(layout.height)">
 
-  <path
-    *ngFor="let d of layout.links"
-    fill="none"
-    stroke="black"
-    stroke-width="4"
-    [attr.d]="getLinkPath$(d, layout.height) | async">
-  </path>
+    <path
+      *ngFor="let d of layout.links"
+      fill="none"
+      stroke="black"
+      stroke-width="4"
+      [attr.d]="getLinkPath(d, width, getHeight(layout.height))">
+    </path>
 
 
-  <circle
-    *ngFor="let node of layout.nodes"
-    r="16"
-    stroke="black"
-    stroke-width="4"
-    [attr.fill]="node.data.stream.id === origin ? 'chocolate' : 'darkgrey'"
-    [attr.transform]="getNodeTransform$(node, layout.height) | async"
-    [appStreamTooltip]="node.data.stream"
-    (click)="selectStream(node.data.stream)">
-  </circle>
+    <circle
+      *ngFor="let node of layout.nodes"
+      r="16"
+      stroke="black"
+      stroke-width="4"
+      [attr.fill]="node.data.stream.id === origin ? 'chocolate' : 'darkgrey'"
+      [attr.transform]="getNodeTransform(node, width, getHeight(layout.height))"
+      [appStreamTooltip]="node.data.stream"
+      (click)="selectStream(node.data.stream)">
+    </circle>
 
-</svg>
+  </svg>
+</ng-container>
