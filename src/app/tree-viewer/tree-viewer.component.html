@@ -9,7 +9,7 @@
     fill="none"
     stroke="black"
     stroke-width="4"
-    [attr.d]="'M' + getX(d.source) + ',' + getY(d.source) + 'C' + (getX(d.source) + getX(d.target)) / 2 + ',' + getY(d.source) + ' ' + (getX(d.source) + getX(d.target)) / 2 + ',' + getY(d.target) + ' ' + getX(d.target) + ',' + getY(d.target)">
+    [attr.d]="getLinkPath(d)">
   </path>
 
 
@@ -19,7 +19,7 @@
     stroke="black"
     stroke-width="4"
     [attr.fill]="node.data.stream.id === origin ? 'chocolate' : 'darkgrey'"
-    [attr.transform]="'translate(' + getX(node) + ',' + getY(node) + ')'"
+    [attr.transform]="getNodeTransform(node)"
     [appStreamTooltip]="node.data.stream"
     (click)="selectStream(node.data.stream)">
   </circle>

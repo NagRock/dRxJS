@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {StreamData} from '../../__instrument__/streams';
 import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, tree} from 'd3';
-import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 interface FlowToNode {
@@ -171,5 +171,20 @@ export class TreeViewerComponent {
       width,
       height,
     };
+  }
+
+  getLinkPath(link: HierarchyPointLink<any>) {
+    const sx = this.getX(link.source);
+    const sy = this.getY(link.source);
+    const tx = this.getX(link.target);
+    const ty = this.getY(link.target);
+    return `M${sx},${sy}C${(sx + tx) / 2},${sy} ${(sx + tx) / 2},${ty} ${tx},${ty}`;
+  }
+
+  getNodeTransform(node: HierarchyPointNode<any>) {
+    const nx = this.getX(node);
+    const ny = this.getY(node);
+
+    return `translate(${nx},${ny})`;
   }
 }
