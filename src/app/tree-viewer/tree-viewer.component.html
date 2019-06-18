@@ -16,11 +16,12 @@
   <circle
     *ngFor="let node of layout.nodes"
     r="16"
-    fill="darkgrey"
     stroke="black"
     stroke-width="4"
+    [attr.fill]="node.data.stream.id === origin ? 'chocolate' : 'darkgrey'"
     [attr.transform]="'translate(' + getX(node) + ',' + getY(node) + ')'"
-    [appStreamTooltip]="node.data.stream">
+    [appStreamTooltip]="node.data.stream"
+    (click)="selectStream(node.data.stream)">
   </circle>
 
 </svg>

@@ -1,6 +1,6 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {StreamData} from '../../__instrument__/streams';
-import {hierarchy, HierarchyPointLink, HierarchyPointNode, tree} from 'd3';
+import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, tree} from 'd3';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -19,6 +19,8 @@ interface FlowFromNode {
 interface FlowLayout {
   nodes: HierarchyPointNode<any>[];
   links: HierarchyPointLink<any>[];
+  width: number;
+  height: number;
 }
 
 function flowToNode(stream: StreamData, output: number, streams: StreamData[]): FlowToNode {
@@ -42,6 +44,18 @@ function flowFromNode(stream: StreamData, input: number, streams: StreamData[]):
   };
 }
 
+const getTreeDimensions = (root: HierarchyNode<any>) => {
+  const height = root.height;
+  const width = Math.max(
+    ...root.descendants()
+      .reduce((widths, node) => {
+        widths[node.height] = widths[node.height] + 1 || (widths[node.height] = 1);
+        return widths;
+      }, []),
+  ) - 1;
+  return {height, width};
+};
+
 @Component({
   selector: 'app-tree-viewer',
   templateUrl: './tree-viewer.component.html',
@@ -60,14 +74,43 @@ export class TreeViewerComponent {
   ).pipe(
     map(([origin, streams]) => {
       if (streams[origin] === undefined) {
-        return {nodes: [], links: []};
+        return {nodes: [], links: [], width: 0, height: 0};
       } else {
-        // return this.layoutFlowToNode(streams, origin);
-        return this.layoutFlowFromNode(streams, origin);
+        const incoming = this.layoutFlowToNode(streams, origin);
+        const outgoing = this.layoutFlowFromNode(streams, origin);
+        const width = Math.max(incoming.width, outgoing.width);
+        const height = incoming.height + outgoing.height;
+        const incomingNodeOffset = incoming.nodes[0].x - width / 2;
+        incoming.nodes.forEach((n) => {
+          const {x, y} = n;
+          n.x = (incoming.height - y) / height;
+          n.y = x / width - incomingNodeOffset;
+        });
+        const outgoingNodeOffset = outgoing.nodes[0].x - width / 2;
+        outgoing.nodes.forEach((n) => {
+          const {x, y} = n;
+          n.x = 1 - (outgoing.height - y) / height;
+          n.y = x / width - outgoingNodeOffset;
+        });
+
+        const root = incoming.nodes[0];
+        const duplicateRoot = outgoing.nodes[0];
+        outgoing.links.forEach((l) => {
+          if (l.source === duplicateRoot) {
+            l.source = root;
+          }
+        });
+
+        const nodes = [...incoming.nodes, ...outgoing.nodes.slice(1)];
+        const links = [...incoming.links, ...outgoing.links];
+
+        return {nodes, links, width, height};
       }
     })
   );
 
+  @Output()
+  readonly originChange = new EventEmitter<number>();
 
   @Input()
   width = 800;
@@ -80,36 +123,51 @@ export class TreeViewerComponent {
     this.originSubject.next(origin);
   }
 
+  get origin(): number {
+    return this.originSubject.getValue();
+  }
+
   @Input()
   set streams(streams: StreamData[]) {
     this.streamsSubject.next(streams);
   }
 
   getX(node: HierarchyPointNode<any>): number {
-    return this.margin + (1 - node.y) * (this.width - 2 * this.margin);
+    return this.margin + node.x * (this.width - 2 * this.margin);
   }
 
   getY(node: HierarchyPointNode<any>): number {
-    return this.margin + node.x * (this.height - 2 * this.margin);
+    return this.margin + node.y * (this.height - 2 * this.margin);
   }
 
-  private layoutFlowToNode(streams, origin) {
+  selectStream(stream: StreamData) {
+    this.origin = stream.id;
+    this.originChange.emit(stream.id);
+  }
+
+  private layoutFlowToNode(streams, origin): FlowLayout {
     const root = flowToNode(streams[origin], undefined, streams);
     const nodes = hierarchy(root, (node) => node.inputs);
-    const layoutResult = this.layout(nodes);
+    const {width, height} = getTreeDimensions(nodes);
+    const layoutResult = this.layout.size([width, height])(nodes);
     return {
       nodes: layoutResult.descendants(),
       links: layoutResult.links(),
+      width,
+      height,
     };
   }
 
-  private layoutFlowFromNode(streams, origin) {
+  private layoutFlowFromNode(streams, origin): FlowLayout {
     const root = flowFromNode(streams[origin], undefined, streams);
     const nodes = hierarchy(root, (node) => node.outputs);
-    const layoutResult = this.layout(nodes);
+    const {width, height} = getTreeDimensions(nodes);
+    const layoutResult = this.layout.size([width, height])(nodes);
     return {
       nodes: layoutResult.descendants(),
       links: layoutResult.links(),
+      width,
+      height,
     };
   }
 }

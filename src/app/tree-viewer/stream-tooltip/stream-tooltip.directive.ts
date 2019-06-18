@@ -1,4 +1,4 @@
-import {ComponentRef, Directive, ElementRef, HostListener, Input, OnInit} from '@angular/core';
+import {ComponentRef, Directive, ElementRef, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {StreamData} from '../../../__instrument__/streams';
 import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
@@ -7,7 +7,7 @@ import {StreamTooltipComponent} from './stream-tooltip.component';
 @Directive({
   selector: '[appStreamTooltip]'
 })
-export class StreamTooltipDirective implements OnInit {
+export class StreamTooltipDirective implements OnInit, OnDestroy {
 
   private overlayRef: OverlayRef;
 
@@ -31,6 +31,10 @@ export class StreamTooltipDirective implements OnInit {
         overlayY: 'bottom',
       }]);
     this.overlayRef = this.overlay.create({positionStrategy});
+  }
+
+  ngOnDestroy(): void {
+    this.hide();
   }
 
   @HostListener('mouseenter')

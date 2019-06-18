@@ -26,7 +26,7 @@ export class AppComponent {
   treeControl = new NestedTreeControl<any>(node => node.instances);
   dataSource = new MatTreeNestedDataSource<any>();
   streams: StreamData[] = [];
-  origin = 0;
+  origin = 3;
 
   constructor() {
     this.dataSource.data = getStreamsLocation(DATA.streams);
@@ -45,6 +45,7 @@ export class AppComponent {
   private runSimpleExample() {
     const stream$ = of('a', 'b', 'c', 'd')
       .pipe(
+        map((zeroMap) => `${zeroMap}:${zeroMap}`),
         map((firstMap) => `${firstMap}:${firstMap}`),
         // delay(1000),
         shareReplay(1),
