@@ -9,7 +9,7 @@ function getDestination(observer: any) {
     ? data.streams[observer.__id__]
     : observer.destination !== undefined
       ? getDestination(observer.destination)
-      : trackStreamData('unknown', 'unknown', 0, 0, []);
+      : trackStreamData('unknown', 'unknown', 0, 0);
 }
 
 function getSource(id) {
@@ -23,23 +23,20 @@ const instrumentOperator = (operator, file, expr, line, char) => {
       return Observable.create((observer) => {
         console.log('instrumenting operator: ', expr);
         const destination: StreamData = getDestination(observer);
-        const source: StreamData = trackStreamData(expr, file, line, char, [destination.id]);
-        trackSubscribeEventData(source.id, destination.id);
+        const source: StreamData = trackStreamData(expr, file, line, char);
+        trackSubscribeEventData(source, destination);
         observer.__id__ = source.id;
         const sub = stream
           .pipe(
             tap((value) => {
-
-                const valueEventData = trackValueEventData(value, source.id, destination.id);
-                source.values.push(valueEventData.id);
-
+                trackValueEventData(value, source, destination);
               }
             )
           )
           .subscribe(observer);
 
         return () => {
-          trackUnsubscribeEventData(source.id, destination.id);
+          trackUnsubscribeEventData(source, destination);
           sub.unsubscribe();
         };
       });
@@ -64,26 +61,24 @@ const instrumentShareOperator = (operator, file, expr, line, char) => {
         let source: StreamData;
         if (sharedStream.__id__ === undefined) {
           console.log('instrumenting share operator: ', expr);
-          source = trackStreamData(expr, file, line, char, []);
+          source = trackStreamData(expr, file, line, char);
           sharedStream.__id__ = source.id;
         } else {
           source = getSource(sharedStream.__id__);
         }
         const destination: StreamData = getDestination(observer);
-        trackSubscribeEventData(sharedStream.__id__, destination.id);
-        source.subscribers.push(destination.id);
+        trackSubscribeEventData(source, destination);
         const sub = stream
           .pipe(
             tap((value) => {
-                const valueEventData = trackValueEventData(value, source.id, destination.id);
-                source.values.push(valueEventData.id);
+                trackValueEventData(value, source, destination);
               }
             )
           )
           .subscribe(observer);
 
         return () => {
-          trackUnsubscribeEventData(source.id, destination.id);
+          trackUnsubscribeEventData(source, destination);
           sub.unsubscribe();
         };
       });

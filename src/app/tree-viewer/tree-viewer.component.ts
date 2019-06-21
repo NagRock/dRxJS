@@ -25,9 +25,8 @@ interface FlowLayout {
 }
 
 function flowToNode(stream: StreamData, output: number, streams: StreamData[]): FlowToNode {
-  const inputs = streams
-    .filter((s) => s.subscribers.includes(stream.id))
-    .map((s) => flowToNode(s, stream.id, streams));
+  const inputs = stream.subscriptions
+    .map((s) => flowToNode(streams[s], stream.id, streams));
   return {
     stream,
     inputs,
