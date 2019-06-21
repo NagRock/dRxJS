@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {StreamData} from '../../../__instrument__/streams';
+import {StreamModel} from '../../model';
 
 @Component({
   selector: 'app-stream-tooltip',
@@ -9,7 +9,7 @@ import {StreamData} from '../../../__instrument__/streams';
 export class StreamTooltipComponent implements OnInit {
 
   @Input()
-  data: StreamData;
+  data: StreamModel;
 
   constructor() { }
 

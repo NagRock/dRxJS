@@ -4,44 +4,13 @@ import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, tree} 
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
-
-interface FlowToNode {
-  stream: StreamData;
-  inputs: FlowToNode[];
-  output: number;
-}
-
-interface FlowFromNode {
-  stream: StreamData;
-  input: number;
-  outputs: FlowFromNode[];
-}
+import {StreamModel} from '../model';
 
 interface FlowLayout {
   nodes: HierarchyPointNode<any>[];
   links: HierarchyPointLink<any>[];
   width: number;
   height: number;
-}
-
-function flowToNode(stream: StreamData, output: number, streams: StreamData[]): FlowToNode {
-  const inputs = stream.subscriptions
-    .map((s) => flowToNode(streams[s], stream.id, streams));
-  return {
-    stream,
-    inputs,
-    output,
-  };
-}
-
-function flowFromNode(stream: StreamData, input: number, streams: StreamData[]): FlowFromNode {
-  const outputs = stream.subscribers
-    .map((s) => flowFromNode(streams[s], stream.id, streams));
-  return {
-    stream,
-    input,
-    outputs,
-  };
 }
 
 const getTreeDimensions = (root: HierarchyNode<any>) => {
@@ -66,55 +35,53 @@ const distance = 2 * margin;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TreeViewerComponent {
-  private readonly originSubject = new BehaviorSubject<number>(0);
-  private readonly streamsSubject = new BehaviorSubject<StreamData[]>([]);
+  private readonly streamSubject = new BehaviorSubject<StreamModel>(undefined);
   private readonly widthSubject = new BehaviorSubject<number>(this.elementRef.nativeElement.clientWidth);
   private readonly layout = tree();
 
   readonly width$ = this.widthSubject.asObservable().pipe(delay(0, animationFrame));
-  readonly layout$: Observable<FlowLayout> = combineLatest(
-    this.originSubject,
-    this.streamsSubject,
-  ).pipe(
-    map(([origin, streams]) => {
-      if (streams[origin] === undefined) {
-        return {nodes: [], links: [], width: 0, height: 0};
-      } else {
-        const incoming = this.layoutFlowToNode(streams, origin);
-        const outgoing = this.layoutFlowFromNode(streams, origin);
-        const width = Math.max(incoming.width, outgoing.width);
-        const height = incoming.height + outgoing.height;
-        const incomingNodeOffset = incoming.nodes[0].x - width / 2;
-        incoming.nodes.forEach((n) => {
-          const {x, y} = n;
-          n.x = height === 0 ? 0 : (incoming.height - y) / height;
-          n.y = width === 0 ? 0 : x / width - incomingNodeOffset;
-        });
-        const outgoingNodeOffset = outgoing.nodes[0].x - width / 2;
-        outgoing.nodes.forEach((n) => {
-          const {x, y} = n;
-          n.x = height === 0 ? 0 : 1 - (outgoing.height - y) / height;
-          n.y = width === 0 ? 0 : x / width - outgoingNodeOffset;
-        });
+  readonly layout$: Observable<FlowLayout> = this.streamSubject
+    .asObservable()
+    .pipe(
+      map((stream: StreamModel) => {
+        if (stream === undefined) {
+          return {nodes: [], links: [], width: 0, height: 0};
+        } else {
+          const incoming = this.layoutFlowToNode(stream);
+          const outgoing = this.layoutFlowFromNode(stream);
+          const width = Math.max(incoming.width, outgoing.width);
+          const height = incoming.height + outgoing.height;
+          const incomingNodeOffset = incoming.nodes[0].x - width / 2;
+          incoming.nodes.forEach((n) => {
+            const {x, y} = n;
+            n.x = height === 0 ? 0 : (incoming.height - y) / height;
+            n.y = width === 0 ? 0 : x / width - incomingNodeOffset;
+          });
+          const outgoingNodeOffset = outgoing.nodes[0].x - width / 2;
+          outgoing.nodes.forEach((n) => {
+            const {x, y} = n;
+            n.x = height === 0 ? 0 : 1 - (outgoing.height - y) / height;
+            n.y = width === 0 ? 0 : x / width - outgoingNodeOffset;
+          });
 
-        const root = incoming.nodes[0];
-        const duplicateRoot = outgoing.nodes[0];
-        outgoing.links.forEach((l) => {
-          if (l.source === duplicateRoot) {
-            l.source = root;
-          }
-        });
+          const root = incoming.nodes[0];
+          const duplicateRoot = outgoing.nodes[0];
+          outgoing.links.forEach((l) => {
+            if (l.source === duplicateRoot) {
+              l.source = root;
+            }
+          });
 
-        const nodes = [...incoming.nodes, ...outgoing.nodes.slice(1)];
-        const links = [...incoming.links, ...outgoing.links];
+          const nodes = [...incoming.nodes, ...outgoing.nodes.slice(1)];
+          const links = [...incoming.links, ...outgoing.links];
 
-        return {nodes, links, height: width, width: height};
-      }
-    }),
-  );
+          return {nodes, links, height: width, width: height};
+        }
+      }),
+    );
 
   @Output()
-  readonly originChange = new EventEmitter<number>();
+  readonly streamChange = new EventEmitter<StreamModel>();
 
   constructor(
     private readonly elementRef: ElementRef,
@@ -122,17 +89,12 @@ export class TreeViewerComponent {
   }
 
   @Input()
-  set origin(origin: number) {
-    this.originSubject.next(origin);
+  set stream(stream: StreamModel) {
+    this.streamSubject.next(stream);
   }
 
-  get origin(): number {
-    return this.originSubject.getValue();
-  }
-
-  @Input()
-  set streams(streams: StreamData[]) {
-    this.streamsSubject.next(streams);
+  get stream() {
+    return this.streamSubject.getValue();
   }
 
   @HostListener('window:resize')
@@ -148,9 +110,9 @@ export class TreeViewerComponent {
     return margin + node.y * (height - 2 * margin);
   }
 
-  selectStream(stream: StreamData) {
-    this.origin = stream.id;
-    this.originChange.emit(stream.id);
+  selectStream(stream: StreamModel) {
+    this.stream = stream;
+    this.streamChange.emit(stream);
   }
 
   getHeight(height: number) {
@@ -172,9 +134,8 @@ export class TreeViewerComponent {
     return `translate(${nx},${ny})`;
   }
 
-  private layoutFlowToNode(streams, origin): FlowLayout {
-    const root = flowToNode(streams[origin], undefined, streams);
-    const nodes = hierarchy(root, (node) => node.inputs);
+  private layoutFlowToNode(stream: StreamModel): FlowLayout {
+    const nodes = hierarchy(stream, (node) => node.subscriptions);
     const {width, height} = getTreeDimensions(nodes);
     const layoutResult = this.layout.size([width, height])(nodes);
     return {
@@ -185,9 +146,8 @@ export class TreeViewerComponent {
     };
   }
 
-  private layoutFlowFromNode(streams, origin): FlowLayout {
-    const root = flowFromNode(streams[origin], undefined, streams);
-    const nodes = hierarchy(root, (node) => node.outputs);
+  private layoutFlowFromNode(stream: StreamModel): FlowLayout {
+    const nodes = hierarchy(stream, (node) => node.subscribers);
     const {width, height} = getTreeDimensions(nodes);
     const layoutResult = this.layout.size([width, height])(nodes);
     return {

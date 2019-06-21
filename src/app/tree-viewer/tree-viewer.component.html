@@ -20,10 +20,10 @@
       r="16"
       stroke="black"
       stroke-width="4"
-      [attr.fill]="node.data.stream.id === origin ? 'chocolate' : 'darkgrey'"
+      [attr.fill]="node.data.id === stream.id ? 'chocolate' : 'darkgrey'"
       [attr.transform]="getNodeTransform(node, width, getHeight(layout.height))"
-      [appStreamTooltip]="node.data.stream"
-      (click)="selectStream(node.data.stream)">
+      [appStreamTooltip]="node.data"
+      (click)="selectStream(node.data)">
     </circle>
 
   </svg>

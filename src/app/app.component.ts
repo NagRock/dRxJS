@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
 import {map, shareReplay} from 'rxjs/operators';
 import {of} from 'rxjs';
-import {StreamData} from '../__instrument__/streams';
 import {data as DATA} from '../__instrument__/data';
 import {MatTreeNestedDataSource} from '@angular/material';
 import {NestedTreeControl} from '@angular/cdk/tree';
+import {getModel, Model, StreamModel} from './model';
 
-const getStreamsLocation = (streams: StreamData[]) => {
+const getStreamsByLocation = (streams: StreamModel[]) => {
   const groups = streams.reduce((streamsByFile, stream) => {
     const location = `${stream.location.file} (${stream.location.line}:${stream.location.char})`;
     const group = streamsByFile[location] || (streamsByFile[location] = []);
@@ -15,6 +15,7 @@ const getStreamsLocation = (streams: StreamData[]) => {
   }, {});
   return Object.entries(groups).map(([location, instances]) => ({location, instances}));
 };
+
 
 @Component({
   selector: 'app-root',
@@ -25,11 +26,10 @@ export class AppComponent {
 
   treeControl = new NestedTreeControl<any>(node => node.instances);
   dataSource = new MatTreeNestedDataSource<any>();
-  streams: StreamData[] = [];
-  origin = 3;
+  model: Model;
+  stream: StreamModel;
 
   constructor() {
-    this.dataSource.data = getStreamsLocation(DATA.streams);
     // this.runSimpleExampleWithPrimitives();
     this.runSimpleExample();
     // this.runMousePositionExample();
@@ -38,8 +38,8 @@ export class AppComponent {
   hasChild = (_: number, node: any) => !!node.instances && node.instances.length > 0;
 
   refresh() {
-    this.streams = DATA.streams;
-    this.dataSource.data = getStreamsLocation(DATA.streams);
+    this.model = getModel(DATA);
+    this.dataSource.data = getStreamsByLocation(this.model.streams);
   }
 
   private runSimpleExample() {

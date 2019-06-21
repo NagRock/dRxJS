@@ -6,7 +6,7 @@
 
   <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
     <li class="mat-tree-node">
-      <button mat-raised-button (click)="origin = node.id">Analyze flow to stream #{{node.id}}</button>
+      <button mat-raised-button (click)="stream = node">Analyze flow to stream #{{node.id}}</button>
     </li>
   </mat-tree-node>
 
@@ -28,4 +28,4 @@
 
 </mat-tree>
 
-<app-tree-viewer [streams]="streams" [origin]="origin"></app-tree-viewer>
+<app-tree-viewer [stream]="stream"></app-tree-viewer>
