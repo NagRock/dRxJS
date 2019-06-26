@@ -6,15 +6,15 @@ import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
 
 function getIncomingEvents(stream: StreamModel): EventModel[] {
   return [
-    ...stream.events.filter((e) => e.destination === stream),
+    ...stream.events.filter((e) => e.source === stream || e.destination === stream),
     ...stream.subscriptions.map((s) => getIncomingEvents(s)).reduce((result, x) => result.concat(...x), [])
   ];
 }
 
 function getOutgoingEvents(stream: StreamModel): EventModel[] {
   return [
-    ...stream.events.filter((e) => e.source === stream),
-    ...stream.subscriptions.map((s) => getOutgoingEvents(s)).reduce((result, x) => result.concat(...x), [])
+    ...stream.events.filter((e) => e.source === stream || e.destination === stream),
+    ...stream.subscribers.map((s) => getOutgoingEvents(s)).reduce((result, x) => result.concat(...x), [])
   ];
 }
 
@@ -48,8 +48,10 @@ export class TimelineComponent {
           return [];
         } else {
           const events: EventModel[] = [...getIncomingEvents(stream), ...getOutgoingEvents(stream)];
-          events.sort((a, b) => b.id - a.id);
-          return events.map((event, index): TimelineEvent => ({event, x: index / (events.length - 1)}));
+          return events
+            .sort((a, b) => a.id - b.id)
+            .filter((item, i, arr) => !i || item.id !== arr[i - 1].id)
+            .map((event, index): TimelineEvent => ({event, x: index / (events.length - 1)}));
         }
       })
     );

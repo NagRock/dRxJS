@@ -1,9 +1,10 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, tree} from 'd3';
+import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, path, tree} from 'd3';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
 import {EventModel, StreamModel} from '../model';
+import {animate, AnimationBuilder, AnimationPlayer, style} from '@angular/animations';
 
 interface FlowLayout {
   nodes: HierarchyPointNode<any>[];
@@ -37,6 +38,9 @@ export class TreeViewerComponent {
   private readonly streamSubject = new BehaviorSubject<StreamModel>(undefined);
   private readonly widthSubject = new BehaviorSubject<number>(this.elementRef.nativeElement.clientWidth);
   private readonly layout = tree();
+  private player: AnimationPlayer;
+
+  _event: EventModel;
 
   readonly width$ = this.widthSubject.asObservable().pipe(delay(0, animationFrame));
   readonly layout$: Observable<FlowLayout> = this.streamSubject
@@ -84,6 +88,7 @@ export class TreeViewerComponent {
 
   constructor(
     private readonly elementRef: ElementRef,
+    private readonly animationBuilder: AnimationBuilder,
   ) {
   }
 
@@ -97,7 +102,13 @@ export class TreeViewerComponent {
   }
 
   @Input()
-  event: EventModel | undefined;
+  set event(event: EventModel | undefined) {
+    console.log(event);
+    this._event = event;
+    Promise.resolve().then(() => {
+      this.animateEvent(event);
+    });
+  }
 
   @HostListener('window:resize')
   onWindowResize() {
@@ -105,7 +116,7 @@ export class TreeViewerComponent {
   }
 
   isNodeHighlighted(id: number) {
-    return this.event !== undefined && (id === this.event.source.id || id === this.event.destination.id);
+    return this._event !== undefined && (id === this._event.source.id || id === this._event.destination.id);
   }
 
   getX(node: HierarchyPointNode<any>, width: number): number {
@@ -146,7 +157,7 @@ export class TreeViewerComponent {
     const layoutResult = this.layout.size([width, height])(nodes);
     return {
       nodes: layoutResult.descendants(),
-      links: layoutResult.links(),
+      links: layoutResult.links().map(({source, target}) => ({source: target, target: source})),
       width,
       height,
     };
@@ -162,5 +173,45 @@ export class TreeViewerComponent {
       width,
       height,
     };
+  }
+
+  private animateEvent(event: EventModel | undefined) {
+    if (this.player !== undefined) {
+      this.player.destroy();
+    }
+
+    if (event !== undefined) {
+      switch (event.kind) {
+        case 'subscribe':
+          const selector = `[data-source="${event.source.id}"][data-target="${event.destination.id}"]`;
+          const element = this.element.querySelector(selector) as SVGPathElement;
+          this.player = this.buildSubscribeAnimation(element);
+          break;
+        default:
+          this.player = undefined;
+      }
+
+      if (this.player !== undefined) {
+        this.player.onDone(() => {
+          this.animateEvent(this._event);
+        });
+        this.player.play();
+      }
+    } else {
+      this.player = undefined;
+    }
+  }
+
+  private buildSubscribeAnimation(pathElement: SVGPathElement): AnimationPlayer {
+    const length = pathElement.getTotalLength();
+    return this.animationBuilder.build([
+      style({strokeDasharray: length, strokeDashoffset: -length, opacity: 1}),
+      animate('500ms ease', style({offset: 0, strokeDashoffset: 0})),
+      animate('500ms ease', style({offset: 500, opacity: 0}))
+    ]).create(pathElement);
+  }
+
+  private get element(): HTMLElement {
+    return this.elementRef.nativeElement;
   }
 }

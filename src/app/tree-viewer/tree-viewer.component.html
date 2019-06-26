@@ -11,6 +11,8 @@
       fill="none"
       stroke="black"
       stroke-width="4"
+      [attr.data-source]="d.source.data.id"
+      [attr.data-target]="d.target.data.id"
       [attr.d]="getLinkPath(d, width, getHeight(layout.height))">
     </path>
 

@@ -54,6 +54,7 @@ export function trackSubscribeEventData(source: StreamData, destination: StreamD
     destination: destination.id,
   };
   data.events[eventData.id] = eventData;
+  source.events.push(eventData.id);
   source.subscribers.push(destination.id);
   destination.subscriptions.push(source.id);
   return eventData;

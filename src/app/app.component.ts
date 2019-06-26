@@ -38,9 +38,13 @@ export class AppComponent {
 
   hasChild = (_: number, node: any) => !!node.instances && node.instances.length > 0;
 
-  refresh() {
+  refresh(id?: number) {
     this.model = getModel(DATA);
     this.dataSource.data = getStreamsByLocation(this.model.streams);
+
+    if (id !== undefined) {
+      this.stream = this.model.streams[id];
+    }
   }
 
   private runSimpleExample() {

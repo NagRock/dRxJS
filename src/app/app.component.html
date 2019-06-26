@@ -1,5 +1,6 @@
 <div>
   <button mat-raised-button (click)="refresh()">Refresh</button>
+  <button mat-raised-button (click)="refresh(3)">Refresh & select #3</button>
 </div>
 
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
