@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TreeViewerComponent} from './tree-viewer.component';
-import {StreamTooltipModule} from './stream-tooltip/stream-tooltip.module';
+import {OverlayModule} from '../overlay/overlay.module';
 
 @NgModule({
   declarations: [TreeViewerComponent],
@@ -10,7 +10,7 @@ import {StreamTooltipModule} from './stream-tooltip/stream-tooltip.module';
   ],
   imports: [
     CommonModule,
-    StreamTooltipModule
+    OverlayModule
   ]
 })
 export class TreeViewerModule { }

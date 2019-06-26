@@ -22,9 +22,17 @@
       stroke-width="4"
       [attr.fill]="node.data.id === stream.id ? 'chocolate' : 'darkgrey'"
       [attr.transform]="getNodeTransform(node, width, getHeight(layout.height))"
-      [appStreamTooltip]="node.data"
+      [appOverlay]="overlay"
+      [appOverlayData]="node.data"
       (click)="selectStream(node.data)">
     </circle>
 
   </svg>
 </ng-container>
+
+<ng-template #overlay let-data>
+  <div class="overlay">
+    <code class="location">{{data.location.file}} ({{data.location.line}}:{{data.location.char}}) #{{data.id}}</code>
+    <code class="expression">{{data.expression}}</code>
+  </div>
+</ng-template>

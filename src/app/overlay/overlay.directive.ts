@@ -1,23 +1,25 @@
-import {ComponentRef, Directive, ElementRef, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
+import {Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef} from '@angular/core';
 import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay';
-import {ComponentPortal} from '@angular/cdk/portal';
-import {StreamTooltipComponent} from './stream-tooltip.component';
-import {StreamModel} from '../../model';
+import {TemplatePortal} from '@angular/cdk/portal';
 
 @Directive({
-  selector: '[appStreamTooltip]'
+  selector: '[appOverlay]'
 })
-export class StreamTooltipDirective implements OnInit, OnDestroy {
+export class OverlayDirective<T> implements OnInit, OnDestroy {
 
   private overlayRef: OverlayRef;
 
-  @Input('appStreamTooltip')
-  data: StreamModel;
+  @Input('appOverlay')
+  templateRef: TemplateRef<{ $implicit: T }>;
+
+  @Input('appOverlayData')
+  data: T;
 
   constructor(
     private readonly elementRef: ElementRef,
     private readonly overlayPositionBuilder: OverlayPositionBuilder,
     private readonly overlay: Overlay,
+    private readonly viewContainerRef: ViewContainerRef,
   ) {
   }
 
@@ -39,14 +41,12 @@ export class StreamTooltipDirective implements OnInit, OnDestroy {
 
   @HostListener('mouseenter')
   show() {
-    const tooltipPortal = new ComponentPortal(StreamTooltipComponent);
-    const tooltipRef: ComponentRef<StreamTooltipComponent> = this.overlayRef.attach(tooltipPortal);
-    tooltipRef.instance.data = this.data;
+    const overlayPortal = new TemplatePortal(this.templateRef, this.viewContainerRef, {$implicit: this.data});
+    this.overlayRef.attach(overlayPortal);
   }
 
   @HostListener('mouseout')
   hide() {
     this.overlayRef.detach();
   }
-
 }

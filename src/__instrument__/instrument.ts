@@ -21,7 +21,6 @@ const instrumentOperator = (operator, file, expr, line, char) => {
     operator,
     (stream: Observable<any>) => {
       return Observable.create((observer) => {
-        console.log('instrumenting operator: ', expr);
         const destination: StreamData = getDestination(observer);
         const source: StreamData = trackStreamData(expr, file, line, char);
         trackSubscribeEventData(source, destination);
