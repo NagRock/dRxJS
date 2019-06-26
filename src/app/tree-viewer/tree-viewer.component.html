@@ -20,13 +20,12 @@
       r="16"
       stroke="black"
       stroke-width="4"
-      [attr.fill]="node.data.id === stream.id ? 'chocolate' : 'darkgrey'"
+      [attr.fill]="isNodeHighlighted(node.data.id) ? 'red' : node.data.id === stream.id ? 'chocolate' : 'darkgrey'"
       [attr.transform]="getNodeTransform(node, width, getHeight(layout.height))"
       [appOverlay]="overlay"
       [appOverlayData]="node.data"
       (click)="selectStream(node.data)">
     </circle>
-
   </svg>
 </ng-container>
 

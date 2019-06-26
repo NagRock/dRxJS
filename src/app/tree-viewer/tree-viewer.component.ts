@@ -3,7 +3,7 @@ import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, tree} 
 import {BehaviorSubject, Observable} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
-import {StreamModel} from '../model';
+import {EventModel, StreamModel} from '../model';
 
 interface FlowLayout {
   nodes: HierarchyPointNode<any>[];
@@ -96,9 +96,16 @@ export class TreeViewerComponent {
     return this.streamSubject.getValue();
   }
 
+  @Input()
+  event: EventModel | undefined;
+
   @HostListener('window:resize')
   onWindowResize() {
     this.widthSubject.next(this.elementRef.nativeElement.clientWidth);
+  }
+
+  isNodeHighlighted(id: number) {
+    return this.event !== undefined && (id === this.event.source.id || id === this.event.destination.id);
   }
 
   getX(node: HierarchyPointNode<any>, width: number): number {

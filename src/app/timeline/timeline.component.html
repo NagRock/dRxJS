@@ -21,7 +21,10 @@
       stroke="black"
       stroke-width="4"
       fill="darkgrey"
-      [attr.transform]="getEventTransform(event, width)">
+      [attr.transform]="getEventTransform(event, width)"
+      (mouseenter)="eventHighlighted.emit(event.event)"
+      (mouseleave)="eventHighlighted.emit(undefined)"
+      (click)="eventClicked.emit(event.event)">
     </circle>
 
   </svg>

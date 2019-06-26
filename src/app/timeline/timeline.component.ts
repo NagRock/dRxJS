@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Input} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {EventModel, StreamModel} from '../model';
@@ -31,6 +31,12 @@ interface TimelineEvent {
 export class TimelineComponent {
   private readonly streamSubject = new BehaviorSubject<StreamModel>(undefined);
   private readonly widthSubject = new BehaviorSubject<number>(this.elementRef.nativeElement.clientWidth);
+
+  @Output()
+  readonly eventClicked = new EventEmitter<EventModel>();
+
+  @Output()
+  readonly eventHighlighted = new EventEmitter<EventModel | undefined>();
 
   readonly height = 200;
   readonly margin = 100;

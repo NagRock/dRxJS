@@ -4,7 +4,7 @@ import {of} from 'rxjs';
 import {data as DATA} from '../__instrument__/data';
 import {MatTreeNestedDataSource} from '@angular/material';
 import {NestedTreeControl} from '@angular/cdk/tree';
-import {getModel, Model, StreamModel} from './model';
+import {EventModel, getModel, Model, StreamModel} from './model';
 
 const getStreamsByLocation = (streams: StreamModel[]) => {
   const groups = streams.reduce((streamsByFile, stream) => {
@@ -28,6 +28,7 @@ export class AppComponent {
   dataSource = new MatTreeNestedDataSource<any>();
   model: Model;
   stream: StreamModel;
+  event: EventModel;
 
   constructor() {
     // this.runSimpleExampleWithPrimitives();

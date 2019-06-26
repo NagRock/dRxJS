@@ -28,5 +28,12 @@
 
 </mat-tree>
 
-<app-tree-viewer [stream]="stream"></app-tree-viewer>
-<app-timeline [stream]="stream"></app-timeline>
+<app-tree-viewer
+  [stream]="stream"
+  [event]="event">
+</app-tree-viewer>
+
+<app-timeline
+  [stream]="stream"
+  (eventHighlighted)="this.event = $event">
+</app-timeline>
