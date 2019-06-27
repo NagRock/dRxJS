@@ -69,16 +69,18 @@ export class EventAnimationService {
   ) {
   }
 
-  buildAnimation(svg: SVGElement, event: EventModel, loop: boolean) {
+  buildAnimation(svg: SVGElement, event: EventModel, loop: boolean): EventAnimationPlayer {
     switch (event.kind) {
       case 'subscribe':
         return this.buildSubscribeAnimation(svg, event, loop);
       case 'unsubscribe':
         return this.buildUnsubscribeAnimation(svg, event, loop);
+      default:
+        return undefined;
     }
   }
 
-  buildSubscribeAnimation(svg: SVGElement, event: EventModel, loop: boolean): EventAnimationPlayer {
+  private buildSubscribeAnimation(svg: SVGElement, event: EventModel, loop: boolean): EventAnimationPlayer {
     const selector = `path[data-source="${event.source.id}"][data-target="${event.destination.id}"]`;
     const pathElement = svg.querySelector(selector) as SVGPathElement;
     const length = pathElement.getTotalLength();
@@ -100,7 +102,7 @@ export class EventAnimationService {
 
   }
 
-  buildUnsubscribeAnimation(svg: SVGElement, event: EventModel, loop: boolean): EventAnimationPlayer {
+  private buildUnsubscribeAnimation(svg: SVGElement, event: EventModel, loop: boolean): EventAnimationPlayer {
     const selector = `path[data-source="${event.source.id}"][data-target="${event.destination.id}"]`;
     const pathElement = svg.querySelector(selector) as SVGPathElement;
     const length = pathElement.getTotalLength();
