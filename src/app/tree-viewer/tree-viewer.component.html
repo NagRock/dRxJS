@@ -1,6 +1,7 @@
 <ng-container
-*ngIf="width$ | async as width">
+  *ngIf="width$ | async as width">
   <svg
+    #svg
     *ngIf="layout$ | async as layout"
     style="background-color: rebeccapurple; border-radius: 3px"
     [attr.width]="width"

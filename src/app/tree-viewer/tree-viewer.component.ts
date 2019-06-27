@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, path, tree} from 'd3';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild} from '@angular/core';
+import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, tree} from 'd3';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
 import {EventModel, StreamModel} from '../model';
-import {animate, AnimationBuilder, AnimationPlayer, style} from '@angular/animations';
+import {EventAnimationPlayer, EventAnimationService} from './event-animation.service';
 
 interface FlowLayout {
   nodes: HierarchyPointNode<any>[];
@@ -32,13 +32,14 @@ const distance = 2 * margin;
   selector: 'app-tree-viewer',
   templateUrl: './tree-viewer.component.html',
   styleUrls: ['./tree-viewer.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [EventAnimationService],
 })
 export class TreeViewerComponent {
   private readonly streamSubject = new BehaviorSubject<StreamModel>(undefined);
   private readonly widthSubject = new BehaviorSubject<number>(this.elementRef.nativeElement.clientWidth);
   private readonly layout = tree();
-  private player: AnimationPlayer;
+  private player: EventAnimationPlayer;
 
   _event: EventModel;
 
@@ -86,9 +87,12 @@ export class TreeViewerComponent {
   @Output()
   readonly streamChange = new EventEmitter<StreamModel>();
 
+  @ViewChild('svg')
+  readonly svgElementRef: ElementRef<SVGElement>;
+
   constructor(
     private readonly elementRef: ElementRef,
-    private readonly animationBuilder: AnimationBuilder,
+    private readonly eventAnimationService: EventAnimationService,
   ) {
   }
 
@@ -177,41 +181,17 @@ export class TreeViewerComponent {
 
   private animateEvent(event: EventModel | undefined) {
     if (this.player !== undefined) {
-      this.player.destroy();
+      this.player.stop();
     }
 
     if (event !== undefined) {
-      switch (event.kind) {
-        case 'subscribe':
-          const selector = `[data-source="${event.source.id}"][data-target="${event.destination.id}"]`;
-          const element = this.element.querySelector(selector) as SVGPathElement;
-          this.player = this.buildSubscribeAnimation(element);
-          break;
-        default:
-          this.player = undefined;
-      }
+      this.player = this.eventAnimationService.buildAnimation(this.svgElementRef.nativeElement, event, true);
 
       if (this.player !== undefined) {
-        this.player.onDone(() => {
-          this.animateEvent(this._event);
-        });
         this.player.play();
       }
     } else {
       this.player = undefined;
     }
-  }
-
-  private buildSubscribeAnimation(pathElement: SVGPathElement): AnimationPlayer {
-    const length = pathElement.getTotalLength();
-    return this.animationBuilder.build([
-      style({strokeDasharray: length, strokeDashoffset: -length, opacity: 1}),
-      animate('500ms ease', style({offset: 0, strokeDashoffset: 0})),
-      animate('500ms ease', style({offset: 500, opacity: 0}))
-    ]).create(pathElement);
-  }
-
-  private get element(): HTMLElement {
-    return this.elementRef.nativeElement;
   }
 }
