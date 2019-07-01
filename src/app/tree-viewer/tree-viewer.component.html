@@ -9,13 +9,14 @@
     [attr.height]="getHeight(layout.height)">
 
     <path
-      *ngFor="let d of layout.links"
+      *ngFor="let link of layout.links"
       fill="none"
-      stroke="black"
       stroke-width="4"
-      [attr.data-source]="d.source.data.id"
-      [attr.data-target]="d.target.data.id"
-      [attr.d]="getLinkPath(d, width, getHeight(layout.height))">
+      stroke="black"
+      [ngStyle]="{'opacity': isLinkActive(link) ? '1' : '0.25'}"
+      [attr.data-source]="link.source.data.id"
+      [attr.data-target]="link.target.data.id"
+      [attr.d]="getLinkPath(link, width, getHeight(layout.height))">
     </path>
 
 
@@ -24,6 +25,7 @@
       r="16"
       stroke="black"
       stroke-width="4"
+      [ngStyle]="{'opacity': isNodeActive(node) ? '1' : '0.25'}"
       [attr.fill]="isNodeHighlighted(node.data.id) ? 'red' : node.data.id === stream.id ? 'chocolate' : 'darkgrey'"
       [attr.transform]="getNodeTransform(node, width, getHeight(layout.height))"
       [appOverlay]="overlay"

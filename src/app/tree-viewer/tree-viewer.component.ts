@@ -40,6 +40,7 @@ export class TreeViewerComponent {
   private readonly layout = tree();
   private player: AnimationPlayer;
 
+  private _activeSubscriptionIds = new Set<string>();
   _event: EventModel;
 
   readonly width$ = this.widthSubject.asObservable().pipe(delay(0, animationFrame));
@@ -95,6 +96,11 @@ export class TreeViewerComponent {
   }
 
   @Input()
+  set activeSubscriptionIds(ids: string[]) {
+    this._activeSubscriptionIds = new Set<string>(ids);
+  }
+
+  @Input()
   set stream(stream: StreamModel) {
     this.streamSubject.next(stream);
   }
@@ -127,6 +133,14 @@ export class TreeViewerComponent {
 
   getY(node: HierarchyPointNode<any>, height: number): number {
     return margin + node.y * (height - 2 * margin);
+  }
+
+  isNodeActive(node: HierarchyPointNode<any>) {
+    return this._activeSubscriptionIds.has(node.data.id);
+  }
+
+  isLinkActive(link: HierarchyPointLink<any>) {
+    return this.isNodeActive(link.source) && this.isNodeActive(link.target);
   }
 
   selectStream(stream: StreamModel) {
