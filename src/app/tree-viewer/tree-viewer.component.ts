@@ -4,7 +4,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
 import {EventModel, StreamModel} from '../model';
-import {EventAnimationPlayer, EventAnimationService} from './event-animation.service';
+import {AnimationPlayer, buildAnimation} from './event-animations';
 
 interface FlowLayout {
   nodes: HierarchyPointNode<any>[];
@@ -33,13 +33,12 @@ const distance = 2 * margin;
   templateUrl: './tree-viewer.component.html',
   styleUrls: ['./tree-viewer.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [EventAnimationService],
 })
 export class TreeViewerComponent {
   private readonly streamSubject = new BehaviorSubject<StreamModel>(undefined);
   private readonly widthSubject = new BehaviorSubject<number>(this.elementRef.nativeElement.clientWidth);
   private readonly layout = tree();
-  private player: EventAnimationPlayer;
+  private player: AnimationPlayer;
 
   _event: EventModel;
 
@@ -92,7 +91,6 @@ export class TreeViewerComponent {
 
   constructor(
     private readonly elementRef: ElementRef,
-    private readonly eventAnimationService: EventAnimationService,
   ) {
   }
 
@@ -181,11 +179,12 @@ export class TreeViewerComponent {
 
   private animateEvent(event: EventModel | undefined) {
     if (this.player !== undefined) {
+      console.log('stop', this.player);
       this.player.stop();
     }
 
     if (event !== undefined) {
-      this.player = this.eventAnimationService.buildAnimation(this.svgElementRef.nativeElement, event, true);
+      this.player = buildAnimation(this.svgElementRef.nativeElement, event, true);
 
       if (this.player !== undefined) {
         this.player.play();
