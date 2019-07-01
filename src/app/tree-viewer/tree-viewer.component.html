@@ -1,38 +1,40 @@
-<ng-container
-  *ngIf="width$ | async as width">
+<ng-container>
   <svg
-    id="tree"
     #svg
     *ngIf="layout$ | async as layout"
+    viewBox="0 0 800 600"
     style="background-color: rebeccapurple; border-radius: 3px"
-    [attr.width]="width"
-    [attr.height]="getHeight(layout.height)">
+    width="800"
+    height="600"
+  >
+    <g #g>
+      <path
+        *ngFor="let link of layout.links"
+        fill="none"
+        stroke-width="4"
+        stroke="black"
+        [ngStyle]="{'opacity': isLinkActive(link) ? '1' : '0.25'}"
+        [attr.data-source]="link.source.data.id"
+        [attr.data-target]="link.target.data.id"
+        [attr.d]="getLinkPath(link, 800, getHeight(layout.height))">
+      </path>
 
-    <path
-      *ngFor="let link of layout.links"
-      fill="none"
-      stroke-width="4"
-      stroke="black"
-      [ngStyle]="{'opacity': isLinkActive(link) ? '1' : '0.25'}"
-      [attr.data-source]="link.source.data.id"
-      [attr.data-target]="link.target.data.id"
-      [attr.d]="getLinkPath(link, width, getHeight(layout.height))">
-    </path>
 
-
-    <circle
-      *ngFor="let node of layout.nodes"
-      r="16"
-      stroke="black"
-      stroke-width="4"
-      [ngStyle]="{'opacity': isNodeActive(node) ? '1' : '0.25'}"
-      [attr.fill]="isNodeHighlighted(node.data.id) ? 'red' : node.data.id === stream.id ? 'chocolate' : 'darkgrey'"
-      [attr.transform]="getNodeTransform(node, width, getHeight(layout.height))"
-      [appOverlay]="overlay"
-      [appOverlayData]="node.data"
-      (click)="selectStream(node.data)">
-    </circle>
+      <circle
+        *ngFor="let node of layout.nodes"
+        r="16"
+        stroke="black"
+        stroke-width="4"
+        [ngStyle]="{'opacity': isNodeActive(node) ? '1' : '0.25'}"
+        [attr.fill]="isNodeHighlighted(node.data.id) ? 'red' : node.data.id === stream.id ? 'chocolate' : 'darkgrey'"
+        [attr.transform]="getNodeTransform(node, 800, getHeight(layout.height))"
+        [appOverlay]="overlay"
+        [appOverlayData]="node.data"
+        (click)="selectStream(node.data)">
+      </circle>
+    </g>
   </svg>
+
 </ng-container>
 
 <ng-template #overlay let-data>

@@ -1,10 +1,22 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {hierarchy, HierarchyNode, HierarchyPointLink, HierarchyPointNode, tree} from 'd3';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
 import {EventModel, StreamModel} from '../model';
 import {AnimationPlayer, buildAnimation} from './event-animations';
+
+import * as SvgPanZoom from 'svg-pan-zoom';
 
 interface FlowLayout {
   nodes: HierarchyPointNode<any>[];
@@ -34,7 +46,7 @@ const distance = 2 * margin;
   styleUrls: ['./tree-viewer.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TreeViewerComponent {
+export class TreeViewerComponent implements AfterViewInit {
   private readonly streamSubject = new BehaviorSubject<StreamModel>(undefined);
   private readonly widthSubject = new BehaviorSubject<number>(this.elementRef.nativeElement.clientWidth);
   private readonly layout = tree();
@@ -90,6 +102,9 @@ export class TreeViewerComponent {
   @ViewChild('svg')
   readonly svgElementRef: ElementRef<SVGElement>;
 
+  @ViewChild('g')
+  readonly gElementRef: ElementRef<SVGGElement>;
+
   constructor(
     private readonly elementRef: ElementRef,
   ) {
@@ -128,11 +143,13 @@ export class TreeViewerComponent {
   }
 
   getX(node: HierarchyPointNode<any>, width: number): number {
-    return margin + node.x * (width - 2 * margin);
+    // return margin + node.x * (width - 2 * margin);
+    return node.x * 800;
   }
 
   getY(node: HierarchyPointNode<any>, height: number): number {
-    return margin + node.y * (height - 2 * margin);
+    // return margin + node.y * (height - 2 * margin);
+    return node.y * 600;
   }
 
   isNodeActive(node: HierarchyPointNode<any>) {
@@ -198,7 +215,7 @@ export class TreeViewerComponent {
     }
 
     if (event !== undefined) {
-      this.player = buildAnimation(this.svgElementRef.nativeElement, event, true);
+      this.player = buildAnimation(this.gElementRef.nativeElement, event, true);
 
       if (this.player !== undefined) {
         this.player.play();
@@ -206,5 +223,30 @@ export class TreeViewerComponent {
     } else {
       this.player = undefined;
     }
+  }
+
+  ngAfterViewInit(): void {
+    const width = 800;
+    const height = 600;
+
+    let instance: SvgPanZoom.Instance;
+    instance = SvgPanZoom(this.svgElementRef.nativeElement, {
+      contain: true,
+      beforePan: ((oldPan, newPan) => {
+        const sizes = instance.getSizes();
+        const gutterWidth = sizes.viewBox.width / 2;
+        const gutterHeight = sizes.viewBox.height / 2;
+        const leftLimit = -((sizes.viewBox.x + sizes.viewBox.width) * sizes.realZoom) + gutterWidth;
+        const rightLimit = sizes.width - gutterWidth - (sizes.viewBox.x * sizes.realZoom);
+        const topLimit = -((sizes.viewBox.y + sizes.viewBox.height) * sizes.realZoom) + gutterHeight;
+        const bottomLimit = sizes.height - gutterHeight - (sizes.viewBox.y * sizes.realZoom);
+
+        return {
+          x: Math.max(leftLimit, Math.min(rightLimit, newPan.x)),
+          y: Math.max(topLimit, Math.min(bottomLimit, newPan.y)),
+        };
+      })
+    });
+
   }
 }
