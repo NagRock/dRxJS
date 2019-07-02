@@ -8,6 +8,7 @@ import {MatButtonModule, MatIconModule, MatTreeModule} from '@angular/material';
 import {TreeViewerModule} from './tree-viewer/tree-viewer.module';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {TimelineModule} from './timeline/timeline.module';
+import {EventsLogModule} from './events-log/events-log.module';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {TimelineModule} from './timeline/timeline.module';
     TreeViewerModule,
     OverlayModule,
     TimelineModule,
+    EventsLogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

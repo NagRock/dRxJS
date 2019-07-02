@@ -5,6 +5,9 @@ import {data as DATA} from '../__instrument__/data';
 import {MatTreeNestedDataSource} from '@angular/material';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {EventModel, getModel, Model, StreamModel} from './model';
+import anime from 'animejs';
+import {getEvents} from './events';
+
 
 const getStreamsByLocation = (streams: StreamModel[]) => {
   const groups = streams.reduce((streamsByFile, stream) => {
@@ -28,12 +31,18 @@ export class AppComponent {
   dataSource = new MatTreeNestedDataSource<any>();
   model: Model;
   stream: StreamModel;
+  events: EventModel[];
   event: EventModel;
 
   constructor() {
     // this.runSimpleExampleWithPrimitives();
     this.runSimpleExample();
     // this.runMousePositionExample();
+  }
+
+  setStream(stream: StreamModel) {
+    this.stream = stream;
+    this.events = getEvents(stream);
   }
 
   hasChild = (_: number, node: any) => !!node.instances && node.instances.length > 0;
@@ -43,7 +52,7 @@ export class AppComponent {
     this.dataSource.data = getStreamsByLocation(this.model.streams);
 
     if (id !== undefined) {
-      this.stream = this.model.streams[id];
+      this.setStream(this.model.streams[id]);
     }
   }
 

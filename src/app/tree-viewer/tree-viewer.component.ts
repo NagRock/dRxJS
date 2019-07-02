@@ -48,14 +48,13 @@ const distance = 2 * margin;
 })
 export class TreeViewerComponent implements AfterViewInit {
   private readonly streamSubject = new BehaviorSubject<StreamModel>(undefined);
-  private readonly widthSubject = new BehaviorSubject<number>(this.elementRef.nativeElement.clientWidth);
   private readonly layout = tree();
   private player: AnimationPlayer;
+  instance: SvgPanZoom.Instance;
 
   private _activeSubscriptionIds = new Set<string>();
   _event: EventModel;
 
-  readonly width$ = this.widthSubject.asObservable().pipe(delay(0, animationFrame));
   readonly layout$: Observable<FlowLayout> = this.streamSubject
     .asObservable()
     .pipe(
@@ -105,8 +104,11 @@ export class TreeViewerComponent implements AfterViewInit {
   @ViewChild('g')
   readonly gElementRef: ElementRef<SVGGElement>;
 
+  readonly width = 800;
+  readonly height = 800;
+
   constructor(
-    private readonly elementRef: ElementRef,
+    private readonly elementRef: ElementRef<HTMLElement>,
   ) {
   }
 
@@ -135,7 +137,9 @@ export class TreeViewerComponent implements AfterViewInit {
 
   @HostListener('window:resize')
   onWindowResize() {
-    this.widthSubject.next(this.elementRef.nativeElement.clientWidth);
+    // this.width = this.elementRef.nativeElement.clientWidth;
+    // this.height = this.elementRef.nativeElement.clientHeight;
+    // this.widthSubject.next(this.elementRef.nativeElement.clientWidth);
   }
 
   isNodeHighlighted(id: number) {
@@ -143,13 +147,11 @@ export class TreeViewerComponent implements AfterViewInit {
   }
 
   getX(node: HierarchyPointNode<any>, width: number): number {
-    // return margin + node.x * (width - 2 * margin);
-    return node.x * 800;
+    return margin + node.x * (this.width - 2 * margin);
   }
 
   getY(node: HierarchyPointNode<any>, height: number): number {
-    // return margin + node.y * (height - 2 * margin);
-    return node.y * 600;
+    return margin + node.y * (this.height - 2 * margin);
   }
 
   isNodeActive(node: HierarchyPointNode<any>) {
@@ -226,14 +228,9 @@ export class TreeViewerComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const width = 800;
-    const height = 600;
-
-    let instance: SvgPanZoom.Instance;
-    instance = SvgPanZoom(this.svgElementRef.nativeElement, {
-      contain: true,
+    this.instance = SvgPanZoom(this.svgElementRef.nativeElement, {
       beforePan: ((oldPan, newPan) => {
-        const sizes = instance.getSizes();
+        const sizes = this.instance.getSizes();
         const gutterWidth = sizes.viewBox.width / 2;
         const gutterHeight = sizes.viewBox.height / 2;
         const leftLimit = -((sizes.viewBox.x + sizes.viewBox.width) * sizes.realZoom) + gutterWidth;
@@ -247,6 +244,5 @@ export class TreeViewerComponent implements AfterViewInit {
         };
       })
     });
-
   }
 }
