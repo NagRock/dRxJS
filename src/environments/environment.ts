@@ -2,9 +2,14 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import {enableInstrumentation} from '../instrument';
+
 export const environment = {
   production: false
 };
+
+const rxInspector = enableInstrumentation();
+rxInspector.addListener((e) => console.log(e));
 
 /*
  * For easier debugging in development mode, you can import the following file

@@ -2,7 +2,7 @@ import {Observable, pipe} from 'rxjs';
 import {share, shareReplay, tap} from 'rxjs/operators';
 import {data} from './data';
 import {StreamData, trackStreamData} from './streams';
-import {trackSubscribeEventData, trackUnsubscribeEventData, trackValueEventData} from './events';
+import {trackSubscribeEventData, trackUnsubscribe, trackValueEventData} from './events';
 
 function getDestination(observer: any) {
   return observer.__id__ !== undefined
@@ -35,7 +35,7 @@ const instrumentOperator = (operator, file, expr, line, char) => {
           .subscribe(observer);
 
         return () => {
-          trackUnsubscribeEventData(source, destination);
+          trackUnsubscribe(source, destination);
           sub.unsubscribe();
         };
       });
@@ -77,7 +77,7 @@ const instrumentShareOperator = (operator, file, expr, line, char) => {
           .subscribe(observer);
 
         return () => {
-          trackUnsubscribeEventData(source, destination);
+          trackUnsubscribe(source, destination);
           sub.unsubscribe();
         };
       });

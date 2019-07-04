@@ -60,7 +60,7 @@ export function trackSubscribeEventData(source: StreamData, destination: StreamD
   return eventData;
 }
 
-export function trackUnsubscribeEventData(source: StreamData, destination: StreamData) {
+export function trackUnsubscribe(source: StreamData, destination: StreamData) {
   const eventData: UnsubscribeEventData = {
     kind: 'unsubscribe',
     id: eventDataId++,

@@ -230,7 +230,7 @@ export class TreeViewerComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.instance = SvgPanZoom(this.svgElementRef.nativeElement, {
       beforePan: ((oldPan, newPan) => {
-        const sizes = this.instance.getSizes();
+        const sizes = this.instance.getSizes() as any;
         const gutterWidth = sizes.viewBox.width / 2;
         const gutterHeight = sizes.viewBox.height / 2;
         const leftLimit = -((sizes.viewBox.x + sizes.viewBox.width) * sizes.realZoom) + gutterWidth;
