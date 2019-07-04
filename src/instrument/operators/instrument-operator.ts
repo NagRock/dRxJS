@@ -5,6 +5,18 @@ import {rxInspector} from '../rx-inspector';
 export type RxOperator<IN = any, OUT = any, ARGS extends any[] = any[]> = (...args: ARGS) => OperatorFunction<IN, OUT>;
 export type InstrumentOperator = <IN, OUT, ARGS extends any[]>(operator: RxOperator<IN, OUT, ARGS>) => RxOperator<IN, OUT, ARGS>;
 
+interface SyncCause {
+  kind: 'sync';
+  notification: number;
+}
+
+interface AsyncCause {
+  kind: 'async';
+  notification: number;
+}
+
+type Cause = SyncCause | AsyncCause;
+
 interface OperatorEvent {
   kind: 'operator';
   observable: number;
@@ -33,6 +45,7 @@ interface NextNotificationEvent {
   observable: number;
   source: number;
   destination: number;
+  cause?: Cause;
 }
 
 interface ErrorNotificationEvent {
@@ -42,6 +55,7 @@ interface ErrorNotificationEvent {
   observable: number;
   source: number;
   destination: number;
+  cause?: Cause;
 }
 
 interface CompleteNotificationEvent {
@@ -50,6 +64,7 @@ interface CompleteNotificationEvent {
   observable: number;
   source: number;
   destination: number;
+  cause?: Cause;
 }
 
 type Event = SubscribeEvent | UnsubscribeEvent | NextNotificationEvent | ErrorNotificationEvent | CompleteNotificationEvent;
@@ -58,12 +73,17 @@ let observableId = 0;
 let subscriptionId = 0;
 let notificationId = 0;
 
-function getDestination(observer: any) {
+function getDestinationObserver(observer: any): Observer<any> & { __id__: number } | undefined {
   return observer.__id__ !== undefined
-    ? observer.__id__
+    ? observer
     : observer.destination !== undefined
       ? getDestination(observer.destination)
-      : -1;
+      : undefined;
+}
+
+function getDestination(observer: any) {
+  const destination = getDestinationObserver(observer);
+  return destination !== undefined ? destination.__id__ : -1;
 }
 
 function trackOperator<IN, OUT, ARGS extends any[]>(operator: RxOperator<IN, OUT, ARGS>, args: ARGS): number {
@@ -81,10 +101,25 @@ function trackOperator<IN, OUT, ARGS extends any[]>(operator: RxOperator<IN, OUT
   return observable;
 }
 
+function setId(observer: Observer<any>, id) {
+  (observer as any).__id__ = id;
+}
+
+function setLastReveivedNotificationOnDestination(observer: Observer<any>, notification: number) {
+  const destination = getDestinationObserver(observer);
+  if (destination !== undefined) {
+    (destination as any).__last_received_notificaion_id__ = notification;
+  }
+}
+
+function getLastReceivedNotification(observer: Observer<any>): number {
+  return (observer as any).__last_received_notificaion_id__;
+}
+
 function trackSubscribe(observable: number, observer: Observer<any>): { source: number, destination: number } {
   const source = subscriptionId++;
   const destination = getDestination(observer);
-  (observer as any).__id__ = source;
+  setId(observer, source);
 
   const event: SubscribeEvent = {
     kind: 'subscribe',
@@ -110,7 +145,7 @@ function trackUnsubscribe(observable: number, source: number, destination: numbe
 }
 
 
-function trackNextNotification(observable: number, source: number, destination: number, value: any) {
+function trackNextNotification(observable: number, source: number, destination: number, value: any, cause?: Cause) {
   const notification = notificationId++;
 
   const event: NextNotificationEvent = {
@@ -120,6 +155,7 @@ function trackNextNotification(observable: number, source: number, destination: 
     observable,
     source,
     destination,
+    cause,
   };
 
   rxInspector.dispatch(event);
@@ -127,7 +163,7 @@ function trackNextNotification(observable: number, source: number, destination: 
   return notification;
 }
 
-function trackErrorNotification(observable: number, source: number, destination: number, error: any) {
+function trackErrorNotification(observable: number, source: number, destination: number, error: any, cause?: Cause) {
   const notification = notificationId++;
 
   const event: ErrorNotificationEvent = {
@@ -137,6 +173,7 @@ function trackErrorNotification(observable: number, source: number, destination:
     observable,
     source,
     destination,
+    cause,
   };
 
   rxInspector.dispatch(event);
@@ -144,7 +181,7 @@ function trackErrorNotification(observable: number, source: number, destination:
   return notification;
 }
 
-function trackCompleteNotification(observable: number, source: number, destination: number) {
+function trackCompleteNotification(observable: number, source: number, destination: number, cause?: Cause) {
   const notification = notificationId++;
 
   const event: CompleteNotificationEvent = {
@@ -153,11 +190,22 @@ function trackCompleteNotification(observable: number, source: number, destinati
     observable,
     source,
     destination,
+    cause,
   };
 
   rxInspector.dispatch(event);
 
   return notification;
+}
+
+function getSyncCause(observer: any): SyncCause {
+  const notification = getLastReceivedNotification(observer);
+  return notification !== undefined
+    ? {
+      kind: 'sync',
+      notification,
+    }
+    : undefined;
 }
 
 export const instrumentTransformingOperator =
@@ -172,9 +220,9 @@ export const instrumentTransformingOperator =
             const sub = stream
               .pipe(
                 rxOperators.tap({
-                  next: (value) => trackNextNotification(observable, source, destination, value),
-                  error: (error) => trackErrorNotification(observable, source, destination, error),
-                  complete: () => trackCompleteNotification(observable, source, destination),
+                  next: (value) => trackNextNotification(observable, source, destination, value, getSyncCause(observer)),
+                  error: (error) => trackErrorNotification(observable, source, destination, error, getSyncCause(observer)),
+                  complete: () => trackCompleteNotification(observable, source, destination, getSyncCause(observer)),
                 })
               )
               .subscribe(observer);

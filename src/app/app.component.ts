@@ -61,7 +61,7 @@ export class AppComponent {
       .pipe(
         map((zeroMap) => `${zeroMap}:${zeroMap}`),
         map((firstMap) => `${firstMap}:${firstMap}`),
-        tap(() => console.trace()),
+        // tap(() => console.trace()),
         // delay(1000),
         shareReplay(1),
         map((lastMap) => `${lastMap}:${lastMap}`),
