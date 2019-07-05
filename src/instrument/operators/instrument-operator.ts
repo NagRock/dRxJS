@@ -1,45 +1,49 @@
 import {Observable, Observer, OperatorFunction, pipe} from 'rxjs';
 import {rxOperators} from '../rx';
 import {rxInspector} from '../rx-inspector';
-import * as StackTrace from 'stacktrace-js';
 
 export type RxOperator<IN = any, OUT = any, ARGS extends any[] = any[]> = (...args: ARGS) => OperatorFunction<IN, OUT>;
 export type InstrumentOperator = <IN, OUT, ARGS extends any[]>(operator: RxOperator<IN, OUT, ARGS>) => RxOperator<IN, OUT, ARGS>;
 
-interface SyncCause {
+export interface SyncCause {
   kind: 'sync';
   notification: number;
 }
 
-interface AsyncCause {
+export interface AsyncCause {
   kind: 'async';
   notification: number;
 }
 
-type Cause = SyncCause | AsyncCause;
+export type Cause = SyncCause | AsyncCause;
 
-interface OperatorEvent {
-  kind: 'operator';
+export interface ObservableOperatorEvent {
+  kind: 'observable:operator';
   observable: number;
   operator: RxOperator;
   args: any[];
 }
 
-interface SubscribeEvent {
-  kind: 'subscribe';
+export interface SubscriptionEvent {
+  kind: 'subscription';
   observable: number;
+  subscription: number;
+}
+
+export interface SubscribeEvent {
+  kind: 'subscribe';
   source: number;
   destination: number;
 }
 
-interface UnsubscribeEvent {
+export interface UnsubscribeEvent {
   kind: 'unsubscribe';
   source: number;
   destination: number;
 }
 
-interface NextNotificationEvent {
-  kind: 'next';
+export interface NextNotificationEvent {
+  kind: 'notification:next';
   notification: number;
   value: any;
   source: number;
@@ -47,8 +51,8 @@ interface NextNotificationEvent {
   cause?: Cause;
 }
 
-interface ErrorNotificationEvent {
-  kind: 'error';
+export interface ErrorNotificationEvent {
+  kind: 'notification:error';
   notification: number;
   error: any;
   source: number;
@@ -56,15 +60,22 @@ interface ErrorNotificationEvent {
   cause?: Cause;
 }
 
-interface CompleteNotificationEvent {
-  kind: 'complete';
+export interface CompleteNotificationEvent {
+  kind: 'notification:complete';
   notification: number;
   source: number;
   destination: number;
   cause?: Cause;
 }
 
-type Event = SubscribeEvent | UnsubscribeEvent | NextNotificationEvent | ErrorNotificationEvent | CompleteNotificationEvent;
+export type Event
+  = ObservableOperatorEvent
+  | SubscriptionEvent
+  | SubscribeEvent
+  | UnsubscribeEvent
+  | NextNotificationEvent
+  | ErrorNotificationEvent
+  | CompleteNotificationEvent;
 
 let nextObservableId = 0;
 let nextSubscriptionId = 0;
@@ -87,8 +98,8 @@ function getDestination(observer: InstrumentedObserver): InstrumentedObserver | 
 function trackOperator<IN, OUT, ARGS extends any[]>(operator: RxOperator<IN, OUT, ARGS>, args: ARGS): number {
   const observable = nextObservableId++;
 
-  const event: OperatorEvent = {
-    kind: 'operator',
+  const event: ObservableOperatorEvent = {
+    kind: 'observable:operator',
     observable,
     operator,
     args,
@@ -105,22 +116,32 @@ function trackOperator<IN, OUT, ARGS extends any[]>(operator: RxOperator<IN, OUT
   return observable;
 }
 
-function trackSubscribe(observable: number, observer: Observer<any>): { source: InstrumentedObserver, destination: InstrumentedObserver } {
+function trackSubscription(observable: number, observer: Observer<any>)
+  : { source: InstrumentedObserver, destination: InstrumentedObserver } {
   const source = observer as InstrumentedObserver;
   const destination = getDestination(source);
 
   source.__id__ = nextSubscriptionId++;
 
-  const event: SubscribeEvent = {
-    kind: 'subscribe',
+  const event: SubscriptionEvent = {
+    kind: 'subscription',
     observable,
-    source: source.__id__,
-    destination: destination ? destination.__id__ : -1,
+    subscription: source.__id__,
   };
 
   rxInspector.dispatch(event);
 
   return {source, destination};
+}
+
+function trackSubscribe(source: InstrumentedObserver, destination: InstrumentedObserver): void {
+  const event: SubscribeEvent = {
+    kind: 'subscribe',
+    source: source.__id__,
+    destination: destination ? destination.__id__ : -1,
+  };
+
+  rxInspector.dispatch(event);
 }
 
 function trackUnsubscribe(source: InstrumentedObserver, destination: InstrumentedObserver): void {
@@ -138,7 +159,7 @@ function trackNextNotification(source: InstrumentedObserver, destination: Instru
   const notification = nextNotificationId++;
 
   const event: NextNotificationEvent = {
-    kind: 'next',
+    kind: 'notification:next',
     notification,
     value,
     source: source.__id__,
@@ -158,7 +179,7 @@ function trackErrorNotification(source: InstrumentedObserver, destination: Instr
   const notification = nextNotificationId++;
 
   const event: ErrorNotificationEvent = {
-    kind: 'error',
+    kind: 'notification:error',
     notification,
     error,
     source: source.__id__,
@@ -178,7 +199,7 @@ function trackCompleteNotification(source: InstrumentedObserver, destination: In
   const notification = nextNotificationId++;
 
   const event: CompleteNotificationEvent = {
-    kind: 'complete',
+    kind: 'notification:complete',
     notification,
     source: source.__id__,
     destination: destination ? destination.__id__ : -1,
@@ -211,7 +232,8 @@ export const instrumentTransformingOperator =
         operator(...args),
         (stream: Observable<any>) => {
           return Observable.create((observer) => {
-            const {source, destination} = trackSubscribe(observable, observer);
+            const {source, destination} = trackSubscription(observable, observer);
+            trackSubscribe(source, destination);
             const sub = stream
               .pipe(
                 rxOperators.tap({

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {map, shareReplay, tap} from 'rxjs/operators';
+import {map, mergeMap, shareReplay, tap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {data as DATA} from '../__instrument__/data';
 import {MatTreeNestedDataSource} from '@angular/material';
@@ -60,6 +60,9 @@ export class AppComponent {
     const stream$ = of('a', 'b', 'c', 'd')
       .pipe(
         map((zeroMap) => `${zeroMap}:${zeroMap}`),
+        mergeMap((mergeX) => {
+          return of(mergeX, mergeX);
+        }),
         map((firstMap) => `${firstMap}:${firstMap}`),
         // tap(() => console.trace()),
         // delay(1000),

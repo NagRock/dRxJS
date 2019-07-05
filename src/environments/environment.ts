@@ -3,13 +3,17 @@
 // The list of file replacements can be found in `angular.json`.
 
 import {enableInstrumentation} from '../instrument';
+import {state$} from '../app/state/reducer';
 
 export const environment = {
   production: false
 };
 
 const rxInspector = enableInstrumentation();
-rxInspector.addListener((e) => console.log(e));
+// rxInspector.addListener((e) => console.log(e));
+
+
+state$(rxInspector).subscribe((state) => console.log(state));
 
 /*
  * For easier debugging in development mode, you can import the following file
