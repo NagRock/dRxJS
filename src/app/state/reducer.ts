@@ -3,13 +3,15 @@ import {Observable, Observer} from 'rxjs';
 import {
   CompleteNotificationEvent,
   ErrorNotificationEvent,
-  Event, NextNotificationEvent,
+  Event,
+  NextNotificationEvent,
   ObservableOperatorEvent,
   RxOperator,
   SubscribeEvent,
-  SubscriptionEvent, UnsubscribeEvent
+  SubscriptionEvent,
+  UnsubscribeEvent
 } from '../../instrument/operators/instrument-operator';
-import {bufferTime, scan} from 'rxjs/operators';
+import {rxOperators} from '../../instrument/rx';
 
 interface ObservableState {
   id: number;
@@ -64,21 +66,25 @@ interface CompleteNotificationState {
   cause: CauseState;
 }
 
-type EventState
-  = SubscribeState
-  | UnsubscribeState
-  | NextNotificationState
+type NotificationState
+  = NextNotificationState
   | ErrorNotificationState
   | CompleteNotificationState;
 
+type EventState
+  = SubscribeState
+  | UnsubscribeState
+  | NotificationState;
+
 interface CauseState {
   kind: 'sync' | 'async';
-  notification: EventState;
+  notification: NotificationState;
 }
 
 interface State {
   observables: { [id: number]: ObservableState };
   subscriptions: { [id: number]: SubscriptionState };
+  notifications: { [id: number]: NotificationState };
 }
 
 function fromRxInspector(rxInspector: RxInspector): Observable<Event> {
@@ -125,10 +131,12 @@ function handleSubscribe(state: State, event: SubscribeEvent) {
   };
 
   source.events.push(subscribe);
-  destination.events.push(subscribe);
-
   source.subscribers.push(destination);
-  destination.subscriptions.push(source);
+
+  if (destination) {
+    destination.events.push(subscribe);
+    destination.subscriptions.push(source);
+  }
 
   return state;
 }
@@ -143,7 +151,9 @@ function handleUnsubscribe(state: State, event: UnsubscribeEvent) {
   };
 
   source.events.push(subscribe);
-  destination.events.push(subscribe);
+  if (destination) {
+    destination.events.push(subscribe);
+  }
 
   return state;
 }
@@ -151,6 +161,12 @@ function handleUnsubscribe(state: State, event: UnsubscribeEvent) {
 function handleNotification(state: State, event: NextNotificationEvent | ErrorNotificationEvent | CompleteNotificationEvent) {
   const source = state.subscriptions[event.source];
   const destination = state.subscriptions[event.destination];
+  const cause: CauseState = event.cause
+    ? {
+      kind: event.cause.kind,
+      notification: state.notifications[event.cause.notification]
+    }
+    : undefined;
 
   let notification: NextNotificationState | ErrorNotificationState | CompleteNotificationState;
   switch (event.kind) {
@@ -161,7 +177,7 @@ function handleNotification(state: State, event: NextNotificationEvent | ErrorNo
         source,
         destination,
         value: event.value,
-        cause: undefined // todo
+        cause,
       };
       break;
     case 'notification:error':
@@ -171,7 +187,7 @@ function handleNotification(state: State, event: NextNotificationEvent | ErrorNo
         source,
         destination,
         error: event.error,
-        cause: undefined // todo
+        cause,
       };
       break;
     case 'notification:complete':
@@ -180,23 +196,30 @@ function handleNotification(state: State, event: NextNotificationEvent | ErrorNo
         id: event.notification,
         source,
         destination,
-        cause: undefined // todo
+        cause,
       };
       break;
   }
 
   source.events.push(notification);
-  destination.events.push(notification);
-  return undefined;
+  if (destination) {
+    destination.events.push(notification);
+  }
+
+  state.notifications[event.notification] = notification;
+
+  return state;
 }
 
 export function state$(rxInspector: RxInspector) {
-
-  const events$ = fromRxInspector(rxInspector);
-  return events$.pipe(
-    bufferTime(1000),
-    scan((prevState: State, events: Event[], index: number) => {
-      return events.reduce((state, event) => {
+  const initialState: State = {
+    observables: {},
+    subscriptions: {},
+    notifications: {},
+  };
+  return fromRxInspector(rxInspector)
+    .pipe(
+      rxOperators.scan((state: State, event: Event): State => {
         switch (event.kind) {
           case 'observable:operator':
             return handleObservableOperator(state, event);
@@ -210,13 +233,9 @@ export function state$(rxInspector: RxInspector) {
           case 'notification:error':
           case 'notification:complete':
             return handleNotification(state, event);
+          default:
+            return state;
         }
-
-        return state;
-      }, prevState);
-    }, {
-      observables: [],
-      subscriptions: [],
-    })
-  );
+      }, initialState)
+    );
 }
