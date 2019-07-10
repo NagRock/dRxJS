@@ -232,25 +232,24 @@ export const instrumentTransformingOperator =
             const {__sender_id__: senderId, __receiver_id__: receiverId} = observer;
 
             trackSubscribe(senderId, receiverId);
-            const subscription = stream
-              .subscribe({
-                __skip_subscribe_instrumentation_: true,
-                next: (value) => {
-                  const notificationId = trackNextNotification(senderId, receiverId, value, getCause(lastReceivedNotificationId));
-                  observer.__set_last_received_notification_id__(notificationId);
-                  observer.next(value);
-                },
-                error: (error) => {
-                  const notificationId = trackErrorNotification(senderId, receiverId, error, getCause(lastReceivedNotificationId));
-                  observer.__set_last_received_notification_id__(notificationId);
-                  observer.error(error);
-                },
-                complete: () => {
-                  const notificationId = trackCompleteNotification(senderId, receiverId, getCause(lastReceivedNotificationId));
-                  observer.__set_last_received_notification_id__(notificationId);
-                  observer.complete();
-                },
-              } as any);
+            const subscription = stream.subscribe({
+              __skip_subscribe_instrumentation_: true,
+              next: (value) => {
+                const notificationId = trackNextNotification(senderId, receiverId, value, getCause(lastReceivedNotificationId));
+                observer.__set_last_received_notification_id__(notificationId);
+                observer.next(value);
+              },
+              error: (error) => {
+                const notificationId = trackErrorNotification(senderId, receiverId, error, getCause(lastReceivedNotificationId));
+                observer.__set_last_received_notification_id__(notificationId);
+                observer.error(error);
+              },
+              complete: () => {
+                const notificationId = trackCompleteNotification(senderId, receiverId, getCause(lastReceivedNotificationId));
+                observer.__set_last_received_notification_id__(notificationId);
+                observer.complete();
+              },
+            } as any);
             return () => {
               trackUnsubscribe(senderId, receiverId);
               subscription.unsubscribe();
