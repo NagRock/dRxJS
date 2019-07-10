@@ -57,22 +57,42 @@ export class AppComponent {
   }
 
   private runSimpleExample() {
-    const stream$ = of('a', 'b', 'c', 'd')
+
+    const source$ = of('a', 'b', 'c', 'd')
       .pipe(
         map((zeroMap) => `${zeroMap}:${zeroMap}`),
-        mergeMap((mergeX) => {
-          return of(mergeX, mergeX);
-        }),
+      );
+
+    const stream$ = source$
+      .pipe(
         map((firstMap) => `${firstMap}:${firstMap}`),
-        // tap(() => console.trace()),
-        // delay(1000),
-        shareReplay(1),
+        // shareReplay(1),
         map((lastMap) => `${lastMap}:${lastMap}`),
       );
 
     stream$.subscribe(((x) => console.log('result:', x)));
-    stream$.subscribe(((x) => console.log('result:', x)));
+    // stream$.subscribe(((x) => console.log('result:', x)));
   }
+
+  private runSimpleExample2() {
+
+    const stream$ = of('a', 'b', 'c', 'd')
+      .pipe(
+        map((zeroMap) => `${zeroMap}:${zeroMap}`),
+        // mergeMap((mergeX) => {
+        //   return of(mergeX, mergeX);
+        // }),
+        map((firstMap) => `${firstMap}:${firstMap}`),
+        // tap(() => console.trace()),
+        // delay(1000),
+        // shareReplay(1),
+        map((lastMap) => `${lastMap}:${lastMap}`),
+      );
+
+    stream$.subscribe(((x) => console.log('result:', x)));
+    // stream$.subscribe(((x) => console.log('result:', x)));
+  }
+
 
   private runSimpleExampleWithPrimitives() {
     const stream$ = of('a', 'a', 'a', 'b', 'a', 'c', 'd')

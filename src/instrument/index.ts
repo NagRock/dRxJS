@@ -2,6 +2,7 @@ import {instrumentedRx, instrumentedRxOperators, rx, rxOperators} from './rx';
 import {instrumentOperator, InstrumentOperator, instrumentTransformingOperator, RxOperator} from './operators/instrument-operator';
 import {instrumentCreator, InstrumentRxCreator, RxCreator} from './creators/instrument-creator';
 import {rxInspector} from './rx-inspector';
+import {Subscriber} from 'rxjs';
 
 const creators: [RxCreator, InstrumentRxCreator][] = [
   // [rx.bindCallback, instrumentCreator],
@@ -158,8 +159,69 @@ export function instrumentOperators() {
 
 let instrumented = false;
 
+
+let subId = 10000;
+
+function instrumentSubscriber(observerOrNext?, error?, complete?) {
+  const s = new Subscriber(observerOrNext, error, complete);
+  (s as any).__instrumented__ = true;
+  return s;
+}
+
+function instrumentSubscribe() {
+  const subscribe = rx.Observable.prototype.subscribe;
+  instrumentedRx.Observable.prototype.subscribe = function(observerOrNext?, error?, complete?) {
+    switch (arguments.length) {
+      case 0:
+        console.log('0: track');
+        // console.trace();
+        return subscribe.call(this, instrumentSubscriber(observerOrNext, error, complete));
+        break;
+      case 1:
+        if (!(observerOrNext instanceof instrumentedRx.Subscriber)) {
+          console.log('1: track');
+          // console.trace();
+          return subscribe.call(this, instrumentSubscriber(observerOrNext, error, complete));
+        }
+        break;
+      default:
+        console.log('default: track');
+        // console.trace();
+        return subscribe.call(this, instrumentSubscriber(observerOrNext, error, complete));
+    }
+    return subscribe.apply(this, arguments);
+  };
+}
+
 export function enableInstrumentation() {
   if (!instrumented) {
+
+    // // const subscribe = instrumentedRx.Observable.prototype.subscribe;
+    // class CustomSubscriber<T> extends rx.Subscriber<T> {
+    //
+    //   constructor(...args) {
+    //     super(...args);
+    //     console.log('subscriber', args);
+    //   }
+    // }
+    //
+    // Object.defineProperty(instrumentedRx, rx.Subscriber.name, {
+    //   get: () => CustomSubscriber,
+    // });
+
+    // instrumentedRx.Observable.prototype.subscribe = function() {
+    //   // console.log('subscribe');
+    //   // console.trace();
+    //   const args = arguments;
+    //   const subscriber = subscribe.apply(this, args);
+    //
+    //   // (subscriber as any).__id__ = subId++;
+    //
+    //   return subscriber;
+    // };
+
+
+    instrumentSubscribe();
     instrumentCreators();
     instrumentOperators();
     instrumented = true;

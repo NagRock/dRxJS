@@ -4,6 +4,8 @@
 
 import {enableInstrumentation} from '../instrument';
 import {state$} from '../app/state/reducer';
+import {debounceTime, throttleTime} from 'rxjs/operators';
+import {asapScheduler} from 'rxjs';
 
 export const environment = {
   production: false
@@ -12,8 +14,13 @@ export const environment = {
 const rxInspector = enableInstrumentation();
 // rxInspector.addListener((e) => console.log(e));
 
+// rxInspector.addListener((e) => console.log(e));
 
-state$(rxInspector).subscribe((state) => console.log(state));
+state$(rxInspector)
+  .pipe(debounceTime(0, asapScheduler))
+  .subscribe((state) => {
+    console.log(state);
+  });
 
 /*
  * For easier debugging in development mode, you can import the following file
