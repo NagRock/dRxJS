@@ -5,7 +5,7 @@ import {
   ErrorNotificationEvent,
   Event,
   NextNotificationEvent,
-  Operator,
+  OperatorEvent,
   RxOperator,
   SubscribeEvent,
   SubscriptionEvent,
@@ -96,7 +96,7 @@ function fromRxInspector(rxInspector: RxInspector): Observable<Event> {
   });
 }
 
-function handleObservableOperator(state: State, event: Operator): State {
+function handleObservableOperator(state: State, event: OperatorEvent): State {
   state.observables[event.observable] = {
     id: event.observable,
     operator: event.operator,

@@ -12,10 +12,10 @@ export interface Cause {
   notification: number;
 }
 
-export interface Operator {
+export interface OperatorEvent {
   kind: 'operator';
   operator: number;
-  func: RxOperator;
+  func: (...args: any[]) => OperatorFunction<any, any>;
   args: any[];
 }
 
@@ -64,7 +64,7 @@ export interface CompleteNotificationEvent {
 }
 
 export type Event
-  = Operator
+  = OperatorEvent
   | OperatorInstanceEvent
   | SubscribeEvent
   | UnsubscribeEvent
@@ -105,7 +105,7 @@ function getSender(candidate: ObserverWithDestination): Sender {
 function trackOperator<IN, OUT, ARGS extends any[]>(func: RxOperator<IN, OUT, ARGS>, args: ARGS): number {
   const operator = nextObservableId++;
 
-  const event: Operator = {
+  const event: OperatorEvent = {
     kind: 'operator',
     operator,
     func,
