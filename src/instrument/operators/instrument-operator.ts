@@ -213,12 +213,12 @@ export const instrumentTransformingOperator =
   <IN = any, OUT = any, ARGS extends any[] = any>(operator: RxOperator<IN, OUT, ARGS>): RxOperator<IN, OUT, ARGS> => {
     return (...args: ARGS) => {
       const operatorId = trackOperator(operator, args);
+      let lastSenderId: number;
       let lastReceivedNotificationId: number;
       return pipe(
         (stream: Observable<any>) => {
           return Observable.create((receiver: Receiver) => {
-            const sender = getSender(receiver.destination);
-            receiver.__receiver_id__ = sender.__sender_id__;
+            receiver.__receiver_id__ = lastSenderId;
             receiver.__set_last_received_notification_id__ = (notificationId) => {
               lastReceivedNotificationId = notificationId;
             };
@@ -228,12 +228,14 @@ export const instrumentTransformingOperator =
         operator(...args),
         (stream: Observable<any>) =>
           Observable.create((observer: Receiver & Sender) => {
-            observer.__sender_id__ = trackOperatorInstance(operatorId);
-            const {__sender_id__: senderId, __receiver_id__: receiverId} = observer;
+            const senderId = trackOperatorInstance(operatorId);
+            const receiverId = observer.__receiver_id__;
+
+            lastSenderId = senderId;
 
             trackSubscribe(senderId, receiverId);
             const subscription = stream.subscribe({
-              __skip_subscribe_instrumentation_: true,
+              __skip_instrumentation_: true,
               next: (value) => {
                 const notificationId = trackNextNotification(senderId, receiverId, value, getCause(lastReceivedNotificationId));
                 observer.__set_last_received_notification_id__(notificationId);
