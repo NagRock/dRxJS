@@ -1,109 +1,29 @@
-import {Observable, Observer, OperatorFunction, pipe} from 'rxjs';
-import {rxOperators} from '../rx';
+import {Observable, OperatorFunction, pipe} from 'rxjs';
 import {rxInspector} from '../rx-inspector';
+import {
+  Cause,
+  CompleteNotificationEvent,
+  ErrorNotificationEvent,
+  NextNotificationEvent,
+  OperatorEvent,
+  OperatorInstanceEvent,
+  Receiver,
+  Sender,
+  SubscribeEvent,
+  UnsubscribeEvent
+} from '../types';
+import {getNextNotificationId, getNextObservableId, getNextObservableInstanceId} from '../ids';
 
 export type RxOperator<IN = any, OUT = any, ARGS extends any[] = any[]> = (...args: ARGS) => OperatorFunction<IN, OUT>;
 export type InstrumentOperator = <IN, OUT, ARGS extends any[]>(operator: RxOperator<IN, OUT, ARGS>) => RxOperator<IN, OUT, ARGS>;
 
 // creator.instance -(sender/receiver)-> operator.instance -(sender/receiver)-> subscriber.instance
 
-export interface Cause {
-  kind: 'sync' | 'async';
-  notification: number;
-}
 
-export interface OperatorEvent {
-  kind: 'operator';
-  operator: number;
-  func: (...args: any[]) => OperatorFunction<any, any>;
-  args: any[];
-}
 
-export interface OperatorInstanceEvent {
-  kind: 'operator-instance';
-  operator: number;
-  operatorInstance: number;
-}
-
-export interface SubscribeEvent {
-  kind: 'subscribe';
-  sender: number;
-  receiver: number;
-}
-
-export interface UnsubscribeEvent {
-  kind: 'unsubscribe';
-  sender: number;
-  receiver: number;
-}
-
-export interface NextNotificationEvent {
-  kind: 'notification:next';
-  sender: number;
-  receiver: number;
-  notification: number;
-  cause: Cause;
-  value: any;
-}
-
-export interface ErrorNotificationEvent {
-  kind: 'notification:error';
-  sender: number;
-  receiver: number;
-  notification: number;
-  cause: Cause;
-  error: any;
-}
-
-export interface CompleteNotificationEvent {
-  kind: 'notification:complete';
-  sender: number;
-  receiver: number;
-  notification: number;
-  cause: Cause;
-}
-
-export type Event
-  = OperatorEvent
-  | OperatorInstanceEvent
-  | SubscribeEvent
-  | UnsubscribeEvent
-  | NextNotificationEvent
-  | ErrorNotificationEvent
-  | CompleteNotificationEvent;
-
-let nextObservableId = 0;
-let nextObservableInstanceId = 0;
-let nextNotificationId = 0;
-
-interface ObserverWithDestination extends Observer<any> {
-  destination: ObserverWithDestination;
-}
-
-interface Receiver extends ObserverWithDestination {
-  __receiver_id__: number;
-
-  __set_last_received_notification_id__(notificationId: number): void;
-}
-
-interface Sender extends ObserverWithDestination {
-  __sender_id__: number;
-}
-
-function getSender(candidate: ObserverWithDestination): Sender {
-  if ((candidate as Sender).__sender_id__ !== undefined) {
-    return candidate as Sender;
-  } else {
-    if (candidate.destination !== undefined) {
-      return getSender(candidate.destination);
-    } else {
-      throw new Error('sender not found');
-    }
-  }
-}
 
 function trackOperator<IN, OUT, ARGS extends any[]>(func: RxOperator<IN, OUT, ARGS>, args: ARGS): number {
-  const operator = nextObservableId++;
+  const operator = getNextObservableId();
 
   const event: OperatorEvent = {
     kind: 'operator',
@@ -118,7 +38,7 @@ function trackOperator<IN, OUT, ARGS extends any[]>(func: RxOperator<IN, OUT, AR
 }
 
 function trackOperatorInstance(operator: number): number {
-  const operatorInstance = nextObservableInstanceId++;
+  const operatorInstance = getNextObservableInstanceId();
 
   const event: OperatorInstanceEvent = {
     kind: 'operator-instance',
@@ -153,7 +73,7 @@ function trackUnsubscribe(sender: number, receiver: number): void {
 }
 
 function trackNextNotification(sender: number, receiver: number, value: any, cause: Cause) {
-  const notification = nextNotificationId++;
+  const notification = getNextNotificationId();
 
   const event: NextNotificationEvent = {
     kind: 'notification:next',
@@ -170,7 +90,7 @@ function trackNextNotification(sender: number, receiver: number, value: any, cau
 }
 
 function trackErrorNotification(sender: number, receiver: number, error: any, cause: Cause) {
-  const notification = nextNotificationId++;
+  const notification = getNextNotificationId();
 
   const event: ErrorNotificationEvent = {
     kind: 'notification:error',
@@ -187,7 +107,7 @@ function trackErrorNotification(sender: number, receiver: number, error: any, ca
 }
 
 function trackCompleteNotification(sender: number, receiver: number, cause: Cause) {
-  const notification = nextNotificationId++;
+  const notification = getNextNotificationId();
 
   const event: CompleteNotificationEvent = {
     kind: 'notification:complete',
