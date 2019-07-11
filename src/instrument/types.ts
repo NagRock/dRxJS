@@ -31,6 +31,15 @@ export interface OperatorInstanceEvent {
   operatorInstance: number;
 }
 
+export interface SubscriberEvent {
+  kind: 'subscriber';
+  subscriber: number;
+  next: (value) => void;
+  error: (error) => void;
+  complete: () => void;
+}
+
+
 export interface SubscribeEvent {
   kind: 'subscribe';
   sender: number;
@@ -72,6 +81,7 @@ export interface CompleteNotificationEvent {
 export type Event
   = OperatorEvent
   | OperatorInstanceEvent
+  | SubscriberEvent
   | SubscribeEvent
   | UnsubscribeEvent
   | NextNotificationEvent

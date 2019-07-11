@@ -19,9 +19,6 @@ export type InstrumentOperator = <IN, OUT, ARGS extends any[]>(operator: RxOpera
 
 // creator.instance -(sender/receiver)-> operator.instance -(sender/receiver)-> subscriber.instance
 
-
-
-
 function trackOperator<IN, OUT, ARGS extends any[]>(func: RxOperator<IN, OUT, ARGS>, args: ARGS): number {
   const operator = getNextObservableId();
 
@@ -155,7 +152,7 @@ export const instrumentTransformingOperator =
 
             trackSubscribe(senderId, receiverId);
             const subscription = stream.subscribe({
-              __skip_instrumentation_: true,
+              __skip_instrumentation__: true,
               next: (value) => {
                 const notificationId = trackNextNotification(senderId, receiverId, value, getCause(lastReceivedNotificationId));
                 observer.__set_last_received_notification_id__(notificationId);
