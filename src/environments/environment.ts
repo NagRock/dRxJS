@@ -3,21 +3,17 @@
 // The list of file replacements can be found in `angular.json`.
 
 import {enableInstrumentation} from '../instrument';
-import {state$} from '../app/state/reducer';
-import {debounceTime, throttleTime} from 'rxjs/operators';
-import {asapScheduler} from 'rxjs';
+import {state$} from '../app/state';
+import {rx, rxOperators} from '../instrument/rx';
 
 export const environment = {
   production: false
 };
 
 const rxInspector = enableInstrumentation();
-// rxInspector.addListener((e) => console.log(e));
-
-// rxInspector.addListener((e) => console.log(e));
 
 state$(rxInspector)
-  .pipe(debounceTime(0, asapScheduler))
+  // .pipe(rxOperators.debounceTime(0, rx.asapScheduler))
   .subscribe((state) => {
     console.log(state);
   });

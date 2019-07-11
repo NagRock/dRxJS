@@ -6,6 +6,7 @@ export interface ObserverWithDestination extends Observer<any> {
 
 export interface Receiver extends ObserverWithDestination {
   __receiver_id__: number;
+
   __set_last_received_notification_id__(notificationId: number): void;
 }
 
@@ -78,12 +79,15 @@ export interface CompleteNotificationEvent {
   cause: Cause;
 }
 
+export type NotificationEvent
+  = NextNotificationEvent
+  | ErrorNotificationEvent
+  | CompleteNotificationEvent;
+
 export type Event
   = OperatorEvent
   | OperatorInstanceEvent
   | SubscriberEvent
   | SubscribeEvent
   | UnsubscribeEvent
-  | NextNotificationEvent
-  | ErrorNotificationEvent
-  | CompleteNotificationEvent;
+  | NotificationEvent;

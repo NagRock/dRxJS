@@ -2,7 +2,7 @@ import {instrumentedRx, rx} from './rx';
 import {Subscriber} from 'rxjs';
 import {getNextObservableInstanceId} from './ids';
 import {rxInspector} from './rx-inspector';
-import {SubscriberEvent} from './types';
+import {Receiver, SubscriberEvent} from './types';
 
 
 function trackSubscriber(next, error, complete) {
@@ -30,7 +30,9 @@ export function instrumentSubscribe() {
       return subscribe.call(this, observerOrNext, error, complete);
     } else {
       const subscriber = new Subscriber(observerOrNext, error, complete);
-      (subscriber as any).__receiver_id__ = trackSubscriber(observerOrNext, error, complete);
+      const receiver = subscriber as any as Receiver;
+      receiver.__receiver_id__ = trackSubscriber(observerOrNext, error, complete);
+      receiver.__set_last_received_notification_id__ = () => {}; // todo: set cause for callback functions
       return subscribe.call(this, subscriber);
     }
   };
