@@ -5,7 +5,8 @@ export const runSimpleExample = () => {
 
   const source$ = of('a', 'b', 'c', 'd')
     .pipe(
-      map((zeroMap) => `${zeroMap}:${zeroMap}`),
+      map((x0) => `${x0}:${x0}`),
+      map((x1) => `${x1}:${x1}`),
     );
   source$.subscribe(((x) => console.log('result:', x)));
 };
