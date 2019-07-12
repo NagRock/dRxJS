@@ -3,6 +3,7 @@ import * as Event from '../../instrument/types';
 import * as State from './types';
 import {scan} from 'rxjs/operators';
 import {Observable, Observer} from 'rxjs';
+import {clock} from './clock';
 
 
 function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
@@ -13,7 +14,6 @@ function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
     return () => rxInspector.removeListener(listener);
   });
 }
-
 
 function handleOperator(state: State.State, event: Event.OperatorEvent) {
   const operator: State.Operator = {
@@ -69,6 +69,7 @@ function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
   const receiver = state.receivers[event.receiver];
   const subscribe: State.Subscribe = {
     kind: 'subscribe',
+    time: clock(),
     sender,
     receiver,
   };
@@ -87,6 +88,7 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
   const receiver = state.receivers[event.receiver];
   const unsubscribe: State.Unsubscribe = {
     kind: 'unsubscribe',
+    time: clock(),
     sender,
     receiver,
   };
@@ -107,6 +109,7 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
   const notification: State.Notification = {
     kind: event.kind as any,
     id: event.notification,
+    time: clock(),
     sender,
     receiver,
     cause,

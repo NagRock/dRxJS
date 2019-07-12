@@ -44,12 +44,14 @@ export type Receiver
 
 export interface Subscribe {
   kind: 'subscribe';
+  time: number;
   sender: Sender;
   receiver: Receiver;
 }
 
 export interface Unsubscribe {
   kind: 'unsubscribe';
+  time: number;
   sender: Sender;
   receiver: Receiver;
 }
@@ -62,6 +64,7 @@ export interface Cause {
 export interface NextNotification {
   kind: 'notification:next';
   id: number;
+  time: number;
   sender: Sender;
   receiver: Receiver;
   cause: Cause;
@@ -71,6 +74,7 @@ export interface NextNotification {
 export interface ErrorNotification {
   kind: 'notification:error';
   id: number;
+  time: number;
   sender: Sender;
   receiver: Receiver;
   cause: Cause;
@@ -80,6 +84,7 @@ export interface ErrorNotification {
 export interface CompleteNotification {
   kind: 'notification:complete';
   id: number;
+  time: number;
   sender: Sender;
   receiver: Receiver;
   cause: Cause;
