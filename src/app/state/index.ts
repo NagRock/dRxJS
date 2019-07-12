@@ -132,7 +132,6 @@ export function state$(rxInspector: RxInspector) {
   return fromRxInspector(rxInspector)
     .pipe(
       scan((state: State.State, event: Event.Event): State.State => {
-        console.log(event);
         switch (event.kind) {
           case 'operator':
             return handleOperator(state, event);

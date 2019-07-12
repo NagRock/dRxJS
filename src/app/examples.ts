@@ -7,9 +7,7 @@ export const runSimpleExample = () => {
     .pipe(
       map((zeroMap) => `${zeroMap}:${zeroMap}`),
     );
-  console.log('before-sub');
   source$.subscribe(((x) => console.log('result:', x)));
-  console.log('after-sub');
 };
 
 export const runSimpleExample3 = () => {
