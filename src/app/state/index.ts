@@ -1,119 +1,12 @@
 import {RxInspector} from '../../instrument/rx-inspector';
-import {rxOperators} from '../../instrument/rx';
-import * as rx from 'rxjs';
-import {
-  Event as InspectorEvent, NotificationEvent,
-  OperatorEvent,
-  OperatorInstanceEvent,
-  SubscribeEvent,
-  SubscriberEvent,
-  UnsubscribeEvent
-} from '../../instrument/types';
-
-interface Index<T> {
-  [key: number]: T;
-}
-
-interface Operator {
-  kind: 'operator';
-  id: number;
-  func: (...args: any[]) => rx.OperatorFunction<any, any>;
-  args: any[];
-  instances: OperatorInstance[];
-}
-
-type Observable
-  = Operator;
-
-interface OperatorInstance {
-  kind: 'operator-instance';
-  id: number;
-  operator: Operator;
-  receivers: Receiver[];
-  senders: Sender[];
-  events: Event[];
-}
-
-interface Subscriber {
-  kind: 'subscriber';
-  id: number;
-  next: (value) => void;
-  error: (error) => void;
-  complete: () => void;
-  senders: Sender[];
-  events: Event[];
-}
-
-type Sender
-  = OperatorInstance;
-
-type Receiver
-  = OperatorInstance
-  | Subscriber;
+import * as Event from '../../instrument/types';
+import * as State from './types';
+import {scan} from 'rxjs/operators';
+import {Observable, Observer} from 'rxjs';
 
 
-interface Subscribe {
-  kind: 'subscribe';
-  sender: Sender;
-  receiver: Receiver;
-}
-
-interface Unsubscribe {
-  kind: 'unsubscribe';
-  sender: Sender;
-  receiver: Receiver;
-}
-
-interface Cause {
-  kind: 'sync' | 'async';
-  notification: Notification;
-}
-
-interface NextNotification {
-  kind: 'notification:next';
-  id: number;
-  sender: Sender;
-  receiver: Receiver;
-  cause: Cause;
-  value: any;
-}
-
-interface ErrorNotification {
-  kind: 'notification:error';
-  id: number;
-  sender: Sender;
-  receiver: Receiver;
-  cause: Cause;
-  error: any;
-}
-
-interface CompleteNotification {
-  kind: 'notification:complete';
-  id: number;
-  sender: Sender;
-  receiver: Receiver;
-  cause: Cause;
-}
-
-type Notification
-  = NextNotification
-  | ErrorNotification
-  | CompleteNotification;
-
-type Event
-  = Notification
-  | Subscribe
-  | Unsubscribe;
-
-interface State {
-  observables: Index<Observable>;
-  senders: Index<Sender>;
-  receivers: Index<Receiver>;
-  notifications: Index<Notification>;
-}
-
-function fromRxInspector(rxInspector: RxInspector): rx.Observable<InspectorEvent> {
-  return rx.Observable.create((observer: rx.Observer<InspectorEvent>) => {
+function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
+  return Observable.create((observer: Observer<Event.Event>) => {
     const listener = (event) => observer.next(event);
     rxInspector.addListener(listener);
 
@@ -122,8 +15,8 @@ function fromRxInspector(rxInspector: RxInspector): rx.Observable<InspectorEvent
 }
 
 
-function handleOperator(state: State, event: OperatorEvent) {
-  const operator: Operator = {
+function handleOperator(state: State.State, event: Event.OperatorEvent) {
+  const operator: State.Operator = {
     kind: 'operator',
     id: event.operator,
     func: event.func,
@@ -136,9 +29,9 @@ function handleOperator(state: State, event: OperatorEvent) {
   return state;
 }
 
-function handleOperatorInstance(state: State, event: OperatorInstanceEvent) {
+function handleOperatorInstance(state: State.State, event: Event.OperatorInstanceEvent) {
   const operator = state.observables[event.operator];
-  const operatorInstance: OperatorInstance = {
+  const operatorInstance: State.OperatorInstance = {
     kind: 'operator-instance',
     id: event.operatorInstance,
     operator,
@@ -155,8 +48,8 @@ function handleOperatorInstance(state: State, event: OperatorInstanceEvent) {
   return state;
 }
 
-function handleSubscriber(state: State, event: SubscriberEvent) {
-  const subscriber: Subscriber = {
+function handleSubscriber(state: State.State, event: Event.SubscriberEvent) {
+  const subscriber: State.Subscriber = {
     kind: 'subscriber',
     id: event.subscriber,
     next: event.next,
@@ -171,10 +64,10 @@ function handleSubscriber(state: State, event: SubscriberEvent) {
   return state;
 }
 
-function handleSubscribe(state: State, event: SubscribeEvent) {
+function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
   const sender = state.senders[event.sender];
   const receiver = state.receivers[event.receiver];
-  const subscribe: Subscribe = {
+  const subscribe: State.Subscribe = {
     kind: 'subscribe',
     sender,
     receiver,
@@ -189,10 +82,10 @@ function handleSubscribe(state: State, event: SubscribeEvent) {
   return state;
 }
 
-function handleUnsubscribe(state: State, event: UnsubscribeEvent) {
+function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
   const sender = state.senders[event.sender];
   const receiver = state.receivers[event.receiver];
-  const unsubscribe: Unsubscribe = {
+  const unsubscribe: State.Unsubscribe = {
     kind: 'unsubscribe',
     sender,
     receiver,
@@ -204,14 +97,14 @@ function handleUnsubscribe(state: State, event: UnsubscribeEvent) {
   return state;
 }
 
-function handleNotification(state: State, event: NotificationEvent) {
+function handleNotification(state: State.State, event: Event.NotificationEvent) {
   const sender = state.senders[event.sender];
   const receiver = state.receivers[event.receiver];
-  const cause: Cause = {
+  const cause: State.Cause = {
     kind: event.cause.kind,
     notification: state.notifications[event.cause.notification],
   };
-  const notification: Notification = {
+  const notification: State.Notification = {
     kind: event.kind as any,
     id: event.notification,
     sender,
@@ -230,7 +123,7 @@ function handleNotification(state: State, event: NotificationEvent) {
 }
 
 export function state$(rxInspector: RxInspector) {
-  const initialState: State = {
+  const initialState: State.State = {
     observables: {},
     senders: {},
     receivers: {},
@@ -238,7 +131,8 @@ export function state$(rxInspector: RxInspector) {
   };
   return fromRxInspector(rxInspector)
     .pipe(
-      rxOperators.scan((state: State, event: InspectorEvent): State => {
+      scan((state: State.State, event: Event.Event): State.State => {
+        console.log(event);
         switch (event.kind) {
           case 'operator':
             return handleOperator(state, event);

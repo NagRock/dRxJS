@@ -1,12 +1,10 @@
 import {Component} from '@angular/core';
-import {map, mergeMap, shareReplay, tap} from 'rxjs/operators';
-import {of} from 'rxjs';
 import {data as DATA} from '../__instrument__/data';
 import {MatTreeNestedDataSource} from '@angular/material';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {EventModel, getModel, Model, StreamModel} from './model';
-import anime from 'animejs';
 import {getEvents} from './events';
+import {runSimpleExample} from './examples';
 
 
 const getStreamsByLocation = (streams: StreamModel[]) => {
@@ -35,9 +33,9 @@ export class AppComponent {
   event: EventModel;
 
   constructor() {
-    // this.runSimpleExampleWithPrimitives();
-    this.runSimpleExample();
-    // this.runMousePositionExample();
+    // runSimpleExampleWithPrimitives();
+    runSimpleExample();
+    // runMousePositionExample();
   }
 
   setStream(stream: StreamModel) {
@@ -54,53 +52,5 @@ export class AppComponent {
     if (id !== undefined) {
       this.setStream(this.model.streams[id]);
     }
-  }
-
-  private runSimpleExample() {
-
-    const source$ = of('a', 'b', 'c', 'd')
-      .pipe(
-        map((zeroMap) => `${zeroMap}:${zeroMap}`),
-      );
-
-    const stream$ = source$
-      .pipe(
-        map((firstMap) => `${firstMap}:${firstMap}`),
-        // shareReplay(1),
-        map((lastMap) => `${lastMap}:${lastMap}`),
-      );
-
-    stream$.subscribe(((x) => console.log('result:', x)));
-    // stream$.subscribe(((x) => console.log('result:', x)));
-  }
-
-  private runSimpleExample2() {
-
-    const stream$ = of('a', 'b', 'c', 'd')
-      .pipe(
-        map((zeroMap) => `${zeroMap}:${zeroMap}`),
-        // mergeMap((mergeX) => {
-        //   return of(mergeX, mergeX);
-        // }),
-        map((firstMap) => `${firstMap}:${firstMap}`),
-        // tap(() => console.trace()),
-        // delay(1000),
-        // shareReplay(1),
-        map((lastMap) => `${lastMap}:${lastMap}`),
-      );
-
-    stream$.subscribe(((x) => console.log('result:', x)));
-    // stream$.subscribe(((x) => console.log('result:', x)));
-  }
-
-
-  private runSimpleExampleWithPrimitives() {
-    const stream$ = of('a', 'a', 'a', 'b', 'a', 'c', 'd')
-      .pipe(
-        map((FIRST) => FIRST),
-        map((LAST) => LAST),
-      );
-
-    stream$.subscribe(((x) => console.log('result:', x)));
   }
 }

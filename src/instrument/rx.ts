@@ -1,5 +1,5 @@
-import * as instrumentedRx from 'rxjs';
-import * as instrumentedRxOperators from 'rxjs/operators';
+import * as instrumentedRx from 'instrumented-rxjs';
+import * as instrumentedRxOperators from 'instrumented-rxjs/operators';
 
 export {instrumentedRx, instrumentedRxOperators};
 

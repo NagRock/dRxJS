@@ -4,7 +4,8 @@
 
 import {enableInstrumentation} from '../instrument';
 import {state$} from '../app/state';
-import {rx, rxOperators} from '../instrument/rx';
+import {asapScheduler} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
 
 export const environment = {
   production: false
@@ -13,7 +14,7 @@ export const environment = {
 const rxInspector = enableInstrumentation();
 
 state$(rxInspector)
-  // .pipe(rxOperators.debounceTime(0, rx.asapScheduler))
+  .pipe(debounceTime(0, asapScheduler))
   .subscribe((state) => {
     console.log(state);
   });

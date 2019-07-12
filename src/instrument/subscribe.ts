@@ -1,5 +1,4 @@
 import {instrumentedRx, rx} from './rx';
-import {Subscriber} from 'rxjs';
 import {getNextObservableInstanceId} from './ids';
 import {rxInspector} from './rx-inspector';
 import {Receiver, SubscriberEvent} from './types';
@@ -26,10 +25,12 @@ export function instrumentSubscribe() {
   instrumentedRx.Observable.prototype.subscribe = function(observerOrNext?, error?, complete?) {
     if (this.__skip_instrumentation__
       || (observerOrNext && observerOrNext.__skip_instrumentation__)
-      || observerOrNext instanceof instrumentedRx.Subscriber) {
+      ||  observerOrNext instanceof instrumentedRx.Subscriber
+      // || (observerOrNext && observerOrNext.__receiver_id__ !== undefined) // todo: ??
+    ) {
       return subscribe.call(this, observerOrNext, error, complete);
     } else {
-      const subscriber = new Subscriber(observerOrNext, error, complete);
+      const subscriber = new instrumentedRx.Subscriber(observerOrNext, error, complete);
       const receiver = subscriber as any as Receiver;
       receiver.__receiver_id__ = trackSubscriber(observerOrNext, error, complete);
       receiver.__set_last_received_notification_id__ = () => {}; // todo: set cause for callback functions

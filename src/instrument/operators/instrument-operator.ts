@@ -1,4 +1,5 @@
-import {Observable, OperatorFunction, pipe} from 'rxjs';
+import {Observable, OperatorFunction} from 'instrumented-rxjs';
+import {rx} from '../rx';
 import {rxInspector} from '../rx-inspector';
 import {
   Cause,
@@ -132,7 +133,7 @@ export const instrumentTransformingOperator =
       const operatorId = trackOperator(operator, args);
       let lastSenderId: number;
       let lastReceivedNotificationId: number;
-      return pipe(
+      return rx.pipe(
         (stream: Observable<any>) => {
           return Observable.create((receiver: Receiver) => {
             receiver.__receiver_id__ = lastSenderId;

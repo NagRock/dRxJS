@@ -1,4 +1,4 @@
-import {Observer, OperatorFunction} from 'rxjs';
+import {Observer, OperatorFunction} from 'instrumented-rxjs';
 
 export interface ObserverWithDestination extends Observer<any> {
   destination: ObserverWithDestination;
