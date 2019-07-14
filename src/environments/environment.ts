@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 import {enableInstrumentation} from '../instrument';
-import {state$} from '../app/state';
+import {getState$} from '../app/state';
 import {asapScheduler} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
 
@@ -13,7 +13,7 @@ export const environment = {
 
 const rxInspector = enableInstrumentation();
 
-state$(rxInspector)
+getState$(rxInspector)
   .pipe(debounceTime(0, asapScheduler))
   .subscribe((state) => {
     console.log(state);

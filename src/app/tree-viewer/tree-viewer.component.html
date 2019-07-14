@@ -1,45 +1,33 @@
-<ng-container>
-  <svg
-    #svg
-    *ngIf="layout$ | async as layout"
-    [attr.viewBox]="'0 0 ' + width + ' ' + height"
-    style="background-color: rebeccapurple; border-radius: 3px"
-    width="100%"
-    height="100%"
-  >
-    <g #g>
-      <path
-        *ngFor="let link of layout.links"
-        fill="none"
-        stroke-width="4"
-        stroke="black"
-        [ngStyle]="{'opacity': isLinkActive(link) ? '1' : '0.25'}"
-        [attr.data-source]="link.source.data.id"
-        [attr.data-target]="link.target.data.id"
-        [attr.d]="getLinkPath(link, 800, getHeight(layout.height))">
-      </path>
+<svg
+  *ngIf="layout$ | async as layout"
+  [attr.viewBox]="'0 0 ' + getWidth(layout) + ' ' + getHeight(layout)"
+>
+<!--  <path-->
+<!--    *ngFor="let link of layout.links"-->
+<!--    fill="none"-->
+<!--    stroke-width="4"-->
+<!--    stroke="black"-->
+<!--    [ngStyle]="{'opacity': isLinkActive(link) ? '1' : '0.25'}"-->
+<!--    [attr.data-source]="link.source.data.id"-->
+<!--    [attr.data-target]="link.target.data.id"-->
+<!--    [attr.d]="getLinkPath(link, 800, getHeight(layout.height))">-->
+<!--  </path>-->
 
 
-      <circle
-        *ngFor="let node of layout.nodes"
-        r="16"
-        stroke="black"
-        stroke-width="4"
-        [ngStyle]="{'opacity': isNodeActive(node) ? '1' : '0.25'}"
-        [attr.fill]="isNodeHighlighted(node.data.id) ? 'red' : node.data.id === stream.id ? 'chocolate' : 'darkgrey'"
-        [attr.transform]="getNodeTransform(node, 800, getHeight(layout.height))"
-        [appOverlay]="overlay"
-        [appOverlayData]="node.data"
-        (click)="selectStream(node.data)">
-      </circle>
-    </g>
-  </svg>
+  <circle
+    *ngFor="let node of layout.nodes"
+    r="16"
+    fill="red"
+    stroke="black"
+    stroke-width="4"
+    [attr.transform]="getNodeTransform(node)">
+  </circle>
+</svg>
 
-</ng-container>
 
-<ng-template #overlay let-data>
-  <div class="overlay">
-    <code class="location">{{data.location.file}} ({{data.location.line}}:{{data.location.char}}) #{{data.id}}</code>
-    <code class="expression">{{data.expression}}</code>
-  </div>
-</ng-template>
+<!--<ng-template #overlay let-data>-->
+<!--  <div class="overlay">-->
+<!--    <code class="location">{{data.location.file}} ({{data.location.line}}:{{data.location.char}}) #{{data.id}}</code>-->
+<!--    <code class="expression">{{data.expression}}</code>-->
+<!--  </div>-->
+<!--</ng-template>-->

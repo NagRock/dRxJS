@@ -24,6 +24,10 @@ export interface OperatorInstance {
   events: Event[];
 }
 
+export type ObservableInstance
+  = OperatorInstance;
+
+
 export interface Subscriber {
   kind: 'subscriber';
   id: number;
@@ -37,9 +41,29 @@ export interface Subscriber {
 export type Sender
   = OperatorInstance;
 
+
 export type Receiver
   = OperatorInstance
   | Subscriber;
+
+export function isSender(x: Sender | Receiver): x is Sender {
+  switch (x.kind) {
+    case 'operator-instance':
+      return true;
+    default:
+      return false;
+  }
+}
+
+export function isReceiver(x: Sender | Receiver): x is Receiver {
+  switch (x.kind) {
+    case 'operator-instance':
+    case 'subscriber':
+      return true;
+    default:
+      return false;
+  }
+}
 
 
 export interface Subscribe {

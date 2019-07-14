@@ -1,21 +1,9 @@
 import {Component} from '@angular/core';
-import {data as DATA} from '../__instrument__/data';
-import {MatTreeNestedDataSource} from '@angular/material';
-import {NestedTreeControl} from '@angular/cdk/tree';
-import {EventModel, getModel, Model, StreamModel} from './model';
-import {getEvents} from './events';
+import {getState$} from './state';
+import {rxInspector} from '../instrument/rx-inspector';
+import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
+import {debounceTime, map, tap} from 'rxjs/operators';
 import {runSimpleExample} from './examples';
-
-
-const getStreamsByLocation = (streams: StreamModel[]) => {
-  const groups = streams.reduce((streamsByFile, stream) => {
-    const location = `${stream.location.file} (${stream.location.line}:${stream.location.char})`;
-    const group = streamsByFile[location] || (streamsByFile[location] = []);
-    group.push(stream);
-    return streamsByFile;
-  }, {});
-  return Object.entries(groups).map(([location, instances]) => ({location, instances}));
-};
 
 
 @Component({
@@ -25,32 +13,20 @@ const getStreamsByLocation = (streams: StreamModel[]) => {
 })
 export class AppComponent {
 
-  treeControl = new NestedTreeControl<any>(node => node.instances);
-  dataSource = new MatTreeNestedDataSource<any>();
-  model: Model;
-  stream: StreamModel;
-  events: EventModel[];
-  event: EventModel;
+  readonly selectedObservableIdSubject = new BehaviorSubject<number>(1);
+
+  readonly state$ = getState$(rxInspector).pipe(debounceTime(0, asapScheduler));
+  readonly selectedObservable$ = combineLatest(
+    this.state$,
+    this.selectedObservableIdSubject.asObservable(),
+  ).pipe(
+    map(([state, selectedObservableId]) => {
+      return state.senders[selectedObservableId];
+    }),
+  );
 
   constructor() {
-    // runSimpleExampleWithPrimitives();
-    runSimpleExample();
-    // runMousePositionExample();
+    setTimeout(runSimpleExample);
   }
 
-  setStream(stream: StreamModel) {
-    this.stream = stream;
-    this.events = getEvents(stream);
-  }
-
-  hasChild = (_: number, node: any) => !!node.instances && node.instances.length > 0;
-
-  refresh(id?: number) {
-    this.model = getModel(DATA);
-    this.dataSource.data = getStreamsByLocation(this.model.streams);
-
-    if (id !== undefined) {
-      this.setStream(this.model.streams[id]);
-    }
-  }
 }
