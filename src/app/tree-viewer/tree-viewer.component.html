@@ -2,26 +2,36 @@
   *ngIf="layout$ | async as layout"
   [attr.viewBox]="'0 0 ' + getWidth(layout) + ' ' + getHeight(layout)"
 >
-<!--  <path-->
-<!--    *ngFor="let link of layout.links"-->
-<!--    fill="none"-->
-<!--    stroke-width="4"-->
-<!--    stroke="black"-->
-<!--    [ngStyle]="{'opacity': isLinkActive(link) ? '1' : '0.25'}"-->
-<!--    [attr.data-source]="link.source.data.id"-->
-<!--    [attr.data-target]="link.target.data.id"-->
-<!--    [attr.d]="getLinkPath(link, 800, getHeight(layout.height))">-->
-<!--  </path>-->
+  <!--  <path-->
+  <!--    *ngFor="let link of layout.links"-->
+  <!--    fill="none"-->
+  <!--    stroke-width="4"-->
+  <!--    stroke="black"-->
+  <!--    [ngStyle]="{'opacity': isLinkActive(link) ? '1' : '0.25'}"-->
+  <!--    [attr.data-source]="link.source.data.id"-->
+  <!--    [attr.data-target]="link.target.data.id"-->
+  <!--    [attr.d]="getLinkPath(link, 800, getHeight(layout.height))">-->
+  <!--  </path>-->
 
 
-  <circle
+  <g
     *ngFor="let node of layout.nodes"
-    r="16"
-    fill="red"
-    stroke="black"
-    stroke-width="4"
     [attr.transform]="getNodeTransform(node)">
-  </circle>
+    <circle
+      r="16"
+      fill="red"
+      stroke="black"
+      stroke-width="4">
+    </circle>
+    <text
+      y="16"
+      text-anchor="middle"
+      dominant-baseline="text-before-edge"
+      font-size="12px"
+      font-weight="600">
+      {{node.data?.operator?.func?.name}} <!--todo: make generic-->
+    </text>
+  </g>
 </svg>
 
 

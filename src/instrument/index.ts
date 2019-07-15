@@ -54,7 +54,7 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.delayWhen, instrumentOperator],
   [rxOperators.dematerialize, instrumentOperator],
   [rxOperators.distinct, instrumentOperator],
-  [rxOperators.distinctUntilChanged, instrumentOperator],
+  [rxOperators.distinctUntilChanged, instrumentTransformingOperator],
   [rxOperators.distinctUntilKeyChanged, instrumentOperator],
   [rxOperators.elementAt, instrumentTransformingOperator],
   [rxOperators.endWith, instrumentTransformingOperator], // scheduler

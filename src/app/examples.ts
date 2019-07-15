@@ -1,5 +1,5 @@
 import {of} from 'instrumented-rxjs';
-import {map} from 'instrumented-rxjs/operators';
+import {distinctUntilChanged, map} from 'instrumented-rxjs/operators';
 
 export const runSimpleExample = () => {
 
@@ -7,6 +7,7 @@ export const runSimpleExample = () => {
     .pipe(
       map((x0) => `${x0}:${x0}`),
       map((x1) => `${x1}:${x1}`),
+      distinctUntilChanged(),
     );
   source$.subscribe(((x) => console.log('result:', x)));
 };

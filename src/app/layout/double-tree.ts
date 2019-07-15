@@ -18,8 +18,10 @@ export function doubleTreeLayout<T>(
   } else {
     const incoming = treeLayout(rootNode, getIncomingChildren);
     const outgoing = treeLayout(rootNode, getOutgoingChildren);
-    const width = Math.max(incoming.width, outgoing.width);
-    const height = incoming.height + outgoing.height;
+    const {width: incomingWidth, height: incomingHeight} = incoming;
+    const {width: outgoingWidth, height: outgoingHeight} = outgoing;
+    const width = Math.max(incomingWidth, outgoingWidth);
+    const height = incomingHeight + outgoingHeight;
     incoming.links.forEach((l) => {
       const {source, target} = l;
       l.source = target;
@@ -28,14 +30,14 @@ export function doubleTreeLayout<T>(
     const incomingNodeOffset = incoming.nodes[0].x - width / 2;
     incoming.nodes.forEach((n) => {
       const {x, y} = n;
-      n.x = width === 0 ? 0 : x / width - incomingNodeOffset;
-      n.y = height === 0 ? 0 : (incoming.height - y) / height;
+      n.x = width === 0 ? 0 : (x / incomingWidth / width - incomingNodeOffset) * width;
+      n.y = height === 0 ? 0 : (incoming.height - y / incomingHeight);
     });
     const outgoingNodeOffset = outgoing.nodes[0].x - width / 2;
     outgoing.nodes.forEach((n) => {
       const {x, y} = n;
-      n.x = width === 0 ? 0 : x / width - outgoingNodeOffset;
-      n.y = height === 0 ? 0 : 1 - (outgoing.height - y) / height;
+      n.x = width === 0 ? 0 : (x / outgoingWidth / width - outgoingNodeOffset) * width;
+      n.y = height === 0 ? 0 : 1 - (outgoing.height - y / outgoingHeight);
     });
 
     const root = incoming.nodes[0];

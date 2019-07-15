@@ -20,36 +20,28 @@ export interface TreeLayout<T> {
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
-export function isVerticalDirection(direction: Direction): boolean {
-  switch (direction) {
-    case 'up':
-    case 'down':
-      return true;
-    default:
-      return false;
-  }
+function changeDirectionToRight<T>(layout: TreeLayout<T>): TreeLayout<T> {
+  const {width, height} = layout;
+  layout.width = height;
+  layout.height = width;
+
+  layout.nodes.forEach((node) => {
+    const {x, y} = node;
+    node.x = y;
+    node.y = x;
+  });
+
+  return layout;
 }
 
-export function isHorizontalDirection(direction: Direction): boolean {
+export function changeDirection<T>(layout: TreeLayout<T>, direction: Direction): TreeLayout<T> {
   switch (direction) {
-    case 'left':
-    case 'right':
-      return true;
-    default:
-      return false;
-  }
-}
-
-export function getOppositeDirection(direction: Direction): Direction {
-  switch (direction) {
-    case 'up':
-      return 'down';
     case 'down':
-      return 'up';
-    case 'left':
-      return 'right';
+      return layout;
     case 'right':
-      return 'left';
+      return changeDirectionToRight(layout);
+    default:
+      throw new Error(`Direction not supported: '${direction}'`);
   }
 }
 
@@ -61,6 +53,12 @@ export function treeLayout<T>(
   const nodes = hierarchy<T>(rootNode, getChildren);
   const {width, height} = getTreeDimensions(nodes);
   const layoutResult = tree<T>().size([width, height])(nodes);
+
+  layoutResult.descendants().forEach((node) => {
+    node.x = node.x * width;
+    node.y = node.y * height;
+  });
+
   return {
     nodes: layoutResult.descendants(),
     links: layoutResult.links(),
