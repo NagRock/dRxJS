@@ -13,7 +13,7 @@ export function doubleTreeLayout<T>(
   getOutgoingChildren: (node: T) => T[],
   // direction: 'right'
 ): DoubleTreeLayout<T> {
-  if (rootNode === undefined) {
+  if (!rootNode) {
     return {nodes: [], links: [], width: 0, height: 0};
   } else {
     const incoming = treeLayout(rootNode, getIncomingChildren);

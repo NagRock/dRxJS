@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {isReceiver, isSender, ObservableInstance, Receiver, Sender} from '../state';
-import {Subject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {changeDirection} from '../layout/tree';
 import {DoubleTreeLayout, doubleTreeLayout} from '../layout/double-tree';
@@ -13,7 +13,7 @@ import {getHeight, getWidth} from './coords';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TreeViewerComponent {
-  private readonly observableSubject = new Subject<Sender | Receiver>();
+  private readonly observableSubject = new BehaviorSubject<Sender | Receiver>(undefined);
 
   readonly layout$ = this.observableSubject.asObservable().pipe(
     map((observable) => doubleTreeLayout(
@@ -24,9 +24,13 @@ export class TreeViewerComponent {
     map((layout) => changeDirection(layout, 'right')),
   );
 
-  @Input()
-  set observable(observable: ObservableInstance) {
+  @Input('observable')
+  set observableInput(observable: ObservableInstance) {
     this.observableSubject.next(observable);
+  }
+
+  get observable() {
+    return this.observableSubject.getValue();
   }
 
   getWidth(layout: DoubleTreeLayout<any>) {

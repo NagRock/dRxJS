@@ -10,13 +10,12 @@
       stroke-width="4">
     </path>
 
-
   <g
     *ngFor="let node of layout.nodes"
     [appTreeViewerNode]="node">
     <circle
       r="16"
-      fill="red"
+      [attr.fill]="node.data === observable ? 'red' : 'white'"
       stroke="black"
       stroke-width="4">
     </circle>
