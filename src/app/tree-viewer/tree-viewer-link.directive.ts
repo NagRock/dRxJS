@@ -1,7 +1,7 @@
 import {Directive, HostBinding, Input} from '@angular/core';
 import {Link} from '../layout/tree';
 import {getX, getY} from './coords';
-import {Receiver, Sender} from '../state';
+import {Instance} from '../state';
 
 @Directive({
   selector: 'path[appTreeViewerLink]'
@@ -9,7 +9,7 @@ import {Receiver, Sender} from '../state';
 export class TreeViewerLinkDirective {
 
   @Input()
-  appTreeViewerLink: Link<Sender | Receiver>;
+  appTreeViewerLink: Link<Instance | Instance>;
 
   @HostBinding('attr.data-source')
   get attrDataSource() {

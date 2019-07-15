@@ -19,22 +19,23 @@ export interface Cause {
   notification: number;
 }
 
-export interface OperatorEvent {
-  kind: 'operator';
-  operator: number;
+export interface OperatorDefinitionEvent {
+  kind: 'operator-definition';
+  definition: number;
   func: (...args: any[]) => OperatorFunction<any, any>;
   args: any[];
 }
 
 export interface OperatorInstanceEvent {
   kind: 'operator-instance';
-  operator: number;
-  operatorInstance: number;
+  definition: number;
+  instance: number;
 }
 
-export interface SubscriberEvent {
-  kind: 'subscriber';
-  subscriber: number;
+export interface SubscribeInstanceEvent {
+  kind: 'subscribe-instance';
+  instance: number;
+  // todo: extract definition?
   next: (value) => void;
   error: (error) => void;
   complete: () => void;
@@ -85,9 +86,9 @@ export type NotificationEvent
   | CompleteNotificationEvent;
 
 export type Event
-  = OperatorEvent
+  = OperatorDefinitionEvent
   | OperatorInstanceEvent
-  | SubscriberEvent
+  | SubscribeInstanceEvent
   | SubscribeEvent
   | UnsubscribeEvent
   | NotificationEvent;

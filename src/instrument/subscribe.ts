@@ -1,15 +1,15 @@
 import {instrumentedRx, rx} from './rx';
 import {getNextObservableInstanceId} from './ids';
 import {rxInspector} from './rx-inspector';
-import {Receiver, SubscriberEvent} from './types';
+import {Receiver, SubscribeInstanceEvent} from './types';
 
 
 function trackSubscriber(next, error, complete) {
   const subscriber = getNextObservableInstanceId();
 
-  const event: SubscriberEvent = {
-    kind: 'subscriber',
-    subscriber,
+  const event: SubscribeInstanceEvent = {
+    kind: 'subscribe-instance',
+    instance: subscriber,
     next,
     error,
     complete

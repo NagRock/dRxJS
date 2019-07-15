@@ -15,58 +15,58 @@ function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
   });
 }
 
-function handleOperator(state: State.State, event: Event.OperatorEvent) {
-  const operator: State.Operator = {
-    kind: 'operator',
-    id: event.operator,
+function handleOperatorDefinition(state: State.State, event: Event.OperatorDefinitionEvent) {
+  const operator: State.OperatorDefinition = {
+    kind: 'operator-definition',
+    id: event.definition,
     func: event.func,
     args: event.args,
     instances: [],
   };
 
-  state.observables[operator.id] = operator;
+  state.definitions[operator.id] = operator;
 
   return state;
 }
 
 function handleOperatorInstance(state: State.State, event: Event.OperatorInstanceEvent) {
-  const operator = state.observables[event.operator];
-  const operatorInstance: State.OperatorInstance = {
+  const definition = state.definitions[event.definition];
+  const instance: State.OperatorInstance = {
     kind: 'operator-instance',
-    id: event.operatorInstance,
-    operator,
+    id: event.instance,
+    definition,
     receivers: [],
     senders: [],
     events: [],
   };
 
-  state.senders[operatorInstance.id] = operatorInstance;
-  state.receivers[operatorInstance.id] = operatorInstance;
+  state.instances[instance.id] = instance;
 
-  operator.instances.push(operatorInstance);
+  definition.instances.push(instance);
 
   return state;
 }
 
-function handleSubscriber(state: State.State, event: Event.SubscriberEvent) {
-  const subscriber: State.Subscriber = {
-    kind: 'subscriber',
-    id: event.subscriber,
+function handleSubscribeInstance(state: State.State, event: Event.SubscribeInstanceEvent) {
+  const instance: State.SubscribeInstance = {
+    kind: 'subscribe-instance',
+    id: event.instance,
     next: event.next,
     error: event.error,
     complete: event.complete,
     senders: [],
+    receivers: [],
     events: [],
   };
 
-  state.receivers[subscriber.id] = subscriber;
+  state.instances[instance.id] = instance;
 
   return state;
 }
 
 function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
-  const sender = state.senders[event.sender];
-  const receiver = state.receivers[event.receiver];
+  const sender = state.instances[event.sender];
+  const receiver = state.instances[event.receiver];
   const subscribe: State.Subscribe = {
     kind: 'subscribe',
     time: clock(),
@@ -84,8 +84,8 @@ function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
 }
 
 function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
-  const sender = state.senders[event.sender];
-  const receiver = state.receivers[event.receiver];
+  const sender = state.instances[event.sender];
+  const receiver = state.instances[event.receiver];
   const unsubscribe: State.Unsubscribe = {
     kind: 'unsubscribe',
     time: clock(),
@@ -100,8 +100,8 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
 }
 
 function handleNotification(state: State.State, event: Event.NotificationEvent) {
-  const sender = state.senders[event.sender];
-  const receiver = state.receivers[event.receiver];
+  const sender = state.instances[event.sender];
+  const receiver = state.instances[event.receiver];
   const cause: State.Cause = {
     kind: event.cause.kind,
     notification: state.notifications[event.cause.notification],
@@ -127,21 +127,20 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
 
 export function getState$(rxInspector: RxInspector) {
   const initialState: State.State = {
-    observables: {},
-    senders: {},
-    receivers: {},
+    definitions: {},
+    instances: {},
     notifications: {},
   };
   return fromRxInspector(rxInspector)
     .pipe(
       scan((state: State.State, event: Event.Event): State.State => {
         switch (event.kind) {
-          case 'operator':
-            return handleOperator(state, event);
+          case 'operator-definition':
+            return handleOperatorDefinition(state, event);
           case 'operator-instance':
             return handleOperatorInstance(state, event);
-          case 'subscriber':
-            return handleSubscriber(state, event);
+          case 'subscribe-instance':
+            return handleSubscribeInstance(state, event);
           case 'subscribe':
             return handleSubscribe(state, event);
           case 'unsubscribe':

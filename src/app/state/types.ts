@@ -4,80 +4,53 @@ export interface Index<T> {
   [key: number]: T;
 }
 
-export interface Operator {
-  kind: 'operator';
+export interface OperatorDefinition {
+  kind: 'operator-definition';
   id: number;
   func: (...args: any[]) => rx.OperatorFunction<any, any>;
   args: any[];
   instances: OperatorInstance[];
 }
 
-export type Observable
-  = Operator;
-
 export interface OperatorInstance {
   kind: 'operator-instance';
   id: number;
-  operator: Operator;
-  receivers: Receiver[];
-  senders: Sender[];
+  definition: OperatorDefinition;
+  receivers: Instance[];
+  senders: Instance[];
   events: Event[];
 }
 
-export type ObservableInstance
-  = OperatorInstance;
-
-
-export interface Subscriber {
-  kind: 'subscriber';
+export interface SubscribeInstance {
+  kind: 'subscribe-instance';
   id: number;
   next: (value) => void;
   error: (error) => void;
   complete: () => void;
-  senders: Sender[];
+  senders: Instance[];
+  receivers: Instance[];
   events: Event[];
 }
 
-export type Sender
-  = OperatorInstance;
+export type Definition
+  = OperatorDefinition;
 
-
-export type Receiver
+export type Instance
   = OperatorInstance
-  | Subscriber;
-
-export function isSender(x: Sender | Receiver): x is Sender {
-  switch (x.kind) {
-    case 'operator-instance':
-      return true;
-    default:
-      return false;
-  }
-}
-
-export function isReceiver(x: Sender | Receiver): x is Receiver {
-  switch (x.kind) {
-    case 'operator-instance':
-    case 'subscriber':
-      return true;
-    default:
-      return false;
-  }
-}
-
+  | SubscribeInstance;
 
 export interface Subscribe {
   kind: 'subscribe';
   time: number;
-  sender: Sender;
-  receiver: Receiver;
+  sender: Instance;
+  receiver: Instance;
 }
 
 export interface Unsubscribe {
   kind: 'unsubscribe';
   time: number;
-  sender: Sender;
-  receiver: Receiver;
+  sender: Instance;
+  receiver: Instance;
 }
 
 export interface Cause {
@@ -89,8 +62,8 @@ export interface NextNotification {
   kind: 'notification:next';
   id: number;
   time: number;
-  sender: Sender;
-  receiver: Receiver;
+  sender: Instance;
+  receiver: Instance;
   cause: Cause;
   value: any;
 }
@@ -99,8 +72,8 @@ export interface ErrorNotification {
   kind: 'notification:error';
   id: number;
   time: number;
-  sender: Sender;
-  receiver: Receiver;
+  sender: Instance;
+  receiver: Instance;
   cause: Cause;
   error: any;
 }
@@ -109,8 +82,8 @@ export interface CompleteNotification {
   kind: 'notification:complete';
   id: number;
   time: number;
-  sender: Sender;
-  receiver: Receiver;
+  sender: Instance;
+  receiver: Instance;
   cause: Cause;
 }
 
@@ -125,8 +98,7 @@ export type Event
   | Unsubscribe;
 
 export interface State {
-  observables: Index<Observable>;
-  senders: Index<Sender>;
-  receivers: Index<Receiver>;
+  definitions: Index<Definition>;
+  instances: Index<Instance>;
   notifications: Index<Notification>;
 }

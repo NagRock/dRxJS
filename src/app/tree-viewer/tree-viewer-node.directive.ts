@@ -1,6 +1,6 @@
 import {Directive, HostBinding, Input} from '@angular/core';
 import {Node} from '../layout/tree';
-import {Receiver, Sender} from '../state';
+import {Instance} from '../state';
 import {getX, getY} from './coords';
 
 @Directive({
@@ -9,7 +9,7 @@ import {getX, getY} from './coords';
 export class TreeViewerNodeDirective {
 
   @Input()
-  appTreeViewerNode: Node<Sender | Receiver>;
+  appTreeViewerNode: Node<Instance | Instance>;
 
   @HostBinding('attr.data-node')
   get attrDataNode() {

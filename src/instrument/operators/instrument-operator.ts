@@ -6,7 +6,7 @@ import {
   CompleteNotificationEvent,
   ErrorNotificationEvent,
   NextNotificationEvent,
-  OperatorEvent,
+  OperatorDefinitionEvent,
   OperatorInstanceEvent,
   Receiver,
   Sender,
@@ -23,9 +23,9 @@ export type InstrumentOperator = <IN, OUT, ARGS extends any[]>(operator: RxOpera
 function trackOperator<IN, OUT, ARGS extends any[]>(func: RxOperator<IN, OUT, ARGS>, args: ARGS): number {
   const operator = getNextObservableId();
 
-  const event: OperatorEvent = {
-    kind: 'operator',
-    operator,
+  const event: OperatorDefinitionEvent = {
+    kind: 'operator-definition',
+    definition: operator,
     func,
     args,
   };
@@ -40,8 +40,8 @@ function trackOperatorInstance(operator: number): number {
 
   const event: OperatorInstanceEvent = {
     kind: 'operator-instance',
-    operator,
-    operatorInstance,
+    definition: operator,
+    instance: operatorInstance,
   };
 
   rxInspector.dispatch(event);
