@@ -2,11 +2,9 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {isReceiver, isSender, ObservableInstance, Receiver, Sender} from '../state';
 import {Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {Node, Link, changeDirection} from '../layout/tree';
+import {changeDirection} from '../layout/tree';
 import {DoubleTreeLayout, doubleTreeLayout} from '../layout/double-tree';
-
-const distanceBetweenNodes = 320;
-const distanceBetweenNodeAndEdge = distanceBetweenNodes / 2;
+import {getHeight, getWidth} from './coords';
 
 @Component({
   selector: 'app-tree-viewer',
@@ -32,16 +30,10 @@ export class TreeViewerComponent {
   }
 
   getWidth(layout: DoubleTreeLayout<any>) {
-    return 2 * distanceBetweenNodeAndEdge + Math.max(layout.width - 1, 0) * distanceBetweenNodes;
+    return getWidth(layout.width);
   }
 
   getHeight(layout: DoubleTreeLayout<any>) {
-    return 2 * distanceBetweenNodeAndEdge + Math.max(layout.height - 1, 0) * distanceBetweenNodes;
-  }
-
-  getNodeTransform(node: Node<any>) {
-    const x = distanceBetweenNodeAndEdge + node.x * distanceBetweenNodes;
-    const y = distanceBetweenNodeAndEdge + node.y * distanceBetweenNodes;
-    return `translate(${x},${y})`;
+    return getHeight(layout.height);
   }
 }

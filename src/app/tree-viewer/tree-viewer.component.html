@@ -2,21 +2,18 @@
   *ngIf="layout$ | async as layout"
   [attr.viewBox]="'0 0 ' + getWidth(layout) + ' ' + getHeight(layout)"
 >
-  <!--  <path-->
-  <!--    *ngFor="let link of layout.links"-->
-  <!--    fill="none"-->
-  <!--    stroke-width="4"-->
-  <!--    stroke="black"-->
-  <!--    [ngStyle]="{'opacity': isLinkActive(link) ? '1' : '0.25'}"-->
-  <!--    [attr.data-source]="link.source.data.id"-->
-  <!--    [attr.data-target]="link.target.data.id"-->
-  <!--    [attr.d]="getLinkPath(link, 800, getHeight(layout.height))">-->
-  <!--  </path>-->
+    <path
+      *ngFor="let link of layout.links"
+      [appTreeViewerLink]="link"
+      fill="none"
+      stroke="black"
+      stroke-width="4">
+    </path>
 
 
   <g
     *ngFor="let node of layout.nodes"
-    [attr.transform]="getNodeTransform(node)">
+    [appTreeViewerNode]="node">
     <circle
       r="16"
       fill="red"
