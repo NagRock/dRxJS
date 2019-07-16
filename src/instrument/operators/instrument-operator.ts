@@ -7,7 +7,7 @@ import {
   ErrorNotificationEvent,
   NextNotificationEvent,
   OperatorDefinitionEvent,
-  OperatorInstanceEvent,
+  InstanceEvent,
   Receiver,
   Sender,
   SubscribeEvent,
@@ -38,7 +38,7 @@ function trackOperator<IN, OUT, ARGS extends any[]>(func: RxOperator<IN, OUT, AR
 function trackOperatorInstance(operator: number): number {
   const operatorInstance = getNextObservableInstanceId();
 
-  const event: OperatorInstanceEvent = {
+  const event: InstanceEvent = {
     kind: 'operator-instance',
     definition: operator,
     instance: operatorInstance,
@@ -74,7 +74,7 @@ function trackNextNotification(sender: number, receiver: number, value: any, cau
   const notification = getNextNotificationId();
 
   const event: NextNotificationEvent = {
-    kind: 'notification:next',
+    kind: 'next',
     sender,
     receiver,
     notification,
@@ -91,7 +91,7 @@ function trackErrorNotification(sender: number, receiver: number, error: any, ca
   const notification = getNextNotificationId();
 
   const event: ErrorNotificationEvent = {
-    kind: 'notification:error',
+    kind: 'error',
     sender,
     receiver,
     notification,
@@ -108,7 +108,7 @@ function trackCompleteNotification(sender: number, receiver: number, cause: Caus
   const notification = getNextNotificationId();
 
   const event: CompleteNotificationEvent = {
-    kind: 'notification:complete',
+    kind: 'complete',
     sender,
     receiver,
     notification,

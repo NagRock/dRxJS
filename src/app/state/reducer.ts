@@ -16,7 +16,7 @@ function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
 }
 
 function handleOperatorDefinition(state: State.State, event: Event.OperatorDefinitionEvent) {
-  const operator: State.OperatorDefinition = {
+  const definition: State.OperatorDefinition = {
     kind: 'operator-definition',
     id: event.definition,
     func: event.func,
@@ -24,15 +24,30 @@ function handleOperatorDefinition(state: State.State, event: Event.OperatorDefin
     instances: [],
   };
 
-  state.definitions[operator.id] = operator;
+  state.definitions[definition.id] = definition;
 
   return state;
 }
 
-function handleOperatorInstance(state: State.State, event: Event.OperatorInstanceEvent) {
+function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDefinitionEvent) {
+  const definition: State.SubscribeDefinition = {
+    kind: 'subscribe-definition',
+    id: event.definition,
+    next: event.next,
+    error: event.error,
+    complete: event.complete,
+    instances: [],
+  };
+
+  state.definitions[definition.id] = definition;
+
+  return state;
+}
+
+function handleInstance(state: State.State, event: Event.InstanceEvent) {
   const definition = state.definitions[event.definition];
-  const instance: State.OperatorInstance = {
-    kind: 'operator-instance',
+  const instance: State.Instance = {
+    kind: 'instance',
     id: event.instance,
     definition,
     receivers: [],
@@ -43,23 +58,6 @@ function handleOperatorInstance(state: State.State, event: Event.OperatorInstanc
   state.instances[instance.id] = instance;
 
   definition.instances.push(instance);
-
-  return state;
-}
-
-function handleSubscribeInstance(state: State.State, event: Event.SubscribeInstanceEvent) {
-  const instance: State.SubscribeInstance = {
-    kind: 'subscribe-instance',
-    id: event.instance,
-    next: event.next,
-    error: event.error,
-    complete: event.complete,
-    senders: [],
-    receivers: [],
-    events: [],
-  };
-
-  state.instances[instance.id] = instance;
 
   return state;
 }
@@ -113,8 +111,8 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
     sender,
     receiver,
     cause,
-    ...event.kind === 'notification:next' ? {value: event.value} : {},
-    ...event.kind === 'notification:error' ? {error: event.error} : {},
+    ...event.kind === 'next' ? {value: event.value} : {},
+    ...event.kind === 'error' ? {error: event.error} : {},
   };
 
   sender.events.push(notification);
@@ -137,17 +135,17 @@ export function getState$(rxInspector: RxInspector) {
         switch (event.kind) {
           case 'operator-definition':
             return handleOperatorDefinition(state, event);
-          case 'operator-instance':
-            return handleOperatorInstance(state, event);
-          case 'subscribe-instance':
-            return handleSubscribeInstance(state, event);
+          case 'subscribe-definition':
+            return handleSubscribeDefinition(state, event);
+          case 'instance':
+            return handleInstance(state, event);
           case 'subscribe':
             return handleSubscribe(state, event);
           case 'unsubscribe':
             return handleUnsubscribe(state, event);
-          case 'notification:next':
-          case 'notification:error':
-          case 'notification:complete':
+          case 'next':
+          case 'error':
+          case 'complete':
             return handleNotification(state, event);
           default:
             return state;

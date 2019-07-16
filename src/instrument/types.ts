@@ -26,21 +26,19 @@ export interface OperatorDefinitionEvent {
   args: any[];
 }
 
-export interface OperatorInstanceEvent {
-  kind: 'operator-instance';
+export interface SubscribeDefinitionEvent {
+  kind: 'subscribe-definition';
   definition: number;
-  instance: number;
-}
-
-export interface SubscribeInstanceEvent {
-  kind: 'subscribe-instance';
-  instance: number;
-  // todo: extract definition?
   next: (value) => void;
   error: (error) => void;
   complete: () => void;
 }
 
+export interface InstanceEvent {
+  kind: 'instance';
+  definition: number;
+  instance: number;
+}
 
 export interface SubscribeEvent {
   kind: 'subscribe';
@@ -55,7 +53,7 @@ export interface UnsubscribeEvent {
 }
 
 export interface NextNotificationEvent {
-  kind: 'notification:next';
+  kind: 'next';
   sender: number;
   receiver: number;
   notification: number;
@@ -64,7 +62,7 @@ export interface NextNotificationEvent {
 }
 
 export interface ErrorNotificationEvent {
-  kind: 'notification:error';
+  kind: 'error';
   sender: number;
   receiver: number;
   notification: number;
@@ -73,7 +71,7 @@ export interface ErrorNotificationEvent {
 }
 
 export interface CompleteNotificationEvent {
-  kind: 'notification:complete';
+  kind: 'complete';
   sender: number;
   receiver: number;
   notification: number;
@@ -87,8 +85,8 @@ export type NotificationEvent
 
 export type Event
   = OperatorDefinitionEvent
-  | OperatorInstanceEvent
-  | SubscribeInstanceEvent
+  | SubscribeDefinitionEvent
+  | InstanceEvent
   | SubscribeEvent
   | UnsubscribeEvent
   | NotificationEvent;

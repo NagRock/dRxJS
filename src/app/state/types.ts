@@ -9,35 +9,30 @@ export interface OperatorDefinition {
   id: number;
   func: (...args: any[]) => rx.OperatorFunction<any, any>;
   args: any[];
-  instances: OperatorInstance[];
+  instances: Instance[];
 }
 
-export interface OperatorInstance {
-  kind: 'operator-instance';
-  id: number;
-  definition: OperatorDefinition;
-  receivers: Instance[];
-  senders: Instance[];
-  events: Event[];
-}
-
-export interface SubscribeInstance {
-  kind: 'subscribe-instance';
+export interface SubscribeDefinition {
+  kind: 'subscribe-definition';
   id: number;
   next: (value) => void;
   error: (error) => void;
   complete: () => void;
-  senders: Instance[];
-  receivers: Instance[];
-  events: Event[];
+  instances: Instance[];
 }
 
 export type Definition
-  = OperatorDefinition;
+  = OperatorDefinition
+  | SubscribeDefinition;
 
-export type Instance
-  = OperatorInstance
-  | SubscribeInstance;
+export interface Instance {
+  kind: 'instance';
+  id: number;
+  definition: Definition;
+  receivers: Instance[];
+  senders: Instance[];
+  events: Event[];
+}
 
 export interface Subscribe {
   kind: 'subscribe';
@@ -59,7 +54,7 @@ export interface Cause {
 }
 
 export interface NextNotification {
-  kind: 'notification:next';
+  kind: 'next';
   id: number;
   time: number;
   sender: Instance;
@@ -69,7 +64,7 @@ export interface NextNotification {
 }
 
 export interface ErrorNotification {
-  kind: 'notification:error';
+  kind: 'error';
   id: number;
   time: number;
   sender: Instance;
@@ -79,7 +74,7 @@ export interface ErrorNotification {
 }
 
 export interface CompleteNotification {
-  kind: 'notification:complete';
+  kind: 'complete';
   id: number;
   time: number;
   sender: Instance;
