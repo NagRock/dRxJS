@@ -1,136 +1,24 @@
 import {Observable, OperatorFunction} from 'instrumented-rxjs';
 import {rx} from '../rx';
-import {rxInspector} from '../rx-inspector';
+import {Receiver, Sender} from '../types';
 import {
-  Cause,
-  CompleteNotificationEvent,
-  ErrorNotificationEvent,
-  NextNotificationEvent,
-  OperatorDefinitionEvent,
-  InstanceEvent,
-  Receiver,
-  Sender,
-  SubscribeEvent,
-  UnsubscribeEvent
-} from '../types';
-import {getNextNotificationId, getNextObservableId, getNextObservableInstanceId} from '../ids';
+  getCause,
+  trackCompleteNotification,
+  trackErrorNotification,
+  trackNextNotification,
+  trackOperatorDefinition,
+  trackInstance,
+  trackSubscribe,
+  trackUnsubscribe
+} from '../track';
 
 export type RxOperator<IN = any, OUT = any, ARGS extends any[] = any[]> = (...args: ARGS) => OperatorFunction<IN, OUT>;
 export type InstrumentOperator = <IN, OUT, ARGS extends any[]>(operator: RxOperator<IN, OUT, ARGS>) => RxOperator<IN, OUT, ARGS>;
 
-// creator.instance -(sender/receiver)-> operator.instance -(sender/receiver)-> subscriber.instance
-
-function trackOperator<IN, OUT, ARGS extends any[]>(func: RxOperator<IN, OUT, ARGS>, args: ARGS): number {
-  const operator = getNextObservableId();
-
-  const event: OperatorDefinitionEvent = {
-    kind: 'operator-definition',
-    definition: operator,
-    func,
-    args,
-  };
-
-  rxInspector.dispatch(event);
-
-  return operator;
-}
-
-function trackOperatorInstance(operator: number): number {
-  const operatorInstance = getNextObservableInstanceId();
-
-  const event: InstanceEvent = {
-    kind: 'operator-instance',
-    definition: operator,
-    instance: operatorInstance,
-  };
-
-  rxInspector.dispatch(event);
-
-  return operatorInstance;
-}
-
-
-function trackSubscribe(sender: number, receiver: number): void {
-  const event: SubscribeEvent = {
-    kind: 'subscribe',
-    sender,
-    receiver,
-  };
-
-  rxInspector.dispatch(event);
-}
-
-function trackUnsubscribe(sender: number, receiver: number): void {
-  const event: UnsubscribeEvent = {
-    kind: 'unsubscribe',
-    sender,
-    receiver,
-  };
-
-  rxInspector.dispatch(event);
-}
-
-function trackNextNotification(sender: number, receiver: number, value: any, cause: Cause) {
-  const notification = getNextNotificationId();
-
-  const event: NextNotificationEvent = {
-    kind: 'next',
-    sender,
-    receiver,
-    notification,
-    cause,
-    value,
-  };
-
-  rxInspector.dispatch(event);
-
-  return notification;
-}
-
-function trackErrorNotification(sender: number, receiver: number, error: any, cause: Cause) {
-  const notification = getNextNotificationId();
-
-  const event: ErrorNotificationEvent = {
-    kind: 'error',
-    sender,
-    receiver,
-    notification,
-    cause,
-    error,
-  };
-
-  rxInspector.dispatch(event);
-
-  return notification;
-}
-
-function trackCompleteNotification(sender: number, receiver: number, cause: Cause) {
-  const notification = getNextNotificationId();
-
-  const event: CompleteNotificationEvent = {
-    kind: 'complete',
-    sender,
-    receiver,
-    notification,
-    cause,
-  };
-
-  rxInspector.dispatch(event);
-
-  return notification;
-}
-
-function getCause(notification: number, kind: 'sync' | 'async' = 'sync'): Cause {
-  return {
-    kind,
-    notification,
-  };
-}
-
 export const instrumentTransformingOperator =
   <IN = any, OUT = any, ARGS extends any[] = any>(operator: RxOperator<IN, OUT, ARGS>): RxOperator<IN, OUT, ARGS> => {
     return (...args: ARGS) => {
-      const operatorId = trackOperator(operator, args);
+      const definitionId = trackOperatorDefinition(operator, args);
       let lastSenderId: number;
       let lastReceivedNotificationId: number;
       return rx.pipe(
@@ -146,7 +34,7 @@ export const instrumentTransformingOperator =
         operator(...args),
         (stream: Observable<any>) =>
           Observable.create((observer: Receiver & Sender) => {
-            const senderId = trackOperatorInstance(operatorId);
+            const senderId = trackInstance(definitionId);
             const receiverId = observer.__receiver_id__;
 
             lastSenderId = senderId;

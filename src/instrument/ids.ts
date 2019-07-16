@@ -1,13 +1,13 @@
-let nextObservableId = 0;
-let nextObservableInstanceId = 0;
+let nextDefinitionId = 0;
+let nextInstanceId = 0;
 let nextNotificationId = 0;
 
-export function getNextObservableId() {
-  return nextObservableId++;
+export function getNextDefinitionId() {
+  return nextDefinitionId++;
 }
 
-export function getNextObservableInstanceId() {
-  return nextObservableInstanceId++;
+export function getNextInstanceId() {
+  return nextInstanceId++;
 }
 
 export function getNextNotificationId() {
