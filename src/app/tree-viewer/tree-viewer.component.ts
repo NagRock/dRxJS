@@ -13,7 +13,7 @@ import {getHeight, getWidth} from './coords';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TreeViewerComponent {
-  private readonly observableSubject = new BehaviorSubject<Instance | Instance>(undefined);
+  private readonly observableSubject = new BehaviorSubject<Instance>(undefined);
 
   readonly layout$ = this.observableSubject.asObservable().pipe(
     map((observable) => doubleTreeLayout(

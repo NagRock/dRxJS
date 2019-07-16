@@ -25,7 +25,7 @@
       dominant-baseline="text-before-edge"
       font-size="12px"
       font-weight="600">
-      {{node.data?.definition?.func?.name}} <!--todo: make generic-->
+      {{node.data?.definition?.func?.name || 'subscribe'}} <!--todo: make generic-->
     </text>
   </g>
 </svg>
