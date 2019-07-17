@@ -1,7 +1,6 @@
 <svg
   *ngIf="layout$ | async as layout"
-  [attr.viewBox]="'0 0 ' + getWidth(layout) + ' ' + getHeight(layout)"
->
+  [attr.viewBox]="'0 0 ' + getWidth(layout) + ' ' + getHeight(layout)">
     <path
       *ngFor="let link of layout.links"
       [appTreeViewerLink]="link"

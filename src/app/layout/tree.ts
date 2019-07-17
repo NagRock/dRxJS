@@ -27,8 +27,8 @@ function changeDirectionToRight<T>(layout: TreeLayout<T>): TreeLayout<T> {
 
   layout.nodes.forEach((node) => {
     const {x, y} = node;
-    node.x = y;
-    node.y = x;
+    node.x = height - 1 - y;
+    node.y = width - 1 - x;
   });
 
   return layout;
@@ -36,7 +36,7 @@ function changeDirectionToRight<T>(layout: TreeLayout<T>): TreeLayout<T> {
 
 export function changeDirection<T>(layout: TreeLayout<T>, direction: Direction): TreeLayout<T> {
   switch (direction) {
-    case 'down':
+    case 'up':
       return layout;
     case 'right':
       return changeDirectionToRight(layout);
@@ -52,12 +52,10 @@ export function treeLayout<T>(
 ): TreeLayout<T> {
   const nodes = hierarchy<T>(rootNode, getChildren);
   const {width, height} = getTreeDimensions(nodes);
-  const layoutResult = tree<T>().size([width, height])(nodes);
-
-  layoutResult.descendants().forEach((node) => {
-    node.x = node.x * width;
-    node.y = node.y * height;
-  });
+  const layoutResult = tree<T>()
+    .size([width - 0, height - 1])
+    .separation(() => 1)
+    (nodes);
 
   return {
     nodes: layoutResult.descendants(),
@@ -68,13 +66,13 @@ export function treeLayout<T>(
 }
 
 const getTreeDimensions = (root: HierarchyNode<any>) => {
-  const height = root.height;
+  const height = root.height + 1;
   const width = Math.max(
     ...root.descendants()
       .reduce((widths, node) => {
         widths[node.height] = widths[node.height] + 1 || (widths[node.height] = 1);
         return widths;
       }, []),
-  ) - 1;
+  );
   return {height, width};
 };
