@@ -1,4 +1,3 @@
-import {Observable} from 'instrumented-rxjs';
 import {
   trackCompleteNotification,
   trackCreatorDefinition,
@@ -10,11 +9,9 @@ import {
 } from '../track';
 import {rx} from '../rx';
 import {Receiver, Sender} from '../types';
+import {RxCreator} from './types';
 
-export type RxCreator<OUT = any, ARGS extends any[] = any[]> = (...args: ARGS) => Observable<OUT>;
-export type InstrumentRxCreator = <OUT, ARGS extends any[]>(creator: RxCreator<OUT, ARGS>) => RxCreator<OUT, ARGS>;
-
-export const instrumentCreator =
+export const instrumentSimpleCreator =
   <OUT = any, ARGS extends any[] = any>(creator: RxCreator<OUT, ARGS>): RxCreator<OUT, ARGS> => {
     return (...args: ARGS) => {
       const definitionId = trackCreatorDefinition(creator, args);
