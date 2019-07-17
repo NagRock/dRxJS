@@ -1,7 +1,7 @@
 import {getNextDefinitionId, getNextInstanceId, getNextNotificationId} from './ids';
 import {
   Cause,
-  CompleteNotificationEvent,
+  CompleteNotificationEvent, CreatorDefinitionEvent,
   ErrorNotificationEvent,
   InstanceEvent,
   NextNotificationEvent,
@@ -10,6 +10,21 @@ import {
   UnsubscribeEvent
 } from './types';
 import {rxInspector} from './rx-inspector';
+
+export function trackCreatorDefinition(func: (...args: any[]) => any, args: any[]): number {
+  const definition = getNextDefinitionId();
+
+  const event: CreatorDefinitionEvent = {
+    kind: 'creator-definition',
+    definition,
+    func,
+    args,
+  };
+
+  rxInspector.dispatch(event);
+
+  return definition;
+}
 
 export function trackOperatorDefinition(func: (...args: any[]) => any, args: any[]): number {
   const definition = getNextDefinitionId();

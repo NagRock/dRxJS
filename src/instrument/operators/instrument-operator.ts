@@ -23,7 +23,7 @@ export const instrumentTransformingOperator =
       let lastReceivedNotificationId: number;
       return rx.pipe(
         (stream: Observable<any>) => {
-          return Observable.create((receiver: Receiver) => {
+          return rx.Observable.create((receiver: Receiver) => {
             receiver.__receiver_id__ = lastSenderId;
             receiver.__set_last_received_notification_id__ = (notificationId) => {
               lastReceivedNotificationId = notificationId;
@@ -33,7 +33,7 @@ export const instrumentTransformingOperator =
         },
         operator(...args),
         (stream: Observable<any>) =>
-          Observable.create((observer: Receiver & Sender) => {
+          rx.Observable.create((observer: Receiver & Sender) => {
             const senderId = trackInstance(definitionId);
             const receiverId = observer.__receiver_id__;
 

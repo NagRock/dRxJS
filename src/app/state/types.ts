@@ -4,6 +4,14 @@ export interface Index<T> {
   [key: number]: T;
 }
 
+export interface CreatorDefinition {
+  kind: 'creator-definition';
+  id: number;
+  func: (...args: any[]) => rx.Observable<any>;
+  args: any[];
+  instances: Instance[];
+}
+
 export interface OperatorDefinition {
   kind: 'operator-definition';
   id: number;
@@ -22,7 +30,8 @@ export interface SubscribeDefinition {
 }
 
 export type Definition
-  = OperatorDefinition
+  = CreatorDefinition
+  | OperatorDefinition
   | SubscribeDefinition;
 
 export interface Instance {

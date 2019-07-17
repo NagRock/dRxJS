@@ -1,4 +1,4 @@
-import {Observer, OperatorFunction} from 'instrumented-rxjs';
+import {Observable, Observer, OperatorFunction} from 'instrumented-rxjs';
 
 export interface ObserverWithDestination extends Observer<any> {
   destination: ObserverWithDestination;
@@ -17,6 +17,13 @@ export interface Sender extends ObserverWithDestination {
 export interface Cause {
   kind: 'sync' | 'async';
   notification: number;
+}
+
+export interface CreatorDefinitionEvent {
+  kind: 'creator-definition';
+  definition: number;
+  func: (...args: any[]) => Observable<any>;
+  args: any[];
 }
 
 export interface OperatorDefinitionEvent {
@@ -84,7 +91,8 @@ export type NotificationEvent
   | CompleteNotificationEvent;
 
 export type Event
-  = OperatorDefinitionEvent
+  = CreatorDefinitionEvent
+  | OperatorDefinitionEvent
   | SubscribeDefinitionEvent
   | InstanceEvent
   | SubscribeEvent

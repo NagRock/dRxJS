@@ -4,6 +4,7 @@ import * as State from './types';
 import {scan} from 'rxjs/operators';
 import {Observable, Observer} from 'rxjs';
 import {clock} from './clock';
+import {CreatorDefinitionEvent} from '../../instrument/types';
 
 
 function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
@@ -13,6 +14,20 @@ function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
 
     return () => rxInspector.removeListener(listener);
   });
+}
+
+function handleCreatorDefinition(state: State.State, event: CreatorDefinitionEvent) {
+  const definition: State.CreatorDefinition = {
+    kind: 'creator-definition',
+    id: event.definition,
+    func: event.func,
+    args: event.args,
+    instances: [],
+  };
+
+  state.definitions[definition.id] = definition;
+
+  return state;
 }
 
 function handleOperatorDefinition(state: State.State, event: Event.OperatorDefinitionEvent) {
@@ -100,10 +115,12 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
 function handleNotification(state: State.State, event: Event.NotificationEvent) {
   const sender = state.instances[event.sender];
   const receiver = state.instances[event.receiver];
-  const cause: State.Cause = {
-    kind: event.cause.kind,
-    notification: state.notifications[event.cause.notification],
-  };
+  const cause: State.Cause = event.cause === undefined
+    ? undefined
+    : {
+      kind: event.cause.kind,
+      notification: state.notifications[event.cause.notification],
+    };
   const notification: State.Notification = {
     kind: event.kind as any,
     id: event.notification,
@@ -133,6 +150,8 @@ export function getState$(rxInspector: RxInspector) {
     .pipe(
       scan((state: State.State, event: Event.Event): State.State => {
         switch (event.kind) {
+          case 'creator-definition':
+            return handleCreatorDefinition(state, event);
           case 'operator-definition':
             return handleOperatorDefinition(state, event);
           case 'subscribe-definition':
