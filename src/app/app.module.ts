@@ -7,8 +7,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatIconModule, MatTreeModule} from '@angular/material';
 import {TreeViewerModule} from './tree-viewer/tree-viewer.module';
 import {OverlayModule} from '@angular/cdk/overlay';
-import {TimelineModule} from './timeline/timeline.module';
-import {EventsLogModule} from './events-log/events-log.module';
 
 @NgModule({
   declarations: [
@@ -23,8 +21,6 @@ import {EventsLogModule} from './events-log/events-log.module';
     MatButtonModule,
     TreeViewerModule,
     OverlayModule,
-    TimelineModule,
-    EventsLogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

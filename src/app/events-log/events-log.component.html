@@ -1,8 +1,0 @@
-<div
-  *ngFor="let event of events"
-  (click)="eventClicked.emit(event)"
-  (mouseenter)="eventHighlighted.emit(event)"
-  (mouseleave)="eventHighlighted.emit(undefined)"
-  class="event">
-  {{event.kind}} #{{event.id}}
-</div>

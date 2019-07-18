@@ -1,6 +1,6 @@
-import {EventModel, ValueEventModel} from '../model';
 import anime from 'animejs';
 import {makeCircle, makeGroup, makeLine} from '../svg-util';
+import {Event, Notification, Subscribe, Unsubscribe} from '../state';
 
 export interface AnimationPlayer {
   play(): void;
@@ -8,8 +8,8 @@ export interface AnimationPlayer {
   stop(): void;
 }
 
-const buildSubscriptionAnimation = (svg: SVGElement, event: EventModel, loop: boolean): AnimationPlayer => {
-  const selector = `path[data-source="${event.source.id}"][data-target="${event.destination.id}"]`;
+const buildSubscriptionAnimation = (svg: SVGElement, event: Subscribe | Unsubscribe, loop: boolean): AnimationPlayer => {
+  const selector = `path[data-source="${event.sender.id}"][data-target="${event.receiver.id}"]`;
   const pathElement = svg.querySelector(selector) as SVGPathElement;
 
   const [strokeDashoffset, opacity] = event.kind === 'subscribe'
@@ -73,8 +73,8 @@ const makeNotificationElement = (kind: 'value' | 'error' | 'complete') => {
   }
 };
 
-const buildNotificationAnimation = (svg: SVGElement, event: ValueEventModel, loop: boolean) => {
-  const selector = `path[data-source="${event.source.id}"][data-target="${event.destination.id}"]`;
+const buildNotificationAnimation = (svg: SVGElement, event: Notification, loop: boolean) => {
+  const selector = `path[data-source="${event.sender.id}"][data-target="${event.receiver.id}"]`;
   const pathElement = svg.querySelector(selector) as SVGPathElement;
 
   const notificationElement = makeNotificationElement(/*event.kind*/ 'value');
@@ -108,12 +108,14 @@ const buildNotificationAnimation = (svg: SVGElement, event: ValueEventModel, loo
   };
 };
 
-export const buildAnimation = (svg: SVGElement, event: EventModel, loop: boolean): AnimationPlayer => {
+export const buildAnimation = (svg: SVGElement, event: Event, loop: boolean): AnimationPlayer => {
   switch (event.kind) {
     case 'subscribe':
     case 'unsubscribe':
       return buildSubscriptionAnimation(svg, event, loop);
-    case 'value':
+    case 'next':
+    case 'error':
+    case 'complete':
       return buildNotificationAnimation(svg, event, loop);
     default:
       return undefined;
