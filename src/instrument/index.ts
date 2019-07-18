@@ -3,22 +3,23 @@ import {rxInspector} from './rx-inspector';
 import {instrumentSubscribe} from './subscribe';
 import {InstrumentRxCreator, instrumentSimpleCreator, RxCreator} from './creators';
 import {InstrumentOperator, instrumentOperator, instrumentSimpleOperator, RxOperator} from './operators';
+import {instrumentCombiningCreator} from './creators';
 
 const creators: [RxCreator, InstrumentRxCreator][] = [
   // [rx.bindCallback, instrumentCreator],
   // [rx.bindNodeCallback, instrumentCreator],
-  [rx.combineLatest, instrumentSimpleCreator],
-  [rx.concat, instrumentSimpleCreator],
+  [rx.combineLatest, instrumentCombiningCreator],
+  [rx.concat, instrumentCombiningCreator],
   [rx.defer, instrumentSimpleCreator],
   [rx.empty, instrumentSimpleCreator],
-  [rx.forkJoin, instrumentSimpleCreator],
+  [rx.forkJoin, instrumentCombiningCreator], // ?? [a$, b$]
   [rx.from, instrumentSimpleCreator],
   [rx.fromEvent, instrumentSimpleCreator],
   [rx.fromEventPattern, instrumentSimpleCreator],
   [rx.generate, instrumentSimpleCreator],
   [rx.iif, instrumentSimpleCreator],
   [rx.interval, instrumentSimpleCreator],
-  [rx.merge, instrumentSimpleCreator],
+  [rx.merge, instrumentCombiningCreator],
   [rx.never, instrumentSimpleCreator],
   [rx.of, instrumentSimpleCreator],
   [rx.onErrorResumeNext, instrumentSimpleCreator],
@@ -28,7 +29,7 @@ const creators: [RxCreator, InstrumentRxCreator][] = [
   [rx.throwError, instrumentSimpleCreator],
   [rx.timer, instrumentSimpleCreator],
   [rx.using, instrumentSimpleCreator],
-  [rx.zip, instrumentSimpleCreator],
+  [rx.zip, instrumentCombiningCreator], // ?? [a$, b$]
 ];
 
 const operators: [RxOperator, InstrumentOperator][] = [
@@ -122,7 +123,7 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.tap, instrumentSimpleOperator],
   [rxOperators.throttle, instrumentOperator],
   [rxOperators.throttleTime, instrumentOperator],
-  [rxOperators.throwIfEmpty, instrumentOperator],
+  [rxOperators.throwIfEmpty, instrumentSimpleOperator], // delegates to 'tap'
   [rxOperators.timeInterval, instrumentOperator],
   [rxOperators.timeout, instrumentOperator],
   [rxOperators.timeoutWith, instrumentOperator],

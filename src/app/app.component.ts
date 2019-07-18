@@ -3,8 +3,16 @@ import {getState$} from './state';
 import {rxInspector} from '../instrument/rx-inspector';
 import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
 import {debounceTime, map} from 'rxjs/operators';
-import {runSimpleExample} from './examples';
+import {runCombineExample} from './examples';
 
+let i = 0;
+const m = new WeakMap();
+function id(o) {
+  if (!m.has(o)) {
+    m.set(o, i++);
+  }
+  return m.get(o);
+}
 
 @Component({
   selector: 'app-root',
@@ -26,7 +34,7 @@ export class AppComponent {
   );
 
   constructor() {
-    setTimeout(runSimpleExample);
+    setTimeout(runCombineExample);
   }
 
 }

@@ -1,4 +1,4 @@
-import {of} from 'instrumented-rxjs';
+import {concat, of} from 'instrumented-rxjs';
 import {distinctUntilChanged, map} from 'instrumented-rxjs/operators';
 
 export const runSimpleExample = () => {
@@ -10,6 +10,20 @@ export const runSimpleExample = () => {
       distinctUntilChanged(),
     );
   source$.subscribe(((x) => console.log('result:', x)));
+};
+
+export const runCombineExample = () => {
+
+  const a$ = of('a', 'aa', 'aaa')
+    .pipe(
+      map((x) => x.toUpperCase()),
+    );
+  const b$ = of('b', 'bb', 'bbb')
+    .pipe(
+      map((x) => x.toUpperCase()),
+    );
+
+  concat(a$, b$).subscribe((x) => console.log(x));
 };
 
 export const runSimpleExample3 = () => {
