@@ -1,13 +1,20 @@
 import {Event, Instance} from './types';
+import * as R from 'ramda';
+
+const concatEvents = R.pipe(
+  R.reduce<Event[], Event[]>(R.concat, []),
+  R.sortBy((x: Event) => x.time),
+  R.uniqBy((x: Event) => x.time),
+);
 
 export function getIncomingEvents(instance: Instance): Event[] {
-  return [].concat(instance.events, ...instance.senders.map(getIncomingEvents)).sort((a, b) => a.time - b.time);
+  return concatEvents([instance.events, ...instance.senders.map(getIncomingEvents)]);
 }
 
 export function getOutgoingEvents(instance: Instance): Event[] {
-  return [].concat(instance.events, ...instance.receivers.map(getOutgoingEvents)).sort((a, b) => a.time - b.time);
+  return concatEvents([instance.events, ...instance.receivers.map(getOutgoingEvents)]);
 }
 
 export function getEvents(instance: Instance): Event[] {
-  return [...getIncomingEvents(instance), ...getOutgoingEvents(instance)].sort((a, b) => a.time - b.time);
+  return concatEvents([getIncomingEvents(instance), getOutgoingEvents(instance)]);
 }

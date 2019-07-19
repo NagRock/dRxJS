@@ -4,10 +4,13 @@ export interface Index<T> {
   [key: number]: T;
 }
 
+export interface Observable {}
+export type OperatorFunction = rx.UnaryFunction<Observable, Observable>;
+
 export interface CreatorDefinition {
   kind: 'creator-definition';
   id: number;
-  func: (...args: any[]) => rx.Observable<any>;
+  func: (...args: any[]) => Observable;
   args: any[];
   instances: Instance[];
 }
@@ -15,7 +18,7 @@ export interface CreatorDefinition {
 export interface OperatorDefinition {
   kind: 'operator-definition';
   id: number;
-  func: (...args: any[]) => rx.OperatorFunction<any, any>;
+  func: (...args: any[]) => OperatorFunction;
   args: any[];
   instances: Instance[];
 }

@@ -1,4 +1,5 @@
 <svg
+  #svg
   *ngIf="layout$ | async as layout"
   [attr.viewBox]="'0 0 ' + getWidth(layout) + ' ' + getHeight(layout)">
     <path
@@ -24,7 +25,7 @@
       dominant-baseline="text-before-edge"
       font-size="12px"
       font-weight="600">
-      {{node.data?.definition?.func?.name || 'subscribe'}} <!--todo: make generic-->
+      {{node.data?.definition?.func?.name || 'subscribe'}} ({{node.data.id}}) <!--todo: make generic-->
     </text>
   </g>
 </svg>

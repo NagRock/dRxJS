@@ -1,6 +1,9 @@
-import {Observable, Observer, OperatorFunction} from 'instrumented-rxjs';
+import * as rx from 'instrumented-rxjs';
 
-export interface ObserverWithDestination extends Observer<any> {
+export interface Observable {}
+export type OperatorFunction = rx.UnaryFunction<Observable, Observable>;
+
+export interface ObserverWithDestination extends rx.Observer<any> {
   destination: ObserverWithDestination;
 }
 
@@ -22,14 +25,14 @@ export interface Cause {
 export interface CreatorDefinitionEvent {
   kind: 'creator-definition';
   definition: number;
-  func: (...args: any[]) => Observable<any>;
+  func: (...args: any[]) => Observable;
   args: any[];
 }
 
 export interface OperatorDefinitionEvent {
   kind: 'operator-definition';
   definition: number;
-  func: (...args: any[]) => OperatorFunction<any, any>;
+  func: (...args: any[]) => OperatorFunction;
   args: any[];
 }
 
