@@ -1,0 +1,22 @@
+:host {
+  overflow: auto;
+}
+
+.event {
+  display: flex;
+  justify-content: space-between;
+  width: 180px;
+  height: 32px;
+  align-items: center;
+  padding: 0 8px;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.event:last-child {
+  border-bottom: 0;
+}
+
+.selected {
+  background-color: red;
+}

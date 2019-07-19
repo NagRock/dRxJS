@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {Instance} from '../state';
+import {Event, Instance} from '../state';
 import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {changeDirection} from '../layout/tree';
@@ -14,6 +14,7 @@ import {getHeight, getWidth} from './coords';
 })
 export class TreeViewerComponent {
   private readonly observableSubject = new BehaviorSubject<Instance>(undefined);
+  private readonly eventSubject = new BehaviorSubject<Event>(undefined);
 
   readonly layout$ = this.observableSubject.asObservable().pipe(
     map((observable) => doubleTreeLayout(
@@ -27,6 +28,11 @@ export class TreeViewerComponent {
   @Input('observable')
   set observableInput(observable: Instance) {
     this.observableSubject.next(observable);
+  }
+
+  @Input('event')
+  set eventInput(event: Event) {
+    this.eventSubject.next(event);
   }
 
   get observable() {

@@ -1,3 +1,11 @@
 <app-tree-viewer
-  [observable]="selectedInstanceId | async">
+  [observable]="selectedInstance$ | async"
+  [event]="selectedEvent$ | async">
 </app-tree-viewer>
+
+<app-events-viewer
+  [events]="selectedInstanceEvents$ | async"
+  [selectedEventIndex]="selectedEventIndexSubject | async"
+  (selectedEventIndexChange)="selectedEventIndexSubject.next($event)">
+</app-events-viewer>
+

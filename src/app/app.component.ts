@@ -1,18 +1,9 @@
 import {Component} from '@angular/core';
-import {getState$} from './state';
+import {getEvents, getState$} from './state';
 import {rxInspector} from '../instrument/rx-inspector';
 import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
 import {debounceTime, map} from 'rxjs/operators';
 import {runCombineExample} from './examples';
-
-let i = 0;
-const m = new WeakMap();
-function id(o) {
-  if (!m.has(o)) {
-    m.set(o, i++);
-  }
-  return m.get(o);
-}
 
 @Component({
   selector: 'app-root',
@@ -22,9 +13,10 @@ function id(o) {
 export class AppComponent {
 
   readonly selectedInstanceIdSubject = new BehaviorSubject<number>(1);
+  readonly selectedEventIndexSubject = new BehaviorSubject<number>(0);
 
   readonly state$ = getState$(rxInspector).pipe(debounceTime(0, asapScheduler));
-  readonly selectedInstanceId = combineLatest(
+  readonly selectedInstance$ = combineLatest(
     this.state$,
     this.selectedInstanceIdSubject.asObservable(),
   ).pipe(
@@ -32,9 +24,16 @@ export class AppComponent {
       return state.instances[selectedInstanceId];
     }),
   );
+  readonly selectedInstanceEvents$ = this.selectedInstance$
+    .pipe(
+      map(getEvents),
+    );
+  readonly selectedEvent$ = combineLatest(
+    this.selectedInstanceEvents$,
+    this.selectedEventIndexSubject.asObservable(),
+  ).pipe(map(([events, index]) => events[index]));
 
   constructor() {
     setTimeout(runCombineExample);
   }
-
 }

@@ -1,10 +1,10 @@
 import {RxInspector} from '../../instrument/rx-inspector';
 import * as Event from '../../instrument/types';
+import {CreatorDefinitionEvent} from '../../instrument/types';
 import * as State from './types';
-import {scan} from 'rxjs/operators';
+import {scan, shareReplay} from 'rxjs/operators';
 import {Observable, Observer} from 'rxjs';
 import {clock} from './clock';
-import {CreatorDefinitionEvent} from '../../instrument/types';
 
 
 function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
@@ -141,11 +141,6 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
 }
 
 export function getState$(rxInspector: RxInspector) {
-  const initialState: State.State = {
-    definitions: {},
-    instances: {},
-    notifications: {},
-  };
   return fromRxInspector(rxInspector)
     .pipe(
       scan((state: State.State, event: Event.Event): State.State => {
@@ -169,6 +164,11 @@ export function getState$(rxInspector: RxInspector) {
           default:
             return state;
         }
-      }, initialState)
+      }, {
+        definitions: {},
+        instances: {},
+        notifications: {},
+      }),
+      shareReplay(1),
     );
 }

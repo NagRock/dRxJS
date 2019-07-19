@@ -1,0 +1,7 @@
+<div
+  *ngFor="let event of events; let index=index;"
+  (click)="onEventClicked(index)"
+  [ngClass]="{'selected': index === selectedEventIndex}"
+  class="event">
+  {{event.kind}}
+</div>
