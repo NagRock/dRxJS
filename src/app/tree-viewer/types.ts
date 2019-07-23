@@ -1,10 +1,10 @@
-import {Instance} from '../state';
+import {Instance, Properties} from '../state';
 
 export interface InstanceNode {
   x: number;
   y: number;
   instance: Instance;
-  properties: any;
+  properties: Properties;
 }
 
 export interface InstanceLink {

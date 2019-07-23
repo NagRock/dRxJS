@@ -38,7 +38,7 @@ export type Definition
   | SubscribeDefinition;
 
 export interface Properties {
-  subscribed?: boolean;
+  active?: boolean;
 }
 
 export interface InstanceSnapshot<P extends Properties = Properties> {

@@ -24,6 +24,6 @@ export class TreeViewerNodeDirective {
 
   @HostBinding('attr.opacity')
   get attrOpacity() {
-    return this.appTreeViewerNode.properties && this.appTreeViewerNode.properties.subscribed ? '1' : '0.1';
+    return this.appTreeViewerNode.properties.active ? 1 : 0.1;
   }
 }

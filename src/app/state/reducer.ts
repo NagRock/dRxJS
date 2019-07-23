@@ -101,7 +101,10 @@ function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
     receiver,
   };
 
-  snapshot(sender, subscribe.time, 'subscribed', true);
+  snapshot(sender, subscribe.time, 'active', true);
+  if (receiver.definition.kind === 'subscribe-definition') {
+    snapshot(receiver, subscribe.time, 'active', true);
+  }
 
   sender.events.push(subscribe);
   receiver.events.push(subscribe);
@@ -122,7 +125,10 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
     receiver,
   };
 
-  snapshot(sender, unsubscribe.time, 'subscribed', false);
+  snapshot(sender, unsubscribe.time, 'active', false);
+  if (receiver.definition.kind === 'subscribe-definition') {
+    snapshot(receiver, unsubscribe.time, 'active', false);
+  }
 
   sender.events.push(unsubscribe);
   receiver.events.push(unsubscribe);
