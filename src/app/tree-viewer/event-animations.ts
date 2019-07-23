@@ -12,6 +12,7 @@ const buildSubscriptionAnimation = (svg: SVGElement, event: Subscribe | Unsubscr
   const selector = `path[data-source="${event.sender.id}"][data-target="${event.receiver.id}"]`;
   const pathElement = svg.querySelector(selector) as SVGPathElement;
   const pathElementClone = pathElement.cloneNode() as SVGPathElement;
+  pathElementClone.setAttribute('opacity', '1');
   pathElementClone.setAttribute('stroke-dasharray', String(pathElementClone.getTotalLength()));
 
   const [strokeDashoffset, opacity] = event.kind === 'subscribe'
