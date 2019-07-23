@@ -1,4 +1,4 @@
-import {concat, of} from 'instrumented-rxjs';
+import {combineLatest, concat, of} from 'instrumented-rxjs';
 import {distinctUntilChanged, map} from 'instrumented-rxjs/operators';
 
 export const runSimpleExample = () => {
@@ -23,7 +23,9 @@ export const runCombineExample = () => {
       map((x) => x.toUpperCase()),
     );
 
-  concat(a$, b$).subscribe((x) => console.log(x));
+  const c$ = combineLatest(a$, b$);
+
+  concat(a$, b$, c$).subscribe((x) => console.log(x));
 };
 
 export const runSimpleExample3 = () => {
