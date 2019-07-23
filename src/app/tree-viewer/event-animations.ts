@@ -41,9 +41,9 @@ const buildSubscriptionAnimation = (svg: SVGElement, event: Subscribe | Unsubscr
 };
 
 
-const makeNotificationElement = (kind: 'value' | 'error' | 'complete') => {
+const makeNotificationElement = (kind: 'next' | 'error' | 'complete') => {
   switch (kind) {
-    case 'value':
+    case 'next':
       return makeCircle({
         r: 12,
         cx: 0,
@@ -77,7 +77,7 @@ const buildNotificationAnimation = (svg: SVGElement, event: Notification, loop: 
   const selector = `path[data-source="${event.sender.id}"][data-target="${event.receiver.id}"]`;
   const pathElement = svg.querySelector(selector) as SVGPathElement;
 
-  const notificationElement = makeNotificationElement(/*event.kind*/ 'value');
+  const notificationElement = makeNotificationElement(event.kind);
 
   const {x: sx, y: sy} = pathElement.getPointAtLength(0);
   const {x: ex, y: ey} = pathElement.getPointAtLength(pathElement.getTotalLength());

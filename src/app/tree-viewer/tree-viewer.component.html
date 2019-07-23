@@ -1,9 +1,9 @@
 <svg
   #svg
-  *ngIf="layout$ | async as layout"
-  [attr.viewBox]="'0 0 ' + getWidth(layout) + ' ' + getHeight(layout)">
+  *ngIf="state$ | async as state"
+  [attr.viewBox]="'0 0 ' + getWidth(state) + ' ' + getHeight(state)">
     <path
-      *ngFor="let link of layout.links"
+      *ngFor="let link of state.links"
       [appTreeViewerLink]="link"
       fill="none"
       stroke="black"
@@ -11,11 +11,11 @@
     </path>
 
   <g
-    *ngFor="let node of layout.nodes"
+    *ngFor="let node of state.nodes"
     [appTreeViewerNode]="node">
     <circle
       r="16"
-      [attr.fill]="node.data === observable ? 'red' : 'white'"
+      [attr.fill]="node.instance === instance ? 'red' : 'white'"
       stroke="black"
       stroke-width="4">
     </circle>
@@ -25,7 +25,7 @@
       dominant-baseline="text-before-edge"
       font-size="12px"
       font-weight="600">
-      {{node.data?.definition?.func?.name || 'subscribe'}} ({{node.data.id}}) <!--todo: make generic-->
+      {{node.instance?.definition?.func?.name || 'subscribe'}} ({{node.instance.id}}) <!--todo: make generic-->
     </text>
   </g>
 </svg>

@@ -1,7 +1,6 @@
 import {Directive, HostBinding, Input} from '@angular/core';
-import {Node} from '../layout/tree';
-import {Instance} from '../state';
 import {getX, getY} from './coords';
+import {InstanceNode} from './types';
 
 @Directive({
   selector: '[appTreeViewerNode]'
@@ -9,11 +8,11 @@ import {getX, getY} from './coords';
 export class TreeViewerNodeDirective {
 
   @Input()
-  appTreeViewerNode: Node<Instance | Instance>;
+  appTreeViewerNode: InstanceNode;
 
   @HostBinding('attr.data-node')
   get attrDataNode() {
-    return this.appTreeViewerNode.data.id;
+    return this.appTreeViewerNode.instance.id;
   }
 
   @HostBinding('attr.transform')
@@ -23,4 +22,8 @@ export class TreeViewerNodeDirective {
     return `translate(${x},${y})`;
   }
 
+  @HostBinding('attr.opacity')
+  get attrOpacity() {
+    return this.appTreeViewerNode.properties && this.appTreeViewerNode.properties.subscribed ? '1' : '0.1';
+  }
 }

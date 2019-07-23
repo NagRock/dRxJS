@@ -37,6 +37,11 @@ export type Definition
   | OperatorDefinition
   | SubscribeDefinition;
 
+export interface InstanceSnapshot {
+  time: number;
+  properties: {[property: string]: any};
+}
+
 export interface Instance {
   kind: 'instance';
   id: number;
@@ -44,6 +49,7 @@ export interface Instance {
   receivers: Instance[];
   senders: Instance[];
   events: Event[];
+  snapshots: InstanceSnapshot[];
 }
 
 export interface Subscribe {

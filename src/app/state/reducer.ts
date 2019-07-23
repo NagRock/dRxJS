@@ -5,6 +5,7 @@ import * as State from './types';
 import {scan, shareReplay} from 'rxjs/operators';
 import {Observable, Observer} from 'rxjs';
 import {clock} from './clock';
+import {Instance} from './types';
 
 
 function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
@@ -59,6 +60,16 @@ function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDef
   return state;
 }
 
+function snapshot(instance: Instance, time: number, propertyKey: string, propertyValue: any) {
+  if (instance.snapshots.length === 0) {
+    const properties = {[propertyKey]: propertyValue};
+    instance.snapshots.push({time, properties});
+  } else {
+    const properties = {...instance.snapshots[instance.snapshots.length - 1].properties, [propertyKey]: propertyValue};
+    instance.snapshots.push({time, properties});
+  }
+}
+
 function handleInstance(state: State.State, event: Event.InstanceEvent) {
   const definition = state.definitions[event.definition];
   const instance: State.Instance = {
@@ -68,6 +79,7 @@ function handleInstance(state: State.State, event: Event.InstanceEvent) {
     receivers: [],
     senders: [],
     events: [],
+    snapshots: [],
   };
 
   state.instances[instance.id] = instance;
@@ -87,6 +99,8 @@ function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
     receiver,
   };
 
+  snapshot(sender, subscribe.time, 'subscribed', true);
+
   sender.events.push(subscribe);
   receiver.events.push(subscribe);
 
@@ -105,6 +119,8 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
     sender,
     receiver,
   };
+
+  snapshot(sender, unsubscribe.time, 'subscribed', false);
 
   sender.events.push(unsubscribe);
   receiver.events.push(unsubscribe);

@@ -1,7 +1,6 @@
 import {Directive, HostBinding, Input} from '@angular/core';
-import {Link} from '../layout/tree';
 import {getX, getY} from './coords';
-import {Instance} from '../state';
+import {InstanceLink} from './types';
 
 @Directive({
   selector: 'path[appTreeViewerLink]'
@@ -9,16 +8,16 @@ import {Instance} from '../state';
 export class TreeViewerLinkDirective {
 
   @Input()
-  appTreeViewerLink: Link<Instance | Instance>;
+  appTreeViewerLink: InstanceLink;
 
   @HostBinding('attr.data-source')
   get attrDataSource() {
-    return this.appTreeViewerLink.source.data.id;
+    return this.appTreeViewerLink.source.instance.id;
   }
 
   @HostBinding('attr.data-target')
   get attrDataTarget() {
-    return this.appTreeViewerLink.target.data.id;
+    return this.appTreeViewerLink.target.instance.id;
   }
 
   @HostBinding('attr.d')
@@ -28,5 +27,10 @@ export class TreeViewerLinkDirective {
     const tx = getX(this.appTreeViewerLink.target.x);
     const ty = getY(this.appTreeViewerLink.target.y);
     return `M${sx},${sy}C${(sx + tx) / 2},${sy} ${(sx + tx) / 2},${ty} ${tx},${ty}`;
+  }
+
+  @HostBinding('attr.opacity')
+  get attrOpacity() {
+    return this.appTreeViewerLink.source.properties && this.appTreeViewerLink.source.properties.subscribed ? '1' : '0.1';
   }
 }
