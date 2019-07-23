@@ -5,7 +5,7 @@ import * as State from './types';
 import {scan, shareReplay} from 'rxjs/operators';
 import {Observable, Observer} from 'rxjs';
 import {clock} from './clock';
-import {Instance} from './types';
+import {Instance, Properties} from './types';
 
 
 function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
@@ -60,7 +60,9 @@ function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDef
   return state;
 }
 
-function snapshot(instance: Instance, time: number, propertyKey: string, propertyValue: any) {
+function snapshot<P extends Properties = Properties, K extends keyof P = never>(
+  instance: Instance, time: number, propertyKey: K, propertyValue: P[K],
+) {
   if (instance.snapshots.length === 0) {
     const properties = {[propertyKey]: propertyValue};
     instance.snapshots.push({time, properties});

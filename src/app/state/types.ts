@@ -37,19 +37,23 @@ export type Definition
   | OperatorDefinition
   | SubscribeDefinition;
 
-export interface InstanceSnapshot {
-  time: number;
-  properties: {[property: string]: any};
+export interface Properties {
+  subscribed?: boolean;
 }
 
-export interface Instance {
+export interface InstanceSnapshot<P extends Properties = Properties> {
+  time: number;
+  properties: P;
+}
+
+export interface Instance<P extends Properties = Properties> {
   kind: 'instance';
   id: number;
   definition: Definition;
   receivers: Instance[];
   senders: Instance[];
   events: Event[];
-  snapshots: InstanceSnapshot[];
+  snapshots: InstanceSnapshot<P>[];
 }
 
 export interface Subscribe {
