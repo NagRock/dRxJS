@@ -11,14 +11,16 @@ export interface AnimationPlayer {
 const buildSubscriptionAnimation = (svg: SVGElement, event: Subscribe | Unsubscribe, loop: boolean): AnimationPlayer => {
   const selector = `path[data-source="${event.sender.id}"][data-target="${event.receiver.id}"]`;
   const pathElement = svg.querySelector(selector) as SVGPathElement;
+  const pathElementClone = pathElement.cloneNode() as SVGPathElement;
+  pathElementClone.setAttribute('stroke-dasharray', String(pathElementClone.getTotalLength()));
 
   const [strokeDashoffset, opacity] = event.kind === 'subscribe'
-    ? [[-pathElement.getTotalLength(), 0], [1, 0]]
-    : [[0, -pathElement.getTotalLength()], [0, 1]];
+    ? [[-pathElementClone.getTotalLength(), 0], [1, 0]]
+    : [[0, -pathElementClone.getTotalLength()], [0, 1]];
 
   const animation = anime({
     autoplay: false,
-    targets: pathElement,
+    targets: pathElementClone,
     keyframes: [
       {strokeDashoffset, duration: 1000},
       ...loop ? [{opacity, strokeDashoffset: [0, 0], duration: 500, delay: 500}] : [],
@@ -29,11 +31,13 @@ const buildSubscriptionAnimation = (svg: SVGElement, event: Subscribe | Unsubscr
 
   return {
     play(): void {
-      pathElement.setAttribute('stroke-dasharray', String(pathElement.getTotalLength()));
+      pathElement.setAttribute('opacity', '0.1');
+      svg.insertBefore(pathElementClone, pathElement.nextSibling);
       animation.play();
     },
     stop(): void {
-      pathElement.removeAttribute('stroke-dasharray');
+      pathElement.setAttribute('opacity', '1');
+      pathElementClone.remove();
       animation.restart();
       animation.pause();
     }
