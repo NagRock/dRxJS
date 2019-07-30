@@ -8,3 +8,7 @@ export type RxOperators = typeof instrumentedRxOperators;
 
 export const rx: Rx = {...instrumentedRx};
 export const rxOperators: RxOperators = {...instrumentedRxOperators};
+
+export function isScheduler(value: any): boolean {
+  return value && typeof value.schedule === 'function';
+}

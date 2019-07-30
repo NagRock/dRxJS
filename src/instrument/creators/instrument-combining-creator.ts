@@ -8,14 +8,10 @@ import {
   trackSubscribe,
   trackUnsubscribe
 } from '../track';
-import {rx} from '../rx';
+import {isScheduler, rx} from '../rx';
 import {Receiver, Sender} from '../types';
 import {RxCreator} from './types';
 import {from, isObservable, ObservableInput} from 'instrumented-rxjs';
-import {SchedulerLike} from 'rxjs/src/internal/types';
-import {isScheduler} from 'rxjs/src/internal/util/isScheduler';
-import {isArray} from 'rxjs/src/internal/util/isArray';
-import {isObject} from 'rxjs/src/internal/util/isObject';
 
 const instrumentObservableInputs =
   (args: any[], instrument: (input: ObservableInput<any>, inputKey: number | string) => ObservableInput<any>): any[] => {
@@ -95,7 +91,7 @@ export const instrumentCombineLatest = instrumentCombiningCreator(
       resultSelector = args.pop();
     }
 
-    if (args.length === 1 && isArray(args[0])) {
+    if (args.length === 1 && Array.isArray(args[0])) {
       return [
         args[0].map(instrument),
         ...resultSelector ? [resultSelector] : [],
@@ -136,7 +132,7 @@ export const instrumentForkJoin = instrumentCombiningCreator(
       resultSelector = args.pop();
     }
 
-    if (args.length === 1 && isObject(args[0]) && Object.getPrototypeOf(args[0]) === Object.prototype) {
+    if (args.length === 1 && typeof args[0] === 'object' && Object.getPrototypeOf(args[0]) === Object.prototype) {
       return [
         Object.entries(args[0]).reduce((o, [key, val]) => {
           o[key] = instrument(val as any, key);
@@ -144,7 +140,7 @@ export const instrumentForkJoin = instrumentCombiningCreator(
         }, {}),
         ...resultSelector ? [resultSelector] : [],
       ];
-    } else if (args.length === 1 && isArray(args[0])) {
+    } else if (args.length === 1 && Array.isArray(args[0])) {
       return [
         args[0].map(instrument),
         ...resultSelector ? [resultSelector] : [],
@@ -162,7 +158,7 @@ export const instrumentForkJoin = instrumentCombiningCreator(
 export const instrumentMerge = instrumentCombiningCreator(
   (((args, instrument) => {
     let concurrent = Number.POSITIVE_INFINITY;
-    let scheduler: SchedulerLike = null;
+    let scheduler = null;
 
     if (isScheduler(args[args.length - 1])) {
       scheduler = args.pop();
@@ -183,7 +179,7 @@ export const instrumentMerge = instrumentCombiningCreator(
 // (a$, b$, ...), ([a$, b$, ...])
 export const instrumentOnErrorResumeNext = instrumentCombiningCreator(
   ((args, instrument) => {
-    if (args.length === 1 && isArray(args[0])) {
+    if (args.length === 1 && Array.isArray(args[0])) {
       return args[0].map(instrument);
     } else {
       return args.map(instrument);
