@@ -25,7 +25,7 @@ export const runCombineExample = () => {
 
   const c$ = combineLatest(a$, b$);
 
-  concat(a$, b$, c$).subscribe((x) => console.log(x));
+  concat(a$, b$, c$, Promise.resolve(42)).subscribe((x) => console.log(x));
 };
 
 export const runSimpleExample3 = () => {

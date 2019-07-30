@@ -1,35 +1,44 @@
 import {instrumentedRx, instrumentedRxOperators, rx, rxOperators} from './rx';
 import {rxInspector} from './rx-inspector';
 import {instrumentSubscribe} from './subscribe';
-import {InstrumentRxCreator, instrumentSimpleCreator, RxCreator} from './creators';
+import {
+  instrumentCombineLatest,
+  instrumentConcat,
+  instrumentForkJoin,
+  instrumentMerge,
+  instrumentOnErrorResumeNext,
+  InstrumentRxCreator,
+  instrumentSimpleCreator,
+  instrumentZip,
+  RxCreator,
+} from './creators';
 import {InstrumentOperator, instrumentOperator, instrumentSimpleOperator, RxOperator} from './operators';
-import {instrumentCombiningCreator} from './creators';
 
 const creators: [RxCreator, InstrumentRxCreator][] = [
   // [rx.bindCallback, instrumentCreator],
   // [rx.bindNodeCallback, instrumentCreator],
-  [rx.combineLatest, instrumentCombiningCreator],
-  [rx.concat, instrumentCombiningCreator],
-  [rx.defer, instrumentSimpleCreator],
+  [rx.combineLatest, instrumentCombineLatest],
+  [rx.concat, instrumentConcat],
+  // [rx.defer, ?], // needs special handling
   [rx.empty, instrumentSimpleCreator],
-  [rx.forkJoin, instrumentCombiningCreator], // ?? [a$, b$]
+  [rx.forkJoin, instrumentForkJoin],
   [rx.from, instrumentSimpleCreator],
   [rx.fromEvent, instrumentSimpleCreator],
   [rx.fromEventPattern, instrumentSimpleCreator],
   [rx.generate, instrumentSimpleCreator],
   [rx.iif, instrumentSimpleCreator],
   [rx.interval, instrumentSimpleCreator],
-  [rx.merge, instrumentCombiningCreator],
+  [rx.merge, instrumentMerge],
   [rx.never, instrumentSimpleCreator],
   [rx.of, instrumentSimpleCreator],
-  [rx.onErrorResumeNext, instrumentSimpleCreator],
+  [rx.onErrorResumeNext, instrumentOnErrorResumeNext],
   [rx.pairs, instrumentSimpleCreator],
   [rx.race, instrumentSimpleCreator],
   [rx.range, instrumentSimpleCreator],
   [rx.throwError, instrumentSimpleCreator],
   [rx.timer, instrumentSimpleCreator],
   [rx.using, instrumentSimpleCreator],
-  [rx.zip, instrumentCombiningCreator], // ?? [a$, b$]
+  [rx.zip, instrumentZip],
 ];
 
 const operators: [RxOperator, InstrumentOperator][] = [
