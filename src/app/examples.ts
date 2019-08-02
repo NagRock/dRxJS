@@ -1,5 +1,5 @@
-import {combineLatest, concat, of} from 'instrumented-rxjs';
-import {distinctUntilChanged, map} from 'instrumented-rxjs/operators';
+import {combineLatest, concat, of, range} from 'instrumented-rxjs';
+import {distinctUntilChanged, map, concatMap} from 'instrumented-rxjs/operators';
 
 export const runSimpleExample = () => {
 
@@ -10,6 +10,12 @@ export const runSimpleExample = () => {
       distinctUntilChanged(),
     );
   source$.subscribe(((x) => console.log('result:', x)));
+};
+
+export const runConcatMapExample = () => {
+  of(0, 1, 2).pipe(
+    concatMap((i) => range(i).pipe(map((j) => `${j} of ${i}`)))
+  ).subscribe();
 };
 
 export const runCombineExample = () => {

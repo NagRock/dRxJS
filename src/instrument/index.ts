@@ -13,6 +13,7 @@ import {
   RxCreator,
 } from './creators';
 import {InstrumentOperator, instrumentOperator, instrumentSimpleOperator, RxOperator} from './operators';
+import {instrumentCombiningOperator} from './operators/instrument-combining-operator';
 
 const creators: [RxCreator, InstrumentRxCreator][] = [
   // [rx.bindCallback, instrumentCreator],
@@ -54,7 +55,7 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.combineLatest, instrumentOperator],
   [rxOperators.concat, instrumentOperator],
   [rxOperators.concatAll, instrumentOperator],
-  [rxOperators.concatMap, instrumentOperator],
+  [rxOperators.concatMap, instrumentCombiningOperator ],
   [rxOperators.concatMapTo, instrumentOperator],
   [rxOperators.count, instrumentSimpleOperator],
   [rxOperators.debounce, instrumentOperator],
@@ -87,7 +88,6 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.max, instrumentSimpleOperator],
   [rxOperators.merge, instrumentOperator],
   [rxOperators.mergeAll, instrumentOperator],
-  [rxOperators.mergeMap, instrumentOperator],
   [rxOperators.mergeMap, instrumentOperator],
   [rxOperators.mergeMapTo, instrumentOperator],
   [rxOperators.mergeScan, instrumentOperator],
