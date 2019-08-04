@@ -27,7 +27,7 @@
     "@types/immutable": "^3.8.7",
     "@types/ramda": "^0.26.16",
     "@types/stacktrace-js": "^0.0.32",
-    "animejs": "^3.0.1",
+    "animejs": "3.1.0",
     "core-js": "^2.5.4",
     "d3": "^5.9.2",
     "immutable": "^4.0.0-rc.12",
