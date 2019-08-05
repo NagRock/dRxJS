@@ -87,13 +87,13 @@ const buildNotificationAnimation = (svg: SVGElement, event: Notification, loop: 
   const {x: sx, y: sy} = pathElement.getPointAtLength(0);
   const {x: ex, y: ey} = pathElement.getPointAtLength(pathElement.getTotalLength());
 
-  const path = anime.path(pathElement);
+  // const path = anime.path(pathElement);
   const animation = anime({
     autoplay: false,
     targets: notificationElement,
     keyframes: [
       {translateX: [sx, sx], translateY: [sy, sy], rotate: [0, 0], scale: [0, 1], duration: 150, easing: 'easeInQuad'},
-      {translateX: path('x'), translateY: path('y'), rotate: path('angle'), duration: 700, easing: 'easeOutQuad'},
+      {translateX: [sx, ex], translateY: [sy, ey], duration: 700, easing: 'easeOutQuad'},
       {translateX: [ex, ex], translateY: [ey, ey], rotate: [0, 0], scale: [1, 0], duration: 150, easing: 'easeOutQuad'},
       ...loop ? [{delay: 500}] : [],
     ],
