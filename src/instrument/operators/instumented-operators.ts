@@ -20,33 +20,42 @@ export const instrumentCombineLatestOperator = instrumentOperator(); // deprecat
 
 export const instrumentConcatOperator = instrumentOperator(); // deprecated
 
-export const instrumentConcatAllOperator = instrumentOperator();
+export const instrumentConcatAllOperator = instrumentOperator({
+  instrumentInput: (input, instrument) => {
+    return instrument(input);
+  }
+});
 
-export const instrumentConcatMapOperator = instrumentOperator(([project, resultSelector], instrument) => {
+export const instrumentConcatMapOperator = instrumentOperator({
+  instrumentArgs: ([project, resultSelector], instrument) => {
     let i = 0;
     return [wrapResult(project, (x) => instrument(x, i++)), resultSelector];
-  },
-);
+  }
+});
 
-export const instrumentConcatMapToOperator = instrumentOperator(([innerObservable, resultSelector], instrument) => {
-  return [instrument(innerObservable, 'inner'), resultSelector];
+export const instrumentConcatMapToOperator = instrumentOperator({
+  instrumentArgs: ([innerObservable, resultSelector], instrument) => {
+    return [instrument(innerObservable, 'inner'), resultSelector];
+  }
 });
 
 export const instrumentDistinctOperator = instrumentOperator();
 
 export const instrumentExhaustOperator = instrumentOperator();
 
-export const instrumentExhaustMapOperator = instrumentOperator(([project, resultSelector], instrument) => {
+export const instrumentExhaustMapOperator = instrumentOperator({
+  instrumentArgs: ([project, resultSelector], instrument) => {
     let i = 0;
     return [wrapResult(project, (x) => instrument(x, i++)), resultSelector];
-  },
-);
+  }
+});
 
-export const instrumentExpandOperator = instrumentOperator(([project, concurrent, scheduler], instrument) => {
+export const instrumentExpandOperator = instrumentOperator({
+  instrumentArgs: ([project, concurrent, scheduler], instrument) => {
     let i = 0;
     return [wrapResult(project, (x) => instrument(x, i++)), concurrent, scheduler];
-  },
-);
+  }
+});
 
 export const instrumentGroupByOperator = instrumentOperator();
 
@@ -54,14 +63,17 @@ export const instrumentMergeOperator = instrumentOperator();
 
 export const instrumentMergeAllOperator = instrumentOperator();
 
-export const instrumentMergeMapOperator = instrumentOperator(([project, resultSelector, concurrent], instrument) => {
+export const instrumentMergeMapOperator = instrumentOperator({
+  instrumentArgs: ([project, resultSelector, concurrent], instrument) => {
     let i = 0;
     return [wrapResult(project, (x) => instrument(x, i++)), resultSelector, concurrent];
-  },
-);
+  }
+});
 
-export const instrumentMergeMapToOperator = instrumentOperator(([innerObservable, resultSelector, concurrent], instrument) => {
-  return [instrument(innerObservable, 'inner'), resultSelector, concurrent];
+export const instrumentMergeMapToOperator = instrumentOperator({
+  instrumentArgs: ([innerObservable, resultSelector, concurrent], instrument) => {
+    return [instrument(innerObservable, 'inner'), resultSelector, concurrent];
+  }
 });
 
 export const instrumentMergeScanOperator = instrumentOperator();

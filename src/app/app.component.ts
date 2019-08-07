@@ -3,7 +3,7 @@ import {getEvents, getState$} from './state';
 import {rxInspector} from '../instrument/rx-inspector';
 import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
 import {debounceTime, map} from 'rxjs/operators';
-import {runConcatMapExample, runExpandExample} from './examples';
+import {runConcatAllExample, runConcatMapExample, runExpandExample, runSimpleExample} from './examples';
 
 @Component({
   selector: 'app-root',
@@ -34,6 +34,8 @@ export class AppComponent {
   ).pipe(map(([events, index]) => events[index]));
 
   constructor() {
-    setTimeout(runExpandExample);
+    // setTimeout(runConcatAllExample);
+    // setTimeout(runSimpleExample);
+    setTimeout(runConcatMapExample);
   }
 }

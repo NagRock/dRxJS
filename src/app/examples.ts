@@ -1,5 +1,5 @@
 import {asapScheduler, combineLatest, concat, EMPTY, of, range} from 'instrumented-rxjs';
-import {distinctUntilChanged, map, concatMap, repeat, expand} from 'instrumented-rxjs/operators';
+import {distinctUntilChanged, map, concatMap, repeat, expand, concatAll} from 'instrumented-rxjs/operators';
 
 export const runSimpleExample = () => {
 
@@ -17,6 +17,13 @@ export const runConcatMapExample = () => {
     concatMap((i) => range(i).pipe(map((j) => `${j} of ${i}`)))
   ).subscribe();
 };
+
+export const runConcatAllExample = () => {
+  of(of(0), of(0, 1), of(0, 1, 2)).pipe(
+    concatAll(),
+  ).subscribe((x) => console.log(x));
+};
+
 
 export const runExpandExample = () => {
   const stream$ = of(0, 1, 2).pipe(
