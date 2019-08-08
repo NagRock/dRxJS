@@ -35,31 +35,31 @@ export const instrumentOperator =
         return (scopeStream) => new Observable((scopeObserver: Observer<any>) => {
           const senderId = trackInstance(definitionId);
           let lastReceivedNotificationId: number;
-        return rx.pipe(
-          (stream: Observable<any>) => {
-            return rx.Observable.create((receiver: Receiver) => {
-              receiver.__receiver_id__ = senderId;
-              receiver.__set_last_received_notification_id__ = (notificationId) => {
-                lastReceivedNotificationId = notificationId;
-                onReceived(null, notificationId);
-              };
-              return stream.subscribe(receiver);
-            });
-          },
-          operator(...instrumentArgs(
-            args,
-            (input, inputKey) => {
-              const observableInput = isObservable(input) ? input : from(input);
+          return rx.pipe(
+            (stream: Observable<any>) => {
               return rx.Observable.create((receiver: Receiver) => {
                 receiver.__receiver_id__ = senderId;
                 receiver.__set_last_received_notification_id__ = (notificationId) => {
                   lastReceivedNotificationId = notificationId;
-                  onReceived(inputKey, notificationId);
+                  onReceived(null, notificationId);
                 };
-                return observableInput.subscribe(receiver);
+                return stream.subscribe(receiver);
               });
-            }
-          ) as ARGS),
+            },
+            operator(...instrumentArgs(
+              args,
+              (input, inputKey) => {
+                const observableInput = isObservable(input) ? input : from(input);
+                return rx.Observable.create((receiver: Receiver) => {
+                  receiver.__receiver_id__ = senderId;
+                  receiver.__set_last_received_notification_id__ = (notificationId) => {
+                    lastReceivedNotificationId = notificationId;
+                    onReceived(inputKey, notificationId);
+                  };
+                  return observableInput.subscribe(receiver);
+                });
+              }
+            ) as ARGS),
             (stream: Observable<any>) =>
               rx.Observable.create((observer: Receiver & Sender) => {
                 const receiverId = observer.__receiver_id__;
