@@ -27,15 +27,14 @@ export const instrumentConcatAllOperator = instrumentOperator({
 });
 
 export const instrumentConcatMapOperator = instrumentOperator({
-  instrumentArgs: ([project, resultSelector], instrument) => {
-    let i = 0;
-    return [wrapResult(project, (x) => instrument(x, i++)), resultSelector];
+  wrapArgs: ([project, resultSelector], instrument) => {
+    return [wrapResult(project, instrument), resultSelector];
   }
 });
 
 export const instrumentConcatMapToOperator = instrumentOperator({
-  instrumentArgs: ([innerObservable, resultSelector], instrument) => {
-    return [instrument(innerObservable, 'inner'), resultSelector];
+  wrapArgs: ([innerObservable, resultSelector], instrument) => {
+    return [instrument(innerObservable), resultSelector];
   }
 });
 
@@ -44,16 +43,14 @@ export const instrumentDistinctOperator = instrumentOperator();
 export const instrumentExhaustOperator = instrumentOperator();
 
 export const instrumentExhaustMapOperator = instrumentOperator({
-  instrumentArgs: ([project, resultSelector], instrument) => {
-    let i = 0;
-    return [wrapResult(project, (x) => instrument(x, i++)), resultSelector];
+  wrapArgs: ([project, resultSelector], instrument) => {
+    return [wrapResult(project, instrument), resultSelector];
   }
 });
 
 export const instrumentExpandOperator = instrumentOperator({
-  instrumentArgs: ([project, concurrent, scheduler], instrument) => {
-    let i = 0;
-    return [wrapResult(project, (x) => instrument(x, i++)), concurrent, scheduler];
+  wrapArgs: ([project, concurrent, scheduler], instrument) => {
+    return [wrapResult(project, instrument), concurrent, scheduler];
   }
 });
 
@@ -64,15 +61,14 @@ export const instrumentMergeOperator = instrumentOperator();
 export const instrumentMergeAllOperator = instrumentOperator();
 
 export const instrumentMergeMapOperator = instrumentOperator({
-  instrumentArgs: ([project, resultSelector, concurrent], instrument) => {
-    let i = 0;
-    return [wrapResult(project, (x) => instrument(x, i++)), resultSelector, concurrent];
+  wrapArgs: ([project, resultSelector, concurrent], instrument) => {
+    return [wrapResult(project, instrument), resultSelector, concurrent];
   }
 });
 
 export const instrumentMergeMapToOperator = instrumentOperator({
-  instrumentArgs: ([innerObservable, resultSelector, concurrent], instrument) => {
-    return [instrument(innerObservable, 'inner'), resultSelector, concurrent];
+  wrapArgs: ([innerObservable, resultSelector, concurrent], instrument) => {
+    return [instrument(innerObservable), resultSelector, concurrent];
   }
 });
 

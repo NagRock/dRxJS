@@ -13,21 +13,16 @@ import {from, identity, isObservable, noop, Observable, ObservableInput, Observe
 import {Receiver, Sender} from '../types';
 import {RxOperator} from './types';
 
-export type InstrumentObservableInput = (input: ObservableInput<any>, inputKey?: number | string) => void;
+export type InstrumentObservableInput = (input: ObservableInput<any>, wrapObserver?: (observer: Observer<any>) => Observer<any>) => void;
 
 export interface InstrumentOperatorOptions {
   instrumentInput?: (source: any, instrument: InstrumentObservableInput) => any;
-  instrumentArgs?: (args: any[], instrument: InstrumentObservableInput) => any[];
-  onReceived?: (inputKey: number | string, notificationId: number) => void;
-  onSend?: (notificationId: number) => void;
+  wrapArgs?: (args: any[], instrument: InstrumentObservableInput) => any[];
 }
 
 export const instrumentOperator =
   ({
-     instrumentInput = identity,
-     instrumentArgs = identity,
-     onReceived = noop,
-     onSend = noop,
+     wrapArgs = identity,
    }: InstrumentOperatorOptions = {}) =>
     <IN = any, OUT = any, ARGS extends any[] = any>(operator: RxOperator<IN, OUT, ARGS>): RxOperator<IN, OUT, ARGS> => {
       return (...args: ARGS) => {
@@ -35,15 +30,15 @@ export const instrumentOperator =
         return (scopeStream) => new Observable((scopeObserver: Observer<any>) => {
           const senderId = trackInstance(definitionId);
           let lastReceivedNotificationId: number;
-          const instrumentSecondarySource = (input, inputKey) => {
-            const observableInput = isObservable(input) ? input : from(input);
-            return rx.Observable.create((receiver: Receiver) => {
+          const instrumentObservableInput: InstrumentObservableInput = (source, wrapObserver = identity) => {
+            const stream = isObservable(source) ? source : from(source);
+            return rx.Observable.create((observer: Observer<any>) => {
+              const receiver = wrapObserver(observer) as Receiver;
               receiver.__receiver_id__ = senderId;
               receiver.__set_last_received_notification_id__ = (notificationId) => {
                 lastReceivedNotificationId = notificationId;
-                onReceived(inputKey, notificationId);
               };
-              return observableInput.subscribe(receiver);
+              return stream.subscribe(receiver);
             });
           };
           return rx.pipe(
@@ -52,12 +47,11 @@ export const instrumentOperator =
                 receiver.__receiver_id__ = senderId;
                 receiver.__set_last_received_notification_id__ = (notificationId) => {
                   lastReceivedNotificationId = notificationId;
-                  onReceived(null, notificationId);
                 };
                 return stream.subscribe(receiver);
               });
             },
-            operator(...instrumentArgs(args, instrumentSecondarySource) as ARGS),
+            operator(...wrapArgs(args, instrumentObservableInput) as ARGS),
             (stream: Observable<any>) =>
               rx.Observable.create((observer: Receiver & Sender) => {
                 const receiverId = observer.__receiver_id__;
@@ -67,19 +61,16 @@ export const instrumentOperator =
                   __skip_instrumentation__: true,
                   next: (value) => {
                     const notificationId = trackNextNotification(senderId, receiverId, value, getCause(lastReceivedNotificationId));
-                    onSend(notificationId);
                     observer.__set_last_received_notification_id__(notificationId);
                     observer.next(value);
                   },
                   error: (error) => {
                     const notificationId = trackErrorNotification(senderId, receiverId, error, getCause(lastReceivedNotificationId));
-                    onSend(notificationId);
                     observer.__set_last_received_notification_id__(notificationId);
                     observer.error(error);
                   },
                   complete: () => {
                     const notificationId = trackCompleteNotification(senderId, receiverId, getCause(lastReceivedNotificationId));
-                    onSend(notificationId);
                     observer.__set_last_received_notification_id__(notificationId);
                     observer.complete();
                   },
