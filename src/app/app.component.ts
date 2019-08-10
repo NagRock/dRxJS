@@ -35,7 +35,7 @@ export class AppComponent {
 
   constructor() {
     // setTimeout(runConcatAllExample);
-    // setTimeout(runSimpleExample);
     setTimeout(runConcatMapExample);
+    // setTimeout(runSimpleExample);
   }
 }

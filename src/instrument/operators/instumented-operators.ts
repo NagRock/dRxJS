@@ -21,13 +21,21 @@ export const instrumentCombineLatestOperator = instrumentOperator(); // deprecat
 export const instrumentConcatOperator = instrumentOperator(); // deprecated
 
 export const instrumentConcatAllOperator = instrumentOperator({
-  instrumentInput: (input, instrument) => {
-    return instrument(input);
-  }
+  wrapReceiver: (observer, instrument) => ({
+    next(value) {
+      observer.next(instrument(value));
+    },
+    error(error) {
+      observer.error(error);
+    },
+    complete() {
+      observer.complete();
+    },
+  })
 });
 
 export const instrumentConcatMapOperator = instrumentOperator({
-  wrapArgs: ([project, resultSelector], instrument) => {
+  wrapArgs([project, resultSelector], instrument) {
     return [wrapResult(project, instrument), resultSelector];
   }
 });

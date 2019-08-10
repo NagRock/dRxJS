@@ -9,31 +9,41 @@ import {
   trackUnsubscribe
 } from '../track';
 import {rx} from '../rx';
-import {from, identity, isObservable, noop, Observable, ObservableInput, Observer} from 'instrumented-rxjs';
+import {from, identity, isObservable, noop, Observable, ObservableInput, Observer, Subscriber} from 'instrumented-rxjs';
 import {Receiver, Sender} from '../types';
 import {RxOperator} from './types';
+
+export const toSubscriber = (observer: Observer<any> | Subscriber<any>): Subscriber<any> => {
+  if (observer instanceof Subscriber) {
+    return observer;
+  } else {
+    return new Subscriber(observer);
+  }
+};
 
 export type InstrumentObservableInput = (input: ObservableInput<any>, wrapObserver?: (observer: Observer<any>) => Observer<any>) => void;
 
 export interface InstrumentOperatorOptions {
-  instrumentInput?: (source: any, instrument: InstrumentObservableInput) => any;
   wrapArgs?: (args: any[], instrument: InstrumentObservableInput) => any[];
+  wrapReceiver?: (observer: Observer<any>, instrument: InstrumentObservableInput) => Observer<any>;
+  wrapSender?: (observer: Observer<any>) => Observer<any>;
 }
 
 export const instrumentOperator =
   ({
      wrapArgs = identity,
+     wrapReceiver = identity,
    }: InstrumentOperatorOptions = {}) =>
     <IN = any, OUT = any, ARGS extends any[] = any>(operator: RxOperator<IN, OUT, ARGS>): RxOperator<IN, OUT, ARGS> => {
       return (...args: ARGS) => {
         const definitionId = trackOperatorDefinition(operator, args);
-        return (scopeStream) => new Observable((scopeObserver: Observer<any>) => {
+        return (scopeStream) => new rx.Observable((scopeObserver: Observer<any>) => {
           const senderId = trackInstance(definitionId);
           let lastReceivedNotificationId: number;
           const instrumentObservableInput: InstrumentObservableInput = (source, wrapObserver = identity) => {
             const stream = isObservable(source) ? source : from(source);
             return rx.Observable.create((observer: Observer<any>) => {
-              const receiver = wrapObserver(observer) as Receiver;
+              const receiver = toSubscriber(wrapObserver(observer)) as unknown as Receiver;
               receiver.__receiver_id__ = senderId;
               receiver.__set_last_received_notification_id__ = (notificationId) => {
                 lastReceivedNotificationId = notificationId;
@@ -43,7 +53,8 @@ export const instrumentOperator =
           };
           return rx.pipe(
             (stream: Observable<any>) => {
-              return rx.Observable.create((receiver: Receiver) => {
+              return rx.Observable.create((observer: Observer<any>) => {
+                const receiver = toSubscriber(wrapReceiver(observer, instrumentObservableInput)) as unknown as Receiver;
                 receiver.__receiver_id__ = senderId;
                 receiver.__set_last_received_notification_id__ = (notificationId) => {
                   lastReceivedNotificationId = notificationId;
