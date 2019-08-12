@@ -21,17 +21,19 @@ export const instrumentCombineLatestOperator = instrumentOperator(); // deprecat
 export const instrumentConcatOperator = instrumentOperator(); // deprecated
 
 export const instrumentConcatAllOperator = instrumentOperator({
-  wrapReceiver: (observer, instrument) => ({
-    next(value) {
-      observer.next(instrument(value));
-    },
-    error(error) {
-      observer.error(error);
-    },
-    complete() {
-      observer.complete();
-    },
-  })
+  wrapReceiver(observer, instrument) {
+    return {
+      next(value) {
+        observer.next(instrument(value));
+      },
+      error(error) {
+        observer.error(error);
+      },
+      complete() {
+        observer.complete();
+      },
+    };
+  }
 });
 
 export const instrumentConcatMapOperator = instrumentOperator({
@@ -51,13 +53,13 @@ export const instrumentDistinctOperator = instrumentOperator();
 export const instrumentExhaustOperator = instrumentOperator();
 
 export const instrumentExhaustMapOperator = instrumentOperator({
-  wrapArgs: ([project, resultSelector], instrument) => {
+  wrapArgs([project, resultSelector], instrument) {
     return [wrapResult(project, instrument), resultSelector];
   }
 });
 
 export const instrumentExpandOperator = instrumentOperator({
-  wrapArgs: ([project, concurrent, scheduler], instrument) => {
+  wrapArgs([project, concurrent, scheduler], instrument) {
     return [wrapResult(project, instrument), concurrent, scheduler];
   }
 });
@@ -69,13 +71,13 @@ export const instrumentMergeOperator = instrumentOperator();
 export const instrumentMergeAllOperator = instrumentOperator();
 
 export const instrumentMergeMapOperator = instrumentOperator({
-  wrapArgs: ([project, resultSelector, concurrent], instrument) => {
+  wrapArgs([project, resultSelector, concurrent], instrument) {
     return [wrapResult(project, instrument), resultSelector, concurrent];
   }
 });
 
 export const instrumentMergeMapToOperator = instrumentOperator({
-  wrapArgs: ([innerObservable, resultSelector, concurrent], instrument) => {
+  wrapArgs([innerObservable, resultSelector, concurrent], instrument) {
     return [instrument(innerObservable), resultSelector, concurrent];
   }
 });
