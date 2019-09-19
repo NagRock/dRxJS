@@ -1,0 +1,44 @@
+{
+  "manifest_version": 2,
+  "version": "0.1.0",
+  "name": "dRxJS",
+  "description": "dRxJS",
+  "icons": {
+    "16": "assets/images/icon-16x16.png",
+    "32": "assets/images/icon-32x32.png",
+    "192": "assets/images/icon-192x192.png",
+    "512": "assets/images/icon-512x512.png"
+  },
+  "permissions": [
+    "tabs",
+    "activeTab"
+  ],
+  "browser_action": {
+    "default_icon": "assets/images/icon-192x192.png"
+  },
+  "devtools_page": "devtools/devtools.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "browser-polyfill.min.js",
+        "vendor.js",
+        "content-script.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    "/page-scripts.js"
+  ],
+  "background": {
+    "scripts": [
+      "browser-polyfill.min.js",
+      "vendor.js",
+      "background.js"
+    ],
+    "persistent": true
+  }
+}
