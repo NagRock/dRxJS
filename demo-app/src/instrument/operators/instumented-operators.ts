@@ -6,7 +6,11 @@ const wrapResult = (f, wrap) => {
 
 export const instrumentSimpleOperator = instrumentOperator();
 
+export const instrumentAuditOperator = instrumentOperator();
+
 export const instrumentBufferOperator = instrumentOperator();
+
+export const instrumentBufferCountOperator = instrumentOperator();
 
 export const instrumentBufferToggleOperator = instrumentOperator();
 
@@ -48,6 +52,10 @@ export const instrumentConcatMapToOperator = instrumentOperator({
   }
 });
 
+export const instrumentDebounceOperator = instrumentOperator();
+
+export const instrumentDelayWhenOperator = instrumentOperator();
+
 export const instrumentDistinctOperator = instrumentOperator();
 
 export const instrumentExhaustOperator = instrumentOperator();
@@ -86,13 +94,23 @@ export const instrumentMergeScanOperator = instrumentOperator();
 
 export const instrumentOnErrorResumeNextOperator = instrumentOperator();
 
+export const instrumentRaceOperator = instrumentOperator();
+
 export const instrumentRepeatWhenOperator = instrumentOperator();
 
 export const instrumentRetryWhenOperator = instrumentOperator();
 
+export const instrumentRefCountOperator = instrumentOperator();
+
 export const instrumentSampleOperator = instrumentOperator();
 
+export const instrumentSampleTimeOperator = instrumentOperator();
+
+export const instrumentScanOperator = instrumentOperator();
+
 export const instrumentSequenceEqualOperator = instrumentOperator();
+
+export const instrumentSkipUntilOperator = instrumentOperator();
 
 export const instrumentSwitchAllOperator = instrumentOperator();
 
@@ -100,7 +118,13 @@ export const instrumentSwitchMapOperator = instrumentOperator();
 
 export const instrumentSwitchMapToOperator = instrumentOperator();
 
+export const instrumentThrottleOperator = instrumentOperator();
+
+export const instrumentTimeoutWithOperator = instrumentOperator();
+
 export const instrumentWindowOperator = instrumentOperator();
+
+export const instrumentWindowCountOperator = instrumentOperator();
 
 export const instrumentWindowToggleOperator = instrumentOperator();
 

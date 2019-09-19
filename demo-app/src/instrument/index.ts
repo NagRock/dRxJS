@@ -14,6 +14,7 @@ import {
 } from './creators';
 import {InstrumentOperator, RxOperator} from './operators';
 import {
+  instrumentAuditOperator, instrumentBufferCountOperator,
   instrumentBufferOperator,
   instrumentBufferToggleOperator,
   instrumentBufferWhenOperator,
@@ -23,7 +24,7 @@ import {
   instrumentConcatAllOperator,
   instrumentConcatMapOperator,
   instrumentConcatMapToOperator,
-  instrumentConcatOperator,
+  instrumentConcatOperator, instrumentDebounceOperator, instrumentDelayWhenOperator,
   instrumentDistinctOperator,
   instrumentExhaustMapOperator,
   instrumentExhaustOperator,
@@ -34,15 +35,15 @@ import {
   instrumentMergeMapToOperator,
   instrumentMergeOperator,
   instrumentMergeScanOperator,
-  instrumentOnErrorResumeNextOperator,
+  instrumentOnErrorResumeNextOperator, instrumentRaceOperator, instrumentRefCountOperator,
   instrumentRepeatWhenOperator,
   instrumentRetryWhenOperator,
-  instrumentSampleOperator,
+  instrumentSampleOperator, instrumentSampleTimeOperator, instrumentScanOperator,
   instrumentSequenceEqualOperator,
-  instrumentSimpleOperator,
+  instrumentSimpleOperator, instrumentSkipUntilOperator,
   instrumentSwitchAllOperator,
   instrumentSwitchMapOperator,
-  instrumentSwitchMapToOperator,
+  instrumentSwitchMapToOperator, instrumentThrottleOperator, instrumentTimeoutWithOperator, instrumentWindowCountOperator,
   instrumentWindowOperator,
   instrumentWindowToggleOperator,
   instrumentWindowWhenOperator,
@@ -80,14 +81,16 @@ const creators: [RxCreator, InstrumentRxCreator][] = [
   [rx.zip, instrumentZip],
 ];
 
-const x_instrumentOperator: any = noop;
+const instrumentAsync: any = noop;
+const instrumentShare: any = noop;
+const instrumentConnectable: any = noop;
 
 const operators: [RxOperator, InstrumentOperator][] = [
-  [rxOperators.audit, x_instrumentOperator],
-  [rxOperators.auditTime, x_instrumentOperator],
+  [rxOperators.audit, instrumentAuditOperator], // or instrumentAsync... emits are caused directly by emissions of durationSelector
+  [rxOperators.auditTime, instrumentAsync],
   [rxOperators.buffer, instrumentBufferOperator],
-  [rxOperators.bufferCount, x_instrumentOperator],
-  [rxOperators.bufferTime, x_instrumentOperator],
+  [rxOperators.bufferCount, instrumentBufferCountOperator], // count items
+  [rxOperators.bufferTime, instrumentAsync],
   [rxOperators.bufferToggle, instrumentBufferToggleOperator],
   [rxOperators.bufferWhen, instrumentBufferWhenOperator],
   [rxOperators.catchError, instrumentCatchErrorOperator],
@@ -98,15 +101,15 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.concatMap, instrumentConcatMapOperator],
   [rxOperators.concatMapTo, instrumentConcatMapToOperator],
   [rxOperators.count, instrumentSimpleOperator],
-  [rxOperators.debounce, x_instrumentOperator],
-  [rxOperators.debounceTime, x_instrumentOperator],
+  [rxOperators.debounce, instrumentDebounceOperator],
+  [rxOperators.debounceTime, instrumentAsync],
   [rxOperators.defaultIfEmpty, instrumentSimpleOperator],
-  [rxOperators.delay, x_instrumentOperator],
-  [rxOperators.delayWhen, x_instrumentOperator],
-  [rxOperators.dematerialize, x_instrumentOperator],
+  [rxOperators.delay, instrumentAsync],
+  [rxOperators.delayWhen, instrumentDelayWhenOperator],
+  [rxOperators.dematerialize, instrumentSimpleOperator],
   [rxOperators.distinct, instrumentDistinctOperator],
   [rxOperators.distinctUntilChanged, instrumentSimpleOperator],
-  [rxOperators.distinctUntilKeyChanged, x_instrumentOperator],
+  [rxOperators.distinctUntilKeyChanged, instrumentSimpleOperator],
   [rxOperators.elementAt, instrumentSimpleOperator],
   [rxOperators.endWith, instrumentSimpleOperator], // scheduler
   [rxOperators.every, instrumentSimpleOperator],
@@ -132,36 +135,36 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.mergeMapTo, instrumentMergeMapToOperator],
   [rxOperators.mergeScan, instrumentMergeScanOperator],
   [rxOperators.min, instrumentSimpleOperator],
-  [rxOperators.multicast, x_instrumentOperator],
-  [rxOperators.observeOn, x_instrumentOperator],
+  [rxOperators.multicast, instrumentConnectable],
+  [rxOperators.observeOn, instrumentAsync], // unless sync scheduler is used
   [rxOperators.onErrorResumeNext, instrumentOnErrorResumeNextOperator],
   [rxOperators.pairwise, instrumentSimpleOperator],
   // [rxOperators.partition, x_instrumentOperator],
   [rxOperators.pluck, instrumentSimpleOperator],
-  [rxOperators.publish, x_instrumentOperator],
-  [rxOperators.publishBehavior, x_instrumentOperator],
-  [rxOperators.publishLast, x_instrumentOperator],
-  [rxOperators.publishReplay, x_instrumentOperator],
-  [rxOperators.race, x_instrumentOperator],
+  [rxOperators.publish, instrumentConnectable],
+  [rxOperators.publishBehavior, instrumentConnectable],
+  [rxOperators.publishLast, instrumentConnectable],
+  [rxOperators.publishReplay, instrumentConnectable],
+  [rxOperators.race, instrumentRaceOperator],
   [rxOperators.reduce, instrumentSimpleOperator],
   [rxOperators.repeat, instrumentSimpleOperator],
   [rxOperators.repeatWhen, instrumentRepeatWhenOperator],
   [rxOperators.retry, instrumentSimpleOperator],
   [rxOperators.retryWhen, instrumentRetryWhenOperator],
-  [rxOperators.refCount, x_instrumentOperator],
+  [rxOperators.refCount, instrumentRefCountOperator], // count subscribers
   [rxOperators.sample, instrumentSampleOperator],
-  [rxOperators.sampleTime, x_instrumentOperator],
-  [rxOperators.scan, instrumentSimpleOperator],
+  [rxOperators.sampleTime, instrumentSampleTimeOperator], // store sampled value
+  [rxOperators.scan, instrumentScanOperator], // store accumulator
   [rxOperators.sequenceEqual, instrumentSequenceEqualOperator],
-  [rxOperators.share, x_instrumentOperator],
-  [rxOperators.shareReplay, x_instrumentOperator],
+  [rxOperators.share, instrumentShare],
+  [rxOperators.shareReplay, instrumentShare],
   [rxOperators.single, instrumentSimpleOperator],
-  [rxOperators.skip, instrumentSimpleOperator],
-  [rxOperators.skipLast, instrumentSimpleOperator],
-  [rxOperators.skipUntil, instrumentSimpleOperator],
+  [rxOperators.skip, instrumentSimpleOperator], // count skipped
+  [rxOperators.skipLast, instrumentSimpleOperator], // count skipped
+  [rxOperators.skipUntil, instrumentSkipUntilOperator],
   [rxOperators.skipWhile, instrumentSimpleOperator],
-  [rxOperators.startWith, instrumentSimpleOperator], // scheduler
-  [rxOperators.subscribeOn, x_instrumentOperator],
+  [rxOperators.startWith, instrumentSimpleOperator], // emission scheduler
+  [rxOperators.subscribeOn, instrumentSimpleOperator], // subscribe scheduler
   [rxOperators.switchAll, instrumentSwitchAllOperator],
   [rxOperators.switchMap, instrumentSwitchMapOperator],
   [rxOperators.switchMapTo, instrumentSwitchMapToOperator],
@@ -170,17 +173,17 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.takeUntil, instrumentSimpleOperator],
   [rxOperators.takeWhile, instrumentSimpleOperator],
   [rxOperators.tap, instrumentSimpleOperator],
-  [rxOperators.throttle, x_instrumentOperator],
-  [rxOperators.throttleTime, x_instrumentOperator],
+  [rxOperators.throttle, instrumentThrottleOperator],
+  [rxOperators.throttleTime, instrumentAsync],
   [rxOperators.throwIfEmpty, instrumentSimpleOperator], // delegates to 'tap'
-  [rxOperators.timeInterval, x_instrumentOperator],
-  [rxOperators.timeout, x_instrumentOperator],
-  [rxOperators.timeoutWith, x_instrumentOperator],
-  [rxOperators.timestamp, x_instrumentOperator],
+  [rxOperators.timeInterval, instrumentSimpleOperator],
+  [rxOperators.timeout, instrumentSimpleOperator], // throws error after timeout
+  [rxOperators.timeoutWith, instrumentTimeoutWithOperator], // switch to second observable after timeout
+  [rxOperators.timestamp, instrumentSimpleOperator],
   [rxOperators.toArray, instrumentSimpleOperator],
   [rxOperators.window, instrumentWindowOperator],
-  [rxOperators.windowCount, x_instrumentOperator],
-  [rxOperators.windowTime, x_instrumentOperator],
+  [rxOperators.windowCount, instrumentWindowCountOperator], // count items
+  [rxOperators.windowTime, instrumentAsync],
   [rxOperators.windowToggle, instrumentWindowToggleOperator],
   [rxOperators.windowWhen, instrumentWindowWhenOperator],
   [rxOperators.withLatestFrom, instrumentWithLatestFromOperator],
