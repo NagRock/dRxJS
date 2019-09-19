@@ -66,6 +66,7 @@ module.exports = env => {
       extensions: ['.ts', '.tsx', '.js']
     },
     plugins: [
+      new webpack.ProgressPlugin(),
       new CleanWebpackPlugin(),
       new AngularCompilerPlugin({
         tsConfigPath: './web-extension/tsconfig.json',
@@ -78,7 +79,9 @@ module.exports = env => {
         ignore: [
           '*.ts'
         ],
-      }]),
+      }], {
+        copyUnmodified: true
+      }),
 
       new MergeJsonWebpackPlugin({
         files: buildConfig.manifestFiles(env.mode === 'dev'),
