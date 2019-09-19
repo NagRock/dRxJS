@@ -12,7 +12,7 @@ import {runSubjectExample} from './examples';
 })
 export class AppComponent {
 
-  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(1);
+  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(0);
   readonly selectedEventIndexSubject = new BehaviorSubject<number>(0);
 
   readonly state$ = getState$(rxInspector).pipe(debounceTime(0, asapScheduler));

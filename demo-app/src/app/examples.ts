@@ -115,9 +115,17 @@ export const runSubjectExample = () => {
       map((LAST) => LAST),
     );
 
-  stream$.subscribe((x) => console.log('result:', x));
+  stream$.subscribe((x) => console.log('sub1:', x));
 
   subject$.next(1);
   subject$.next(2);
   subject$.next(3);
+
+  stream$.subscribe((x) => console.log('sub2:', x));
+
+  subject$.next(3);
+  subject$.next(4);
+  subject$.next(5);
+
+  subject$.complete();
 };

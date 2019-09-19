@@ -35,6 +35,7 @@ export function instrumentSubject(subject) {
 
     complete(): void {
       trackSubjectComplete(this.instance);
+      super.complete();
     }
 
     subscribe(observerOrNext?, error?, complete?) {

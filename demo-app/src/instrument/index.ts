@@ -14,7 +14,8 @@ import {
 } from './creators';
 import {InstrumentOperator, RxOperator} from './operators';
 import {
-  instrumentAuditOperator, instrumentBufferCountOperator,
+  instrumentAuditOperator,
+  instrumentBufferCountOperator,
   instrumentBufferOperator,
   instrumentBufferToggleOperator,
   instrumentBufferWhenOperator,
@@ -24,7 +25,9 @@ import {
   instrumentConcatAllOperator,
   instrumentConcatMapOperator,
   instrumentConcatMapToOperator,
-  instrumentConcatOperator, instrumentDebounceOperator, instrumentDelayWhenOperator,
+  instrumentConcatOperator,
+  instrumentDebounceOperator,
+  instrumentDelayWhenOperator,
   instrumentDistinctOperator,
   instrumentExhaustMapOperator,
   instrumentExhaustOperator,
@@ -35,15 +38,23 @@ import {
   instrumentMergeMapToOperator,
   instrumentMergeOperator,
   instrumentMergeScanOperator,
-  instrumentOnErrorResumeNextOperator, instrumentRaceOperator, instrumentRefCountOperator,
+  instrumentOnErrorResumeNextOperator,
+  instrumentRaceOperator,
+  instrumentRefCountOperator,
   instrumentRepeatWhenOperator,
   instrumentRetryWhenOperator,
-  instrumentSampleOperator, instrumentSampleTimeOperator, instrumentScanOperator,
+  instrumentSampleOperator,
+  instrumentSampleTimeOperator,
+  instrumentScanOperator,
   instrumentSequenceEqualOperator,
-  instrumentSimpleOperator, instrumentSkipUntilOperator,
+  instrumentSimpleOperator,
+  instrumentSkipUntilOperator,
   instrumentSwitchAllOperator,
   instrumentSwitchMapOperator,
-  instrumentSwitchMapToOperator, instrumentThrottleOperator, instrumentTimeoutWithOperator, instrumentWindowCountOperator,
+  instrumentSwitchMapToOperator,
+  instrumentThrottleOperator,
+  instrumentTimeoutWithOperator,
+  instrumentWindowCountOperator,
   instrumentWindowOperator,
   instrumentWindowToggleOperator,
   instrumentWindowWhenOperator,
@@ -81,7 +92,7 @@ const creators: [RxCreator, InstrumentRxCreator][] = [
   [rx.zip, instrumentZip],
 ];
 
-const instrumentAsync: any = noop;
+const instrumentAsync: any = instrumentSimpleOperator; // we don't need events correlation data for now
 const instrumentShare: any = noop;
 const instrumentConnectable: any = noop;
 
@@ -90,7 +101,7 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.auditTime, instrumentAsync],
   [rxOperators.buffer, instrumentBufferOperator],
   [rxOperators.bufferCount, instrumentBufferCountOperator], // count items
-  [rxOperators.bufferTime, instrumentAsync],
+  // [rxOperators.bufferTime, instrumentAsync], // it wont work with async
   [rxOperators.bufferToggle, instrumentBufferToggleOperator],
   [rxOperators.bufferWhen, instrumentBufferWhenOperator],
   [rxOperators.catchError, instrumentCatchErrorOperator],
@@ -183,7 +194,7 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.toArray, instrumentSimpleOperator],
   [rxOperators.window, instrumentWindowOperator],
   [rxOperators.windowCount, instrumentWindowCountOperator], // count items
-  [rxOperators.windowTime, instrumentAsync],
+  // [rxOperators.windowTime, instrumentAsync], // it wont work with async
   [rxOperators.windowToggle, instrumentWindowToggleOperator],
   [rxOperators.windowWhen, instrumentWindowWhenOperator],
   [rxOperators.withLatestFrom, instrumentWithLatestFromOperator],
