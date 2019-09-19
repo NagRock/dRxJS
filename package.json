@@ -53,10 +53,13 @@
     "@angular/cli": "~7.3.6",
     "@angular/compiler-cli": "~7.2.0",
     "@angular/language-service": "~7.2.0",
+    "@ngtools/webpack": "^7.2.0",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
+    "clean-webpack-plugin": "~3.0.0",
     "codelyzer": "~4.5.0",
+    "copy-webpack-plugin": "~5.0.4",
     "cross-env": "~6.0.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
@@ -65,7 +68,9 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "merge-jsons-webpack-plugin": "~1.0.19",
     "protractor": "~5.4.0",
+    "ts-loader": "~6.1.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
     "typescript": "~3.2.2",
@@ -73,9 +78,8 @@
     "webpack": "~4.40.2",
     "webpack-cli": "^3.3.9",
     "webpack-merge": "~4.2.2",
-    "merge-jsons-webpack-plugin": "~1.0.19",
-    "copy-webpack-plugin": "~5.0.4",
-    "clean-webpack-plugin": "~3.0.0",
-    "ts-loader": "~6.1.0"
+    "raw-loader": "0.5.1",
+    "to-string-loader": "1.1.5",
+    "css-loader": "0.28.11"
   }
 }

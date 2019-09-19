@@ -1,9 +1,11 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
+    "moduleResolution": "node",
+    "module": "es2015",
+    "target": "es5",
     "lib": [
-      "es2017",
+      "es2018",
       "dom"
     ],
     "noImplicitAny": false,
@@ -14,10 +16,14 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "baseUrl": "src"
+    "baseUrl": "./src",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": false,
+    "importHelpers": true
   },
   "exclude": [
     "node_modules",
-    "build/**/*.*"
+    "build"
   ]
 }
