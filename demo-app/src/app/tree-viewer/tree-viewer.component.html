@@ -25,7 +25,7 @@
       dominant-baseline="text-before-edge"
       font-size="12px"
       font-weight="600">
-      {{node.instance?.definition?.func?.name || 'subscribe'}} #{{node.instance.id}} <!--todo: make generic-->
+      {{node.instance.definition.func?.name || node.instance.definition.kind}} #{{node.instance.id}} <!--todo: make generic-->
     </text>
   </g>
 </svg>

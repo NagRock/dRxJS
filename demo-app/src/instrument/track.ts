@@ -6,7 +6,12 @@ import {
   ErrorNotificationEvent,
   InstanceEvent,
   NextNotificationEvent,
-  OperatorDefinitionEvent, SourcePosition,
+  OperatorDefinitionEvent,
+  SourcePosition,
+  SubjectCompleteEvent,
+  SubjectDefinitionEvent,
+  SubjectErrorEvent,
+  SubjectNextEvent,
   SubscribeDefinitionEvent,
   SubscribeEvent,
   UnsubscribeEvent
@@ -16,8 +21,6 @@ import * as StackTrace from 'stacktrace-js';
 
 export function getSourcePosition(stackTraceOffset: number): SourcePosition {
   const stackFrame = StackTrace.getSync({offline: true})[stackTraceOffset + 1];
-
-  console.log(stackFrame);
 
   return {
     file: stackFrame.fileName,
@@ -75,6 +78,21 @@ export function trackSubscribeDefinition(next, error, complete) {
   return definition;
 }
 
+export function trackSubjectDefinition(constructor: any, args: any[]) {
+  const definition = getNextDefinitionId();
+
+  const event: SubjectDefinitionEvent = {
+    kind: 'subject-definition',
+    constructor,
+    args,
+    definition,
+    position: getSourcePosition(2),
+  };
+
+  rxInspector.dispatch(event);
+
+  return definition;
+}
 export function trackInstance(definition: number): number {
   const instance = getNextInstanceId();
 
@@ -165,4 +183,33 @@ export function getCause(notification: number, kind: 'sync' | 'async' = 'sync'):
     kind,
     notification,
   };
+}
+
+export function trackSubjectNext(subject: number, value: any) {
+  const event: SubjectNextEvent = {
+    kind: 'subject-next',
+    subject,
+    value,
+  };
+
+  rxInspector.dispatch(event);
+}
+
+export function trackSubjectError(subject: number, error: any) {
+  const event: SubjectErrorEvent = {
+    kind: 'subject-error',
+    subject,
+    error,
+  };
+
+  rxInspector.dispatch(event);
+}
+
+export function trackSubjectComplete(subject: number) {
+  const event: SubjectCompleteEvent = {
+    kind: 'subject-complete',
+    subject,
+  };
+
+  rxInspector.dispatch(event);
 }

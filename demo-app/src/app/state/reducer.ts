@@ -1,6 +1,5 @@
 import {RxInspector} from '../../instrument/rx-inspector';
 import * as Event from '../../instrument/types';
-import {CreatorDefinitionEvent} from '../../instrument/types';
 import * as State from './types';
 import {scan, shareReplay} from 'rxjs/operators';
 import {Observable, Observer} from 'rxjs';
@@ -17,7 +16,7 @@ function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
   });
 }
 
-function handleCreatorDefinition(state: State.State, event: CreatorDefinitionEvent) {
+function handleCreatorDefinition(state: State.State, event: Event.CreatorDefinitionEvent) {
   const definition: State.CreatorDefinition = {
     kind: 'creator-definition',
     id: event.definition,
@@ -54,6 +53,20 @@ function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDef
     next: event.next,
     error: event.error,
     complete: event.complete,
+    position: event.position,
+    instances: [],
+  };
+
+  state.definitions[definition.id] = definition;
+
+  return state;
+}
+
+
+function handleSubjectDefinition(state: State.State, event: Event.SubjectDefinitionEvent) {
+  const definition: State.SubjectDefinition = {
+    kind: 'subject-definition',
+    id: event.definition,
     position: event.position,
     instances: [],
   };
@@ -167,6 +180,7 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
   return state;
 }
 
+
 export function getState$(rxInspector: RxInspector) {
   return fromRxInspector(rxInspector)
     .pipe(
@@ -178,6 +192,8 @@ export function getState$(rxInspector: RxInspector) {
             return handleOperatorDefinition(state, event);
           case 'subscribe-definition':
             return handleSubscribeDefinition(state, event);
+          case 'subject-definition':
+            return handleSubjectDefinition(state, event);
           case 'instance':
             return handleInstance(state, event);
           case 'subscribe':

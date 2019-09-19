@@ -41,10 +41,18 @@ export interface SubscribeDefinition {
   instances: Instance[];
 }
 
+export interface SubjectDefinition {
+  kind: 'subject-definition';
+  id: number;
+  position: SourcePosition;
+  instances: Instance[];
+}
+
 export type Definition
   = CreatorDefinition
   | OperatorDefinition
-  | SubscribeDefinition;
+  | SubscribeDefinition
+  | SubjectDefinition;
 
 export interface Properties {
   active?: boolean;

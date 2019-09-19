@@ -1,6 +1,8 @@
 import * as rx from 'instrumented-rxjs';
 
-export interface Observable {}
+export interface Observable {
+}
+
 export type OperatorFunction = rx.UnaryFunction<Observable, Observable>;
 
 export interface ObserverWithDestination extends rx.Observer<any> {
@@ -53,6 +55,14 @@ export interface SubscribeDefinitionEvent {
   position: SourcePosition;
 }
 
+export interface SubjectDefinitionEvent {
+  kind: 'subject-definition';
+  definition: number;
+  constructor: any;
+  args: any[];
+  position: SourcePosition;
+}
+
 export interface InstanceEvent {
   kind: 'instance';
   definition: number;
@@ -97,16 +107,43 @@ export interface CompleteNotificationEvent {
   cause: Cause;
 }
 
+export interface SubjectNextEvent {
+  kind: 'subject-next';
+  subject: number;
+  value: any;
+  // todo: stacktrace / context;
+}
+
+export interface SubjectErrorEvent {
+  kind: 'subject-error';
+  subject: number;
+  error: any;
+  // todo: stacktrace / context;
+}
+
+export interface SubjectCompleteEvent {
+  kind: 'subject-complete';
+  subject: number;
+  // todo: stacktrace / context;
+}
+
 export type NotificationEvent
   = NextNotificationEvent
   | ErrorNotificationEvent
   | CompleteNotificationEvent;
 
+export type SubjectEvent
+  = SubjectNextEvent
+  | SubjectErrorEvent
+  | SubjectCompleteEvent;
+
 export type Event
   = CreatorDefinitionEvent
   | OperatorDefinitionEvent
   | SubscribeDefinitionEvent
+  | SubjectDefinitionEvent
   | InstanceEvent
   | SubscribeEvent
   | UnsubscribeEvent
-  | NotificationEvent;
+  | NotificationEvent
+  | SubjectEvent;

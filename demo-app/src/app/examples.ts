@@ -1,5 +1,5 @@
-import {asapScheduler, combineLatest, concat, EMPTY, identity, of, range} from 'instrumented-rxjs';
-import {distinctUntilChanged, map, concatMap, repeat, expand, concatAll} from 'instrumented-rxjs/operators';
+import {BehaviorSubject, combineLatest, concat, EMPTY, of, range, Subject} from 'instrumented-rxjs';
+import {concatAll, concatMap, distinctUntilChanged, expand, map, repeat} from 'instrumented-rxjs/operators';
 
 export const runSimpleExample = () => {
 
@@ -105,4 +105,19 @@ export const runSimpleExampleWithPrimitives = () => {
     );
 
   stream$.subscribe(((x) => console.log('result:', x)));
+};
+
+export const runSubjectExample = () => {
+  const subject$ = new BehaviorSubject(42);
+  const stream$ = subject$
+    .pipe(
+      map((FIRST) => FIRST),
+      map((LAST) => LAST),
+    );
+
+  stream$.subscribe((x) => console.log('result:', x));
+
+  subject$.next(1);
+  subject$.next(2);
+  subject$.next(3);
 };

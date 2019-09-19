@@ -51,6 +51,7 @@ import {
   instrumentZipOperator
 } from './operators/instumented-operators';
 import {noop} from 'instrumented-rxjs';
+import {instrumentSubjects} from './subject';
 
 const creators: [RxCreator, InstrumentRxCreator][] = [
   // [rx.bindCallback, instrumentCreator],
@@ -210,6 +211,7 @@ let instrumented = false;
 
 export function enableInstrumentation() {
   if (!instrumented) {
+    instrumentSubjects();
     instrumentSubscribe();
     instrumentCreators();
     instrumentOperators();
