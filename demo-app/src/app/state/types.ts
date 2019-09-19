@@ -7,11 +7,18 @@ export interface Index<T> {
 export interface Observable {}
 export type OperatorFunction = rx.UnaryFunction<Observable, Observable>;
 
+export interface SourcePosition {
+  file: string;
+  line: number;
+  column: number;
+}
+
 export interface CreatorDefinition {
   kind: 'creator-definition';
   id: number;
   func: (...args: any[]) => Observable;
   args: any[];
+  position: SourcePosition;
   instances: Instance[];
 }
 
@@ -20,6 +27,7 @@ export interface OperatorDefinition {
   id: number;
   func: (...args: any[]) => OperatorFunction;
   args: any[];
+  position: SourcePosition;
   instances: Instance[];
 }
 
@@ -29,6 +37,7 @@ export interface SubscribeDefinition {
   next: (value) => void;
   error: (error) => void;
   complete: () => void;
+  position: SourcePosition;
   instances: Instance[];
 }
 

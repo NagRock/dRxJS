@@ -48,7 +48,7 @@ export class TreeViewerComponent implements AfterViewInit {
         instance: node.data,
         properties: getProperties(node.data, event.time),
       }));
-      const indexedNodes = R.indexBy((node) => String(node.instance.id), nodes);
+      const indexedNodes = R.indexBy((node: any) => String(node.instance.id), nodes);
       const links = layout.links.map((link) => {
         return ({
           source: indexedNodes[link.source.data.id],

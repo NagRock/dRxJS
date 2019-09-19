@@ -23,6 +23,7 @@ function handleCreatorDefinition(state: State.State, event: CreatorDefinitionEve
     id: event.definition,
     func: event.func,
     args: event.args,
+    position: event.position,
     instances: [],
   };
 
@@ -37,6 +38,7 @@ function handleOperatorDefinition(state: State.State, event: Event.OperatorDefin
     id: event.definition,
     func: event.func,
     args: event.args,
+    position: event.position,
     instances: [],
   };
 
@@ -52,6 +54,7 @@ function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDef
     next: event.next,
     error: event.error,
     complete: event.complete,
+    position: event.position,
     instances: [],
   };
 

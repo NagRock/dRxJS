@@ -1,15 +1,30 @@
 import {getNextDefinitionId, getNextInstanceId, getNextNotificationId} from './ids';
 import {
   Cause,
-  CompleteNotificationEvent, CreatorDefinitionEvent,
+  CompleteNotificationEvent,
+  CreatorDefinitionEvent,
   ErrorNotificationEvent,
   InstanceEvent,
   NextNotificationEvent,
-  OperatorDefinitionEvent, SubscribeDefinitionEvent,
+  OperatorDefinitionEvent, SourcePosition,
+  SubscribeDefinitionEvent,
   SubscribeEvent,
   UnsubscribeEvent
 } from './types';
 import {rxInspector} from './rx-inspector';
+import * as StackTrace from 'stacktrace-js';
+
+export function getSourcePosition(stackTraceOffset: number): SourcePosition {
+  const stackFrame = StackTrace.getSync({offline: true})[stackTraceOffset + 1];
+
+  console.log(stackFrame);
+
+  return {
+    file: stackFrame.fileName,
+    line: stackFrame.lineNumber,
+    column: stackFrame.columnNumber,
+  };
+}
 
 export function trackCreatorDefinition(func: (...args: any[]) => any, args: any[]): number {
   const definition = getNextDefinitionId();
@@ -19,6 +34,7 @@ export function trackCreatorDefinition(func: (...args: any[]) => any, args: any[
     definition,
     func,
     args,
+    position: getSourcePosition(2),
   };
 
   rxInspector.dispatch(event);
@@ -34,6 +50,7 @@ export function trackOperatorDefinition(func: (...args: any[]) => any, args: any
     definition,
     func,
     args,
+    position: getSourcePosition(2),
   };
 
   rxInspector.dispatch(event);
@@ -49,7 +66,8 @@ export function trackSubscribeDefinition(next, error, complete) {
     definition,
     next,
     error,
-    complete
+    complete,
+    position: getSourcePosition(2),
   };
 
   rxInspector.dispatch(event);

@@ -7,6 +7,12 @@ export interface ObserverWithDestination extends rx.Observer<any> {
   destination: ObserverWithDestination;
 }
 
+export interface SourcePosition {
+  file: string;
+  line: number;
+  column: number;
+}
+
 export interface Receiver extends ObserverWithDestination {
   __receiver_id__: number;
 
@@ -27,6 +33,7 @@ export interface CreatorDefinitionEvent {
   definition: number;
   func: (...args: any[]) => Observable;
   args: any[];
+  position: SourcePosition;
 }
 
 export interface OperatorDefinitionEvent {
@@ -34,6 +41,7 @@ export interface OperatorDefinitionEvent {
   definition: number;
   func: (...args: any[]) => OperatorFunction;
   args: any[];
+  position: SourcePosition;
 }
 
 export interface SubscribeDefinitionEvent {
@@ -42,6 +50,7 @@ export interface SubscribeDefinitionEvent {
   next: (value) => void;
   error: (error) => void;
   complete: () => void;
+  position: SourcePosition;
 }
 
 export interface InstanceEvent {
