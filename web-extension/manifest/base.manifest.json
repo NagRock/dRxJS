@@ -33,6 +33,7 @@
   "web_accessible_resources": [
     "/page-scripts.js"
   ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "background": {
     "scripts": [
       "browser-polyfill.min.js",

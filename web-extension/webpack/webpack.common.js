@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 const MergeJsonWebpackPlugin = require("merge-jsons-webpack-plugin");
 const CopyPlugin = require('copy-webpack-plugin');
+const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
 
 // Environment config
 const buildConfig = require('./build.config');
@@ -15,8 +16,10 @@ module.exports = env => {
     entry: {
       'browser-polyfill.min': path.join(__dirname, '../../node_modules/webextension-polyfill/dist/browser-polyfill.min.js'),
       'devtools/devtools': path.join(__dirname, '../src/devtools/devtools.ts'),
+
       'devtools/panel/panel': [
-        path.join(__dirname, '../src/devtools/panel'),
+        path.join(__dirname, '../src/devtools/panel/vendor'),
+        path.join(__dirname, '../src/devtools/panel/panel.module'),
       ],
       background: [
         path.join(__dirname, '../src/background')
@@ -44,7 +47,19 @@ module.exports = env => {
           test: /\.tsx?$/,
           use: 'ts-loader',
           exclude: /node_modules/
-        }
+        },
+
+        {
+          test: /\.css$/,
+          use: [
+            'to-string-loader',
+            'css-loader'
+          ],
+        },
+        {
+          test: /\.html$/,
+          use: 'raw-loader',
+        },
       ]
     },
     resolve: {
@@ -52,7 +67,11 @@ module.exports = env => {
     },
     plugins: [
       new CleanWebpackPlugin(),
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new AngularCompilerPlugin({
+        tsConfigPath: './web-extension/tsconfig.json',
+        entryModule: './web-extension/src/devtools/panel/panel.module#PanelModule',
+        sourceMap: true,
+      }),
       new CopyPlugin([{
         from: './web-extension/src',
         to: buildConfig.DIST_DIR,
@@ -60,6 +79,7 @@ module.exports = env => {
           '*.ts'
         ],
       }]),
+
       new MergeJsonWebpackPlugin({
         files: buildConfig.manifestFiles(env.mode === 'dev'),
         output: {

@@ -1,5 +1,6 @@
 (window as any)._dRxJS = {
   getData: () => ({
-    test: 123
+    test: Math.random(),
+    now: new Date().toLocaleString()
   })
 };
