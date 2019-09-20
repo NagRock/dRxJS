@@ -53,7 +53,7 @@ export const instrumentOperator =
           };
           return rx.pipe(
             (stream: Observable<any>) => {
-              return rx.Observable.create((observer: Observer<any>) => {
+              return new rx.Observable((observer: Observer<any>) => {
                 const receiver = toSubscriber(wrapReceiver(observer, instrumentObservableInput)) as unknown as Receiver;
                 receiver.__receiver_id__ = senderId;
                 receiver.__set_last_received_notification_id__ = (notificationId) => {
@@ -64,7 +64,8 @@ export const instrumentOperator =
             },
             operator(...wrapArgs(args, instrumentObservableInput) as ARGS),
             (stream: Observable<any>) =>
-              rx.Observable.create((observer: Receiver & Sender) => {
+              // @ts-ignore
+              new rx.Observable((observer: Receiver & Sender) => {
                 const receiverId = observer.__receiver_id__;
 
                 trackSubscribe(senderId, receiverId);
