@@ -127,6 +127,11 @@ export interface SubjectCompleteEvent {
   // todo: stacktrace / context;
 }
 
+export interface ConnectEvent {
+  kind: 'connect';
+  connectable: number;
+}
+
 export type NotificationEvent
   = NextNotificationEvent
   | ErrorNotificationEvent
@@ -146,4 +151,5 @@ export type Event
   | SubscribeEvent
   | UnsubscribeEvent
   | NotificationEvent
-  | SubjectEvent;
+  | SubjectEvent
+  | ConnectEvent;

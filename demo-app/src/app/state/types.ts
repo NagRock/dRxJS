@@ -4,7 +4,9 @@ export interface Index<T> {
   [key: number]: T;
 }
 
-export interface Observable {}
+export interface Observable {
+}
+
 export type OperatorFunction = rx.UnaryFunction<Observable, Observable>;
 
 export interface SourcePosition {
@@ -126,10 +128,47 @@ export type Notification
   | ErrorNotification
   | CompleteNotification;
 
+export interface SubjectNextCall {
+  kind: 'subject-next';
+  time: number;
+  sender: undefined;
+  receiver: Instance;
+  value: any;
+}
+
+export interface SubjectErrorCall {
+  kind: 'subject-error';
+  time: number;
+  sender: undefined;
+  receiver: Instance;
+  error: any;
+}
+
+export interface SubjectCompleteCall {
+  kind: 'subject-complete';
+  time: number;
+  sender: undefined;
+  receiver: Instance;
+}
+
+export type SubjectCall
+  = SubjectNextCall
+  | SubjectErrorCall
+  | SubjectCompleteCall;
+
+export interface ConnectCall {
+  kind: 'connect';
+  time: number;
+  sender: undefined;
+  receiver: Instance;
+}
+
 export type Event
   = Notification
   | Subscribe
-  | Unsubscribe;
+  | Unsubscribe
+  | SubjectCall
+  | ConnectCall;
 
 export interface State {
   definitions: Index<Definition>;

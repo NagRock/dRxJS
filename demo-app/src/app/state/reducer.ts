@@ -181,6 +181,36 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
 }
 
 
+function handleSubjectCall(state: State.State, event: Event.SubjectEvent) {
+  const subject = state.instances[event.subject];
+  const call: State.SubjectCall = {
+    kind: event.kind as any,
+    time: clock(),
+    sender: undefined,
+    receiver: subject,
+    ...event.kind === 'subject-next' ? {value: event.value} : {},
+    ...event.kind === 'subject-error' ? {error: event.error} : {},
+  };
+
+  subject.events.push(call);
+
+  return state;
+}
+
+function handleConnectCall(state: State.State, event: Event.ConnectEvent) {
+  const connectable = state.instances[event.connectable];
+  const call: State.SubjectCall = {
+    kind: event.kind as any,
+    time: clock(),
+    sender: undefined,
+    receiver: connectable,
+  };
+
+  connectable.events.push(call);
+
+  return state;
+}
+
 export function getState$(rxInspector: RxInspector) {
   return fromRxInspector(rxInspector)
     .pipe(
@@ -204,6 +234,12 @@ export function getState$(rxInspector: RxInspector) {
           case 'error':
           case 'complete':
             return handleNotification(state, event);
+          case 'subject-next':
+          case 'subject-error':
+          case 'subject-complete':
+            return handleSubjectCall(state, event);
+          case 'connect':
+            return handleConnectCall(state, event);
           default:
             return state;
         }

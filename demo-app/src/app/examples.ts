@@ -1,5 +1,5 @@
-import {BehaviorSubject, combineLatest, concat, EMPTY, of, range, Subject} from 'instrumented-rxjs';
-import {concatAll, concatMap, distinctUntilChanged, expand, map, repeat, share, tap} from 'instrumented-rxjs/operators';
+import {BehaviorSubject, combineLatest, concat, ConnectableObservable, EMPTY, of, range, Subject} from 'instrumented-rxjs';
+import {concatAll, concatMap, distinctUntilChanged, expand, map, publish, repeat, share, tap} from 'instrumented-rxjs/operators';
 
 export const runSimpleExample = () => {
 
@@ -146,4 +146,23 @@ export const runShareExample = () => {
   stream$
     .pipe(map((AFTER_SHARE2) => AFTER_SHARE2))
     .subscribe(((x) => console.log('sub2:', x)));
+};
+
+export const runConnectableExample = () => {
+  const stream$ = of(1, 2, 3)
+    .pipe(
+      map((FIRST) => FIRST),
+      tap((x) => console.log('tap:', x)),
+      publish(),
+    ) as ConnectableObservable<any>;
+
+  stream$
+    .pipe(map((AFTER_SHARE1) => AFTER_SHARE1))
+    .subscribe(((x) => console.log('sub1:', x)));
+
+  stream$
+    .pipe(map((AFTER_SHARE2) => AFTER_SHARE2))
+    .subscribe(((x) => console.log('sub2:', x)));
+
+  stream$.connect();
 };

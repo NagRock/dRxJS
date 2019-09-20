@@ -3,7 +3,7 @@ import {getEvents, getState$} from './state';
 import {rxInspector} from '../instrument/rx-inspector';
 import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
 import {debounceTime, map} from 'rxjs/operators';
-import {runShareExample} from './examples';
+import {runConnectableExample} from './examples';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +12,7 @@ import {runShareExample} from './examples';
 })
 export class AppComponent {
 
-  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(1);
+  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(2);
   readonly selectedEventIndexSubject = new BehaviorSubject<number>(0);
 
   readonly state$ = getState$(rxInspector).pipe(debounceTime(0, asapScheduler));
@@ -38,6 +38,7 @@ export class AppComponent {
     // setTimeout(runConcatMapExample);
     // setTimeout(runSimpleExample);
     // setTimeout(runSubjectExample);
-    setTimeout(runShareExample);
+    // setTimeout(runShareExample);
+    setTimeout(runConnectableExample);
   }
 }

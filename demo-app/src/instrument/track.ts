@@ -2,6 +2,7 @@ import {getNextDefinitionId, getNextInstanceId, getNextNotificationId} from './i
 import {
   Cause,
   CompleteNotificationEvent,
+  ConnectEvent,
   CreatorDefinitionEvent,
   ErrorNotificationEvent,
   InstanceEvent,
@@ -209,6 +210,15 @@ export function trackSubjectComplete(subject: number) {
   const event: SubjectCompleteEvent = {
     kind: 'subject-complete',
     subject,
+  };
+
+  rxInspector.dispatch(event);
+}
+
+export function trackConnect(connectable: number) {
+  const event: ConnectEvent = {
+    kind: 'connect',
+    connectable,
   };
 
   rxInspector.dispatch(event);

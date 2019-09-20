@@ -64,8 +64,8 @@ import {
   instrumentZipOperator,
   RxOperator
 } from './operators';
-import {noop} from 'instrumented-rxjs';
 import {instrumentSubjects} from './subject';
+import {instrumentConnectableOperator} from './operators/instrument-connectable-operator';
 
 const creators: [RxCreator, InstrumentRxCreator][] = [
   // [rx.bindCallback, instrumentCreator],
@@ -95,7 +95,6 @@ const creators: [RxCreator, InstrumentRxCreator][] = [
 ];
 
 const instrumentAsync: any = instrumentSimpleOperator; // we don't need events correlation data for now
-const instrumentConnectable: any = noop;
 
 const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.audit, instrumentAuditOperator], // or instrumentAsync... emits are caused directly by emissions of durationSelector
@@ -147,16 +146,16 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.mergeMapTo, instrumentMergeMapToOperator],
   [rxOperators.mergeScan, instrumentMergeScanOperator],
   [rxOperators.min, instrumentSimpleOperator],
-  [rxOperators.multicast, instrumentConnectable],
+  [rxOperators.multicast, instrumentConnectableOperator],
   [rxOperators.observeOn, instrumentAsync], // unless sync scheduler is used
   [rxOperators.onErrorResumeNext, instrumentOnErrorResumeNextOperator],
   [rxOperators.pairwise, instrumentSimpleOperator],
   // [rxOperators.partition, x_instrumentOperator],
   [rxOperators.pluck, instrumentSimpleOperator],
-  [rxOperators.publish, instrumentConnectable],
-  [rxOperators.publishBehavior, instrumentConnectable],
-  [rxOperators.publishLast, instrumentConnectable],
-  [rxOperators.publishReplay, instrumentConnectable],
+  [rxOperators.publish, instrumentConnectableOperator],
+  [rxOperators.publishBehavior, instrumentConnectableOperator],
+  [rxOperators.publishLast, instrumentConnectableOperator],
+  [rxOperators.publishReplay, instrumentConnectableOperator],
   [rxOperators.race, instrumentRaceOperator],
   [rxOperators.reduce, instrumentSimpleOperator],
   [rxOperators.repeat, instrumentSimpleOperator],
