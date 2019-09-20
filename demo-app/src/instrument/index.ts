@@ -12,7 +12,6 @@ import {
   instrumentZip,
   RxCreator,
 } from './creators';
-import {InstrumentOperator, RxOperator} from './operators';
 import {
   instrumentAuditOperator,
   instrumentBufferCountOperator,
@@ -39,6 +38,7 @@ import {
   instrumentMergeOperator,
   instrumentMergeScanOperator,
   instrumentOnErrorResumeNextOperator,
+  InstrumentOperator,
   instrumentRaceOperator,
   instrumentRefCountOperator,
   instrumentRepeatWhenOperator,
@@ -47,6 +47,7 @@ import {
   instrumentSampleTimeOperator,
   instrumentScanOperator,
   instrumentSequenceEqualOperator,
+  instrumentShareOperator,
   instrumentSimpleOperator,
   instrumentSkipUntilOperator,
   instrumentSwitchAllOperator,
@@ -60,8 +61,9 @@ import {
   instrumentWindowWhenOperator,
   instrumentWithLatestFromOperator,
   instrumentZipAllOperator,
-  instrumentZipOperator
-} from './operators/instumented-operators';
+  instrumentZipOperator,
+  RxOperator
+} from './operators';
 import {noop} from 'instrumented-rxjs';
 import {instrumentSubjects} from './subject';
 
@@ -93,7 +95,6 @@ const creators: [RxCreator, InstrumentRxCreator][] = [
 ];
 
 const instrumentAsync: any = instrumentSimpleOperator; // we don't need events correlation data for now
-const instrumentShare: any = noop;
 const instrumentConnectable: any = noop;
 
 const operators: [RxOperator, InstrumentOperator][] = [
@@ -167,8 +168,8 @@ const operators: [RxOperator, InstrumentOperator][] = [
   [rxOperators.sampleTime, instrumentSampleTimeOperator], // store sampled value
   [rxOperators.scan, instrumentScanOperator], // store accumulator
   [rxOperators.sequenceEqual, instrumentSequenceEqualOperator],
-  [rxOperators.share, instrumentShare],
-  [rxOperators.shareReplay, instrumentShare],
+  [rxOperators.share, instrumentShareOperator],
+  [rxOperators.shareReplay, instrumentShareOperator],
   [rxOperators.single, instrumentSimpleOperator],
   [rxOperators.skip, instrumentSimpleOperator], // count skipped
   [rxOperators.skipLast, instrumentSimpleOperator], // count skipped
