@@ -19,6 +19,10 @@ import {
 } from './types';
 import {rxInspector} from './rx-inspector';
 import * as StackTrace from 'stacktrace-js';
+import {createRxInspectorBuffer} from './rx-inspector-buffer';
+
+// TODO: find better place for this init
+const buffer = createRxInspectorBuffer(rxInspector);
 
 export function getSourcePosition(stackTraceOffset: number): SourcePosition {
   const stackFrame = StackTrace.getSync({offline: true})[stackTraceOffset + 1];

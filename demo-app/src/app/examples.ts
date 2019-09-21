@@ -1,4 +1,4 @@
-import {BehaviorSubject, combineLatest, concat, ConnectableObservable, EMPTY, of, range, Subject} from 'instrumented-rxjs';
+import {BehaviorSubject, combineLatest, concat, ConnectableObservable, EMPTY, of, range} from 'instrumented-rxjs';
 import {concatAll, concatMap, distinctUntilChanged, expand, map, publish, repeat, share, tap} from 'instrumented-rxjs/operators';
 
 export const runSimpleExample = () => {

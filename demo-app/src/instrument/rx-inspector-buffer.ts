@@ -1,4 +1,4 @@
-import {RxInspector} from './rx-inspector';
+import {rxInspector, RxInspector} from './rx-inspector';
 // @ts-ignore
 import * as StackFrame from 'stackframe';
 import * as StackTraceGPS from 'stacktrace-gps';
@@ -25,6 +25,7 @@ const notMappableEvents = [
   'next',
   'complete',
   'unsubscribe',
+  'connect',
 ];
 
 class RxInspectorBuffer {
@@ -34,13 +35,13 @@ class RxInspectorBuffer {
   private readonly listener: (event: any) => void;
   private readonly gps: StackTraceGPS = new StackTraceGPS();
 
-  constructor(private rxInspector: RxInspector) {
+  constructor(private rxInspectorInst: RxInspector) {
     this.listener = (event: any) => {
       this.eventsToMap.push(event);
       this.tryToMapNextEvents();
     };
 
-    this.rxInspector.addListener(this.listener);
+    this.rxInspectorInst.addListener(this.listener);
   }
 
   flush(): Array<RxSourceMappedInspectorEvent | RxInstanceInspectorEvent> {
@@ -53,7 +54,7 @@ class RxInspectorBuffer {
     // TODO: cancel current running mappings promises
     this.mappedEvents = [];
     this.eventsToMap = [];
-    this.rxInspector.removeListener(this.listener);
+    this.rxInspectorInst.removeListener(this.listener);
   }
 
   private tryToMapNextEvents() {
@@ -74,6 +75,7 @@ class RxInspectorBuffer {
       if (notMappableEvents.indexOf(toMap.kind) > -1) {
         mapPromises.push(Promise.resolve({originalEvent: toMap}));
       } else {
+        console.log(toMap);
         const fileName = toMap.position.file;
         const lineNumber = toMap.position.line;
         const columnNumber = toMap.position.column;
@@ -105,8 +107,10 @@ class RxInspectorBuffer {
   }
 }
 
-export function createRxInspectorBuffer(rxInspector: RxInspector): RxInspectorBuffer {
-  return new RxInspectorBuffer(rxInspector);
+export function createRxInspectorBuffer(rxInspectorInst: RxInspector): RxInspectorBuffer {
+  return new RxInspectorBuffer(rxInspectorInst);
 }
 
+const rxInspectorBuffer = createRxInspectorBuffer(rxInspector);
+(window as any).___dRxJS_flushBuffer = () => rxInspectorBuffer.flush();
 
