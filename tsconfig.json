@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@drxjs": ["./instrumentation"],
+      "@drxjs/events": ["./protocol/events"]
+    }
+  }
+}

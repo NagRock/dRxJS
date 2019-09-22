@@ -1,4 +1,4 @@
-import * as Event from './events';
+import * as Event from '@drxjs/events';
 import * as State from './types';
 import {scan, shareReplay} from 'rxjs/operators';
 import {Observable, Observer} from 'rxjs';

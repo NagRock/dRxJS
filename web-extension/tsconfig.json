@@ -1,4 +1,5 @@
 {
+  "extends": "../tsconfig.json",
   "compileOnSave": false,
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
@@ -12,13 +13,11 @@
     "types": ["node"],
     "noImplicitAny": false,
     "sourceMap": false,
-    "rootDir": "src",
     "outDir": "dist/js",
     "noEmitOnError": true,
     "typeRoots": [
       "node_modules/@types"
     ],
-    "baseUrl": "./src",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "declaration": false,

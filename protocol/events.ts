@@ -1,28 +1,11 @@
-import * as rx from 'rxjs';
+export type Observable = any;
 
-export interface Observable {
-}
-
-export type OperatorFunction = rx.UnaryFunction<Observable, Observable>;
-
-export interface ObserverWithDestination extends rx.Observer<any> {
-  destination: ObserverWithDestination;
-}
+export type OperatorFunction = (source: Observable) => Observable;
 
 export interface SourcePosition {
   file: string;
   line: number;
   column: number;
-}
-
-export interface Receiver extends ObserverWithDestination {
-  __receiver_id__: number;
-
-  __set_last_received_notification_id__(notificationId: number): void;
-}
-
-export interface Sender extends ObserverWithDestination {
-  __sender_id__: number;
 }
 
 export interface Cause {

@@ -16,7 +16,7 @@ import {
   SubscribeDefinitionEvent,
   SubscribeEvent,
   UnsubscribeEvent
-} from './types';
+} from '@drxjs/events';
 import {rxInspector} from './rx-inspector';
 import * as StackTrace from 'stacktrace-js';
 import {createRxInspectorBuffer} from './rx-inspector-buffer';
