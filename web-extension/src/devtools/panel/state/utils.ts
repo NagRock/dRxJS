@@ -8,6 +8,7 @@ const concatEvents = R.pipe(
 );
 
 export function getIncomingEvents(instance: Instance): Event[] {
+  console.log('getIncomingEvents', instance);
   return concatEvents([
     instance.events.filter((event) => event.receiver === instance),
     ...instance.senders.map(getIncomingEvents),

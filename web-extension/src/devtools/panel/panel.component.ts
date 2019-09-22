@@ -1,10 +1,9 @@
 import {Component} from '@angular/core';
-import {asapScheduler, BehaviorSubject, combineLatest, from, interval} from 'rxjs';
-import {browser} from '../../types/webextension-polyfill-ts';
-import {debounceTime, map, switchMap} from 'rxjs/operators';
-import {RxInstanceInspectorEvent, RxSourceMappedInspectorEvent} from '../event.service';
+import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
+import {debounceTime, map} from 'rxjs/operators';
 import {getEvents} from './state';
 import {StateService} from './state/state.service';
+import {Event} from '@drxjs/events';
 
 @Component({
   selector: 'd-panel',
@@ -12,7 +11,7 @@ import {StateService} from './state/state.service';
   styleUrls: ['./panel.component.css'],
 })
 export class PanelComponent {
-  events: Array<RxInstanceInspectorEvent | RxSourceMappedInspectorEvent> = [];
+  events: Array<Event> = [];
 
   constructor(private readonly stateService: StateService) {
   }
@@ -31,7 +30,7 @@ export class PanelComponent {
   );
   readonly selectedInstanceEvents$ = this.selectedInstance$
     .pipe(
-      map(getEvents),
+      map((instance) => instance ? getEvents(instance) : []),
     );
   readonly selectedEvent$ = combineLatest(
     this.selectedInstanceEvents$,

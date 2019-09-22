@@ -1,16 +1,16 @@
 import * as Event from '@drxjs/events';
 import * as State from './types';
-import {scan, shareReplay} from 'rxjs/operators';
-import {Observable, Observer} from 'rxjs';
-import {clock} from './clock';
 import {Instance, Properties} from './types';
+import {scan} from 'rxjs/operators';
+import {clock} from './clock';
 
 function handleCreatorDefinition(state: State.State, event: Event.CreatorDefinitionEvent) {
   const definition: State.CreatorDefinition = {
     kind: 'creator-definition',
+    name: event.functionName,
     id: event.definition,
-    func: event.func,
-    args: event.args,
+    functionRef: event.functionRef,
+    argsRefs: event.argsRefs,
     position: event.position,
     instances: [],
   };
@@ -23,9 +23,10 @@ function handleCreatorDefinition(state: State.State, event: Event.CreatorDefinit
 function handleOperatorDefinition(state: State.State, event: Event.OperatorDefinitionEvent) {
   const definition: State.OperatorDefinition = {
     kind: 'operator-definition',
+    name: event.functionName,
     id: event.definition,
-    func: event.func,
-    args: event.args,
+    functionRef: event.functionRef,
+    argsRefs: event.argsRefs,
     position: event.position,
     instances: [],
   };
@@ -38,10 +39,11 @@ function handleOperatorDefinition(state: State.State, event: Event.OperatorDefin
 function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDefinitionEvent) {
   const definition: State.SubscribeDefinition = {
     kind: 'subscribe-definition',
+    name: 'subscribe',
     id: event.definition,
-    next: event.next,
-    error: event.error,
-    complete: event.complete,
+    nextRef: event.nextRef,
+    errorRef: event.errorRef,
+    completeRef: event.completeRef,
     position: event.position,
     instances: [],
   };
@@ -55,7 +57,9 @@ function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDef
 function handleSubjectDefinition(state: State.State, event: Event.SubjectDefinitionEvent) {
   const definition: State.SubjectDefinition = {
     kind: 'subject-definition',
+    name: event.constructorName,
     id: event.definition,
+    constructorRef: event.constructorRef,
     position: event.position,
     instances: [],
   };
@@ -144,21 +148,15 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
 function handleNotification(state: State.State, event: Event.NotificationEvent) {
   const sender = state.instances[event.sender];
   const receiver = state.instances[event.receiver];
-  const cause: State.Cause = event.cause === undefined
-    ? undefined
-    : {
-      kind: event.cause.kind,
-      notification: state.notifications[event.cause.notification],
-    };
+
   const notification: State.Notification = {
     kind: event.kind as any,
     id: event.notification,
     time: clock(),
     sender,
     receiver,
-    cause,
-    ...event.kind === 'next' ? {value: event.value} : {},
-    ...event.kind === 'error' ? {error: event.error} : {},
+    ...event.kind === 'next' ? {valueRef: event.valueRef} : {},
+    ...event.kind === 'error' ? {errorRef: event.errorRef} : {},
   };
 
   sender.events.push(notification);
@@ -177,8 +175,8 @@ function handleSubjectCall(state: State.State, event: Event.SubjectEvent) {
     time: clock(),
     sender: undefined,
     receiver: subject,
-    ...event.kind === 'subject-next' ? {value: event.value} : {},
-    ...event.kind === 'subject-error' ? {error: event.error} : {},
+    ...event.kind === 'subject-next' ? {valueRef: event.valueRef} : {},
+    ...event.kind === 'subject-error' ? {errorRef: event.errorRef} : {},
   };
 
   subject.events.push(call);

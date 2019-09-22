@@ -1,45 +1,15 @@
 import {rxInspector, RxInspector} from './rx-inspector';
-// @ts-ignore
-import * as StackFrame from 'stackframe';
-import * as StackTraceGPS from 'stacktrace-gps';
-
-export interface RxSourceMappedInspectorEvent {
-  originalEvent: OriginalEvent;
-  position: {
-    file: string;
-    column: number;
-    line: number;
-    functionName: string;
-  };
-}
-
-export interface RxInstanceInspectorEvent {
-  originalEvent: OriginalEvent;
-}
-
-type OriginalEvent = any;
-
-const notMappableEvents = [
-  'instance',
-  'subscribe',
-  'next',
-  'error',
-  'complete',
-  'unsubscribe',
-  'subject-next',
-  'subject-error',
-  'subject-complete',
-  'connect',
-];
+import {createEventsMapper, EventsMapper} from './events-mapper';
+import {Event} from '@drxjs/events';
+import {DispatchedEvent} from './dispatched-events';
 
 class RxInspectorBuffer {
-  private eventsToMap: OriginalEvent[] = [];
-  private currentMappingEvents: OriginalEvent[] = [];
-  private mappedEvents: Array<RxSourceMappedInspectorEvent | RxInstanceInspectorEvent> = [];
+  private eventsToMap: DispatchedEvent[] = [];
+  private currentMappingEvents: DispatchedEvent[] = [];
+  private mappedEvents: Array<Event> = [];
   private readonly listener: (event: any) => void;
-  private readonly gps: StackTraceGPS = new StackTraceGPS();
 
-  constructor(private rxInspectorInst: RxInspector) {
+  constructor(private rxInspectorInst: RxInspector, private eventsMapper: EventsMapper) {
     this.listener = (event: any) => {
       this.eventsToMap.push(event);
       this.tryToMapNextEvents();
@@ -48,7 +18,7 @@ class RxInspectorBuffer {
     this.rxInspectorInst.addListener(this.listener);
   }
 
-  flush(): Array<RxSourceMappedInspectorEvent | RxInstanceInspectorEvent> {
+  flush(): Array<Event> {
     const returnVal = this.mappedEvents.slice();
     this.mappedEvents = [];
     console.log('flush', returnVal);
@@ -77,31 +47,7 @@ class RxInspectorBuffer {
     const mapPromises = [];
 
     for (const toMap of this.currentMappingEvents) {
-      if (notMappableEvents.indexOf(toMap.kind) > -1) {
-        mapPromises.push(Promise.resolve({originalEvent: toMap}));
-      } else {
-        // console.log(toMap);
-        const fileName = toMap.position.file;
-        const lineNumber = toMap.position.line;
-        const columnNumber = toMap.position.column;
-        const sourceStackFrame = new (StackFrame as any)({fileName, lineNumber, columnNumber});
-
-        mapPromises.push(
-          new Promise((resolve, reject) => {
-            this.gps.pinpoint(sourceStackFrame).then(stackFrame => {
-              resolve({
-                originalEvent: toMap,
-                position: {
-                  file: stackFrame.fileName,
-                  column: stackFrame.columnNumber,
-                  line: stackFrame.lineNumber,
-                  functionName: stackFrame.functionName,
-                }
-              });
-            });
-          })
-        );
-      }
+      mapPromises.push(this.eventsMapper.map(toMap));
     }
 
     Promise.all(mapPromises).then(results => {
@@ -112,10 +58,12 @@ class RxInspectorBuffer {
   }
 }
 
+
 export function createRxInspectorBuffer(rxInspectorInst: RxInspector): RxInspectorBuffer {
-  return new RxInspectorBuffer(rxInspectorInst);
+  return new RxInspectorBuffer(rxInspectorInst, createEventsMapper());
 }
 
 const rxInspectorBuffer = createRxInspectorBuffer(rxInspector);
+
 (window as any).___dRxJS_flushBuffer = () => rxInspectorBuffer.flush();
 

@@ -2,13 +2,14 @@ import {Injectable} from '@angular/core';
 import {from, interval, ReplaySubject} from "rxjs";
 import {filter, map, switchMap, tap} from 'rxjs/operators';
 import {browser} from "../types/webextension-polyfill-ts";
+import {Event} from '@drxjs/events';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EventService {
   private readonly flushFuncName = '___dRxJS_flushBuffer()';
-  private readonly _events$: ReplaySubject<Array<RxInstanceInspectorEvent | RxSourceMappedInspectorEvent>> = new ReplaySubject();
+  private readonly _events$: ReplaySubject<Array<Event>> = new ReplaySubject();
 
   constructor() {
     interval(1000)
@@ -26,20 +27,4 @@ export class EventService {
   get event$() {
     return this._events$;
   }
-}
-
-type OriginalEvent = any;
-
-export interface RxSourceMappedInspectorEvent {
-  originalEvent: OriginalEvent;
-  position: {
-    file: string;
-    column: number;
-    line: number;
-    functionName: string;
-  };
-}
-
-export interface RxInstanceInspectorEvent {
-  originalEvent: OriginalEvent;
 }

@@ -1,46 +1,48 @@
+export type Observable = any;
+
+export type OperatorFunction = (source: Observable) => Observable;
+
 export interface SourcePosition {
   file: string;
   line: number;
   column: number;
-  functionName: string;
+}
+
+export interface Cause {
+  kind: 'sync' | 'async';
+  notification: number;
 }
 
 export interface CreatorDefinitionEvent {
   kind: 'creator-definition';
   definition: number;
-  functionName: string;
-  functionRef: number;
-  argsRefs: number[];
+  func: (...args: any[]) => Observable;
+  args: any[];
   position: SourcePosition;
 }
 
 export interface OperatorDefinitionEvent {
   kind: 'operator-definition';
   definition: number;
-  functionName: string;
-  functionRef: number;
-  argsRefs: number[];
+  func: (...args: any[]) => OperatorFunction;
+  args: any[];
   position: SourcePosition;
 }
 
 export interface SubscribeDefinitionEvent {
   kind: 'subscribe-definition';
   definition: number;
-  nextName?: string;
-  nextRef?: number;
-  errorName?: string;
-  errorRef?: number;
-  completeName?: string;
-  completeRef?: number;
+  next: (value) => void;
+  error: (error) => void;
+  complete: () => void;
   position: SourcePosition;
 }
 
 export interface SubjectDefinitionEvent {
   kind: 'subject-definition';
   definition: number;
-  constructorName: string;
-  constructorRef: number;
-  argsRefs: number[];
+  constructor: any;
+  args: any[];
   position: SourcePosition;
 }
 
@@ -73,7 +75,8 @@ export interface NextNotificationEvent {
   sender: number;
   receiver: number;
   notification: number;
-  valueRef: number;
+  cause: Cause;
+  value: any;
 }
 
 export interface ErrorNotificationEvent {
@@ -81,7 +84,8 @@ export interface ErrorNotificationEvent {
   sender: number;
   receiver: number;
   notification: number;
-  errorRef: number;
+  cause: Cause;
+  error: any;
 }
 
 export interface CompleteNotificationEvent {
@@ -89,19 +93,20 @@ export interface CompleteNotificationEvent {
   sender: number;
   receiver: number;
   notification: number;
+  cause: Cause;
 }
 
 export interface SubjectNextEvent {
   kind: 'subject-next';
   subject: number;
-  valueRef: number;
+  value: any;
   // todo: stacktrace / context;
 }
 
 export interface SubjectErrorEvent {
   kind: 'subject-error';
   subject: number;
-  errorRef: number;
+  error: any;
   // todo: stacktrace / context;
 }
 
@@ -126,7 +131,7 @@ export type SubjectEvent
   | SubjectErrorEvent
   | SubjectCompleteEvent;
 
-export type Event
+export type DispatchedEvent
   = DefinitionEvent
   | InstanceEvent
   | SubscribeEvent
@@ -135,7 +140,7 @@ export type Event
   | SubjectEvent
   | ConnectEvent;
 
-export function isDefinitionEvent(x: Event): x is DefinitionEvent {
+export function isDefinitionEvent(x: DispatchedEvent): x is DefinitionEvent {
   switch (x.kind) {
     case 'creator-definition':
     case 'operator-definition':

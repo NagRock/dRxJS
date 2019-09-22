@@ -1,13 +1,6 @@
-import * as rx from 'rxjs';
-
 export interface Index<T> {
   [key: number]: T;
 }
-
-export interface Observable {
-}
-
-export type OperatorFunction = rx.UnaryFunction<Observable, Observable>;
 
 export interface SourcePosition {
   file: string;
@@ -17,35 +10,40 @@ export interface SourcePosition {
 
 export interface CreatorDefinition {
   kind: 'creator-definition';
+  name: string;
   id: number;
-  func: (...args: any[]) => Observable;
-  args: any[];
+  functionRef: number;
+  argsRefs: number[];
   position: SourcePosition;
   instances: Instance[];
 }
 
 export interface OperatorDefinition {
   kind: 'operator-definition';
+  name: string;
   id: number;
-  func: (...args: any[]) => OperatorFunction;
-  args: any[];
+  functionRef: number;
+  argsRefs: number[];
   position: SourcePosition;
   instances: Instance[];
 }
 
 export interface SubscribeDefinition {
   kind: 'subscribe-definition';
+  name: string;
   id: number;
-  next: (value) => void;
-  error: (error) => void;
-  complete: () => void;
+  nextRef?: number;
+  errorRef?: number;
+  completeRef?: number;
   position: SourcePosition;
   instances: Instance[];
 }
 
 export interface SubjectDefinition {
   kind: 'subject-definition';
+  name: string;
   id: number;
+  constructorRef: number;
   position: SourcePosition;
   instances: Instance[];
 }
@@ -89,19 +87,13 @@ export interface Unsubscribe {
   receiver: Instance;
 }
 
-export interface Cause {
-  kind: 'sync' | 'async';
-  notification: Notification;
-}
-
 export interface NextNotification {
   kind: 'next';
   id: number;
   time: number;
   sender: Instance;
   receiver: Instance;
-  cause: Cause;
-  value: any;
+  valueRef: number;
 }
 
 export interface ErrorNotification {
@@ -110,8 +102,7 @@ export interface ErrorNotification {
   time: number;
   sender: Instance;
   receiver: Instance;
-  cause: Cause;
-  error: any;
+  errorRef: number;
 }
 
 export interface CompleteNotification {
@@ -120,7 +111,6 @@ export interface CompleteNotification {
   time: number;
   sender: Instance;
   receiver: Instance;
-  cause: Cause;
 }
 
 export type Notification
@@ -133,7 +123,7 @@ export interface SubjectNextCall {
   time: number;
   sender: undefined;
   receiver: Instance;
-  value: any;
+  valueRef: number;
 }
 
 export interface SubjectErrorCall {
@@ -141,7 +131,7 @@ export interface SubjectErrorCall {
   time: number;
   sender: undefined;
   receiver: Instance;
-  error: any;
+  errorRef: number;
 }
 
 export interface SubjectCompleteCall {
