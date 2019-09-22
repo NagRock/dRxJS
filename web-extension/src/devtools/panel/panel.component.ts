@@ -36,4 +36,9 @@ export class PanelComponent {
     this.selectedInstanceEvents$,
     this.selectedEventIndexSubject.asObservable(),
   ).pipe(map(([events, index]) => events[index]));
+
+  selectInstance(instanceId: number) {
+    console.log("selectedInstance:", instanceId);
+    this.selectedInstanceIdSubject.next(instanceId);
+  }
 }

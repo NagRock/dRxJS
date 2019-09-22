@@ -16,6 +16,7 @@
     <circle
       r="16"
       [attr.fill]="node.instance === instance ? 'red' : 'white'"
+      (click)="instanceClicked(node.instance)"
       stroke="black"
       stroke-width="4">
     </circle>

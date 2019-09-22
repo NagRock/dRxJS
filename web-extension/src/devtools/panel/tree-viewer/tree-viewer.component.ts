@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {Event, Instance} from '../state';
 import {animationFrameScheduler, asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, observeOn, throttleTime} from 'rxjs/operators';
@@ -79,6 +79,9 @@ export class TreeViewerComponent implements AfterViewInit {
     this.eventSubject.next(event);
   }
 
+  @Output()
+  readonly instanceChange = new EventEmitter<Instance>();
+
   ngAfterViewInit(): void {
     this.eventSubject
       .pipe(observeOn(animationFrameScheduler))
@@ -105,5 +108,9 @@ export class TreeViewerComponent implements AfterViewInit {
 
   getHeight(layout: InstanceLayout) {
     return getHeight(layout.height);
+  }
+
+  instanceClicked(instance: Instance) {
+    this.instanceChange.emit(instance);
   }
 }
