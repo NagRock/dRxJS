@@ -1,0 +1,8 @@
+<ng-container
+  *ngIf="instance">
+  {{instance.definition.position.file}}
+  / {{instance.definition.position.line}}:{{instance.definition.position.column}}
+  / {{instance.definition.position.functionName}}
+  / {{instance.definition.name}}
+  / {{instance.id}}
+</ng-container>

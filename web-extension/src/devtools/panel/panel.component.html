@@ -1,11 +1,20 @@
-<app-tree-viewer
+<app-instance-selector
   [instance]="selectedInstance$ | async"
-  [event]="selectedEvent$ | async">
-</app-tree-viewer>
+></app-instance-selector>
 
-<app-events-viewer
-  [events]="selectedInstanceEvents$ | async"
-  [selectedEventIndex]="selectedEventIndexSubject | async"
-  (selectedEventIndexChange)="selectedEventIndexSubject.next($event)">
-</app-events-viewer>
+<div
+  class="content"
+>
+  <app-tree-viewer
+    [instance]="selectedInstance$ | async"
+    [event]="selectedEvent$ | async"
+  ></app-tree-viewer>
+
+  <app-events-viewer
+    [events]="selectedInstanceEvents$ | async"
+    [selectedEventIndex]="selectedEventIndexSubject | async"
+    (selectedEventIndexChange)="selectedEventIndexSubject.next($event)"
+  ></app-events-viewer>
+</div>
+
 

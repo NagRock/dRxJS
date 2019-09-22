@@ -1,7 +1,22 @@
 :host {
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 4px);
   display: flex;
+  flex-direction: column;
+}
+
+app-instance-selector {
+  width: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  flex-shrink: 1;
+  height: 0;
 }
 
 app-tree-viewer {

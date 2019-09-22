@@ -6,6 +6,7 @@ export interface SourcePosition {
   file: string;
   line: number;
   column: number;
+  functionName: string;
 }
 
 export interface CreatorDefinition {

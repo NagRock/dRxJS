@@ -9,6 +9,7 @@ import {MatButtonModule, MatIconModule, MatTreeModule} from '@angular/material';
 import {TreeViewerModule} from './tree-viewer/tree-viewer.module';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {EventsViewerModule} from './events-viewer/events-viewer.module';
+import {InstanceSelectorModule} from './instance-selector/instance-selector.module';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import {EventsViewerModule} from './events-viewer/events-viewer.module';
     TreeViewerModule,
     OverlayModule,
     EventsViewerModule,
+    InstanceSelectorModule,
   ],
   declarations: [
     PanelComponent
