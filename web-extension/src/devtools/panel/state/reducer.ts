@@ -1,20 +1,9 @@
-import {RxInspector} from '../../instrument/rx-inspector';
-import * as Event from '../../instrument/types';
+import * as Event from './events';
 import * as State from './types';
 import {scan, shareReplay} from 'rxjs/operators';
 import {Observable, Observer} from 'rxjs';
 import {clock} from './clock';
 import {Instance, Properties} from './types';
-
-
-function fromRxInspector(rxInspector: RxInspector): Observable<Event.Event> {
-  return Observable.create((observer: Observer<Event.Event>) => {
-    const listener = (event) => observer.next(event);
-    rxInspector.addListener(listener);
-
-    return () => rxInspector.removeListener(listener);
-  });
-}
 
 function handleCreatorDefinition(state: State.State, event: Event.CreatorDefinitionEvent) {
   const definition: State.CreatorDefinition = {
@@ -211,43 +200,37 @@ function handleConnectCall(state: State.State, event: Event.ConnectEvent) {
   return state;
 }
 
-export function getState$(rxInspector: RxInspector) {
-  return fromRxInspector(rxInspector)
-    .pipe(
-      scan((state: State.State, event: Event.Event): State.State => {
-        switch (event.kind) {
-          case 'creator-definition':
-            return handleCreatorDefinition(state, event);
-          case 'operator-definition':
-            return handleOperatorDefinition(state, event);
-          case 'subscribe-definition':
-            return handleSubscribeDefinition(state, event);
-          case 'subject-definition':
-            return handleSubjectDefinition(state, event);
-          case 'instance':
-            return handleInstance(state, event);
-          case 'subscribe':
-            return handleSubscribe(state, event);
-          case 'unsubscribe':
-            return handleUnsubscribe(state, event);
-          case 'next':
-          case 'error':
-          case 'complete':
-            return handleNotification(state, event);
-          case 'subject-next':
-          case 'subject-error':
-          case 'subject-complete':
-            return handleSubjectCall(state, event);
-          case 'connect':
-            return handleConnectCall(state, event);
-          default:
-            return state;
-        }
-      }, {
-        definitions: {},
-        instances: {},
-        notifications: {},
-      }),
-      shareReplay(1),
-    );
-}
+export const state = () => scan((state: State.State, event: Event.Event): State.State => {
+  switch (event.kind) {
+    case 'creator-definition':
+      return handleCreatorDefinition(state, event);
+    case 'operator-definition':
+      return handleOperatorDefinition(state, event);
+    case 'subscribe-definition':
+      return handleSubscribeDefinition(state, event);
+    case 'subject-definition':
+      return handleSubjectDefinition(state, event);
+    case 'instance':
+      return handleInstance(state, event);
+    case 'subscribe':
+      return handleSubscribe(state, event);
+    case 'unsubscribe':
+      return handleUnsubscribe(state, event);
+    case 'next':
+    case 'error':
+    case 'complete':
+      return handleNotification(state, event);
+    case 'subject-next':
+    case 'subject-error':
+    case 'subject-complete':
+      return handleSubjectCall(state, event);
+    case 'connect':
+      return handleConnectCall(state, event);
+    default:
+      return state;
+  }
+}, {
+  definitions: {},
+  instances: {},
+  notifications: {},
+});

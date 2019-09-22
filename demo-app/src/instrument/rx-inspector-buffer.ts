@@ -47,6 +47,7 @@ class RxInspectorBuffer {
   flush(): Array<RxSourceMappedInspectorEvent | RxInstanceInspectorEvent> {
     const returnVal = this.mappedEvents.slice();
     this.mappedEvents = [];
+    console.log('flush', returnVal);
     return returnVal;
   }
 
@@ -75,7 +76,7 @@ class RxInspectorBuffer {
       if (notMappableEvents.indexOf(toMap.kind) > -1) {
         mapPromises.push(Promise.resolve({originalEvent: toMap}));
       } else {
-        console.log(toMap);
+        // console.log(toMap);
         const fileName = toMap.position.file;
         const lineNumber = toMap.position.line;
         const columnNumber = toMap.position.column;

@@ -1,13 +1,11 @@
-dRxJS Devtools Panel!
-<pre>{{ counter | async | json }}</pre>
+<app-tree-viewer
+  [instance]="selectedInstance$ | async"
+  [event]="selectedEvent$ | async">
+</app-tree-viewer>
 
-Events:
-<ul>
-  <li *ngFor="let event of events">
-    <ng-container *ngIf="event && event.originalEvent !== undefined">
-      <pre>{{ event.originalEvent.kind }}</pre>
-      <pre *ngIf="event.originalEvent.value !== undefined">Value: {{ event.originalEvent.value }}</pre>
-      <pre *ngIf="event.position !== undefined">Source: {{ event.position.file }}:{{ event.position.column }}:{{ event.position.line }}</pre>
-    </ng-container>
-  </li>
-</ul>
+<app-events-viewer
+  [events]="selectedInstanceEvents$ | async"
+  [selectedEventIndex]="selectedEventIndexSubject | async"
+  (selectedEventIndexChange)="selectedEventIndexSubject.next($event)">
+</app-events-viewer>
+

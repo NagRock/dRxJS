@@ -1,9 +1,8 @@
 :host {
-  width: 100vw;
-  height: 100vh;
   display: flex;
+  flex-direction: column;
 }
 
-app-tree-viewer {
-  flex-grow: 1;
+button {
+  margin: 8px;
 }

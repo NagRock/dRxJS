@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "module": "es2015",
     "target": "es5",
@@ -8,6 +9,7 @@
       "es2018",
       "dom"
     ],
+    "types": ["node"],
     "noImplicitAny": false,
     "sourceMap": false,
     "rootDir": "src",

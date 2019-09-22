@@ -1,8 +1,10 @@
 import {Component} from '@angular/core';
-import {from, interval} from 'rxjs';
+import {asapScheduler, BehaviorSubject, combineLatest, from, interval} from 'rxjs';
 import {browser} from '../../types/webextension-polyfill-ts';
-import {switchMap} from 'rxjs/operators';
-import {EventService, RxInstanceInspectorEvent, RxSourceMappedInspectorEvent} from "../event.service";
+import {debounceTime, map, switchMap} from 'rxjs/operators';
+import {RxInstanceInspectorEvent, RxSourceMappedInspectorEvent} from '../event.service';
+import {getEvents} from './state';
+import {StateService} from './state/state.service';
 
 @Component({
   selector: 'd-panel',
@@ -12,12 +14,27 @@ import {EventService, RxInstanceInspectorEvent, RxSourceMappedInspectorEvent} fr
 export class PanelComponent {
   events: Array<RxInstanceInspectorEvent | RxSourceMappedInspectorEvent> = [];
 
-  counter = interval(1500)
-    .pipe(switchMap(() => from(browser.devtools.inspectedWindow.eval('_dRxJS.getData()'))));
-
-  constructor(private eventService: EventService) {
-    this.eventService.event$.subscribe(events => {
-      this.events = [...this.events, ...events];
-    })
+  constructor(private readonly stateService: StateService) {
   }
+
+  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(2);
+  readonly selectedEventIndexSubject = new BehaviorSubject<number>(0);
+
+  readonly state$ = this.stateService.state$.pipe(debounceTime(0, asapScheduler));
+  readonly selectedInstance$ = combineLatest(
+    this.state$,
+    this.selectedInstanceIdSubject.asObservable(),
+  ).pipe(
+    map(([state, selectedInstanceId]) => {
+      return state.instances[selectedInstanceId];
+    }),
+  );
+  readonly selectedInstanceEvents$ = this.selectedInstance$
+    .pipe(
+      map(getEvents),
+    );
+  readonly selectedEvent$ = combineLatest(
+    this.selectedInstanceEvents$,
+    this.selectedEventIndexSubject.asObservable(),
+  ).pipe(map(([events, index]) => events[index]));
 }
