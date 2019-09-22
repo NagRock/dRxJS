@@ -1,4 +1,4 @@
-import * as rx from 'instrumented-rxjs';
+import * as rx from 'rxjs';
 
 export interface ObserverWithDestination extends rx.Observer<any> {
   destination: ObserverWithDestination;

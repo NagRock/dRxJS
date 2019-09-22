@@ -42,11 +42,13 @@ export class TreeViewerComponent implements AfterViewInit {
   ]).pipe(
     debounceTime(0, asapScheduler),
     map(([layout, event]): InstanceLayout => {
+      const time = event ? event.time : 0;
+
       const nodes = layout.nodes.map((node) => ({
         x: node.x,
         y: node.y,
         instance: node.data,
-        properties: getProperties(node.data, event.time),
+        properties: getProperties(node.data, time),
       }));
       const indexedNodes = R.indexBy((node: any) => String(node.instance.id), nodes);
       const links = layout.links.map((link) => {

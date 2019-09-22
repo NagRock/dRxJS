@@ -11,7 +11,7 @@ import {
 import {isScheduler, rx} from '../rx';
 import {Receiver, Sender} from '../types';
 import {RxCreator} from './types';
-import {from, isObservable, ObservableInput} from 'instrumented-rxjs';
+import {from, isObservable, ObservableInput} from 'rxjs';
 
 const instrumentObservableInputs =
   (args: any[], instrument: (input: ObservableInput<any>, inputKey: number | string) => ObservableInput<any>): any[] => {

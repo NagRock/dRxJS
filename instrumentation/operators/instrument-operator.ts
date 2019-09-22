@@ -8,8 +8,8 @@ import {
   trackSubscribe,
   trackUnsubscribe
 } from '../track';
-import {rx} from '../rx';
-import {from, identity, isObservable, noop, Observable, ObservableInput, Observer, Subscriber} from 'instrumented-rxjs';
+import {instrumentedRx, rx} from '../rx';
+import {Observable, ObservableInput, Observer, Subscriber} from 'rxjs';
 import {Receiver, Sender} from '../types';
 import {RxOperator} from './types';
 
@@ -17,7 +17,7 @@ export const toSubscriber = (observer: Observer<any> | Subscriber<any>): Subscri
   if (observer instanceof Subscriber) {
     return observer;
   } else {
-    return new Subscriber(observer);
+    return new rx.Subscriber(observer);
   }
 };
 
@@ -31,8 +31,8 @@ export interface InstrumentOperatorOptions {
 
 export const instrumentOperator =
   ({
-     wrapArgs = identity,
-     wrapReceiver = identity,
+     wrapArgs = rx.identity,
+     wrapReceiver = rx.identity,
    }: InstrumentOperatorOptions = {}) =>
     <IN = any, OUT = any, ARGS extends any[] = any>(operator: RxOperator<IN, OUT, ARGS>): RxOperator<IN, OUT, ARGS> => {
       return (...args: ARGS) => {
@@ -40,8 +40,8 @@ export const instrumentOperator =
         return (scopeStream) => new rx.Observable((scopeObserver: Observer<any>) => {
           const senderId = trackInstance(definitionId);
           let lastReceivedNotificationId: number;
-          const instrumentObservableInput: InstrumentObservableInput = (source, wrapObserver = identity) => {
-            const stream = isObservable(source) ? source : from(source);
+          const instrumentObservableInput: InstrumentObservableInput = (source, wrapObserver = rx.identity) => {
+            const stream = rx.isObservable(source) ? source : instrumentedRx.from(source);
             return rx.Observable.create((observer: Observer<any>) => {
               const receiver = toSubscriber(wrapObserver(observer)) as unknown as Receiver;
               receiver.__receiver_id__ = senderId;

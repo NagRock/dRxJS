@@ -37,7 +37,6 @@
     "core-js": "^2.5.4",
     "d3": "^5.9.2",
     "immutable": "^4.0.0-rc.12",
-    "instrumented-rxjs": "npm:rxjs@6.5.2",
     "ngx-build-plus": "^7.7.6",
     "ramda": "^0.26.1",
     "rxjs": "6.5.2",

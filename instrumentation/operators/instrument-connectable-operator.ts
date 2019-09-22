@@ -10,7 +10,7 @@ import {
   trackUnsubscribe
 } from '../track';
 import {rx} from '../rx';
-import {Observable, Observer, Subscription, Subscriber, TeardownLogic, ConnectableObservable} from 'instrumented-rxjs';
+import {Observable, Observer, Subscription, Subscriber, TeardownLogic, ConnectableObservable} from 'rxjs';
 import {Receiver, Sender} from '../types';
 import {toSubscriber} from './instrument-operator';
 

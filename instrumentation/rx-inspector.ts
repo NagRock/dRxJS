@@ -1,11 +1,13 @@
 type RxInspectorEvent = any;
 type RxInspectorListener = (event: RxInspectorEvent) => void;
 
+declare const Zone: any;
+
 export class RxInspector {
   private listeners: RxInspectorListener[] = [];
 
   dispatch(event: RxInspectorEvent) {
-    this.listeners.forEach((listener) => listener(event));
+    Zone.root.run(() => this.listeners.forEach((listener) => listener(event)));
   }
 
   addListener(listener: RxInspectorListener) {

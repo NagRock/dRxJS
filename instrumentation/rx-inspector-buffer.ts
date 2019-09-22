@@ -23,8 +23,12 @@ const notMappableEvents = [
   'instance',
   'subscribe',
   'next',
+  'error',
   'complete',
   'unsubscribe',
+  'subject-next',
+  'subject-error',
+  'subject-complete',
   'connect',
 ];
 

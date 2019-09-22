@@ -17,7 +17,7 @@ export class PanelComponent {
   constructor(private readonly stateService: StateService) {
   }
 
-  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(2);
+  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(30);
   readonly selectedEventIndexSubject = new BehaviorSubject<number>(0);
 
   readonly state$ = this.stateService.state$.pipe(debounceTime(0, asapScheduler));

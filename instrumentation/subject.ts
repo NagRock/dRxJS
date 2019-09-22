@@ -11,7 +11,7 @@ import {
   trackSubscribe, trackUnsubscribe
 } from './track';
 import {Receiver, Sender} from './types';
-import {Subscriber} from 'instrumented-rxjs';
+import {Subscriber} from 'rxjs';
 
 export function instrumentSubject(subject) {
   const instrumentedSubject = class InstrumentedSubject<T> extends subject {
