@@ -7,17 +7,24 @@
 <div
   class="content"
 >
-  <app-tree-viewer
-    [instance]="selectedInstance$ | async"
-    [event]="selectedEvent$ | async"
-    (instanceChange)="selectInstance($event.id)"
-  ></app-tree-viewer>
-
   <app-events-viewer
+    class="events-viewer"
     [events]="selectedInstanceEvents$ | async"
     [selectedEventIndex]="selectedEventIndexSubject | async"
     (selectedEventIndexChange)="selectedEventIndexSubject.next($event)"
   ></app-events-viewer>
+
+  <app-event-data-viewer
+    class="event-data-viewer"
+    [event]="selectedEvent$ | async"
+  ></app-event-data-viewer>
+
+  <app-tree-viewer
+    class="tree-viewer"
+    [instance]="selectedInstance$ | async"
+    [event]="selectedEvent$ | async"
+    (instanceChange)="selectInstance($event.id)"
+  ></app-tree-viewer>
 </div>
 
 

@@ -1,0 +1,7 @@
+<ng-container *ngIf="eventData !== undefined">
+  <h6>Data:</h6>
+  <span class="type"
+        [ngClass]="getEventDataType(eventData)">
+    {{ eventData }}
+  </span>
+</ng-container>

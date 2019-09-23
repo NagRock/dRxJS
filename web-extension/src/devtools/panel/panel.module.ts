@@ -10,6 +10,7 @@ import {TreeViewerModule} from './tree-viewer/tree-viewer.module';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {EventsViewerModule} from './events-viewer/events-viewer.module';
 import {InstanceSelectorModule} from './instance-selector/instance-selector.module';
+import {EventDataViewerModule} from './event-data-viewer/event-data-viewer.module';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import {InstanceSelectorModule} from './instance-selector/instance-selector.modu
     TreeViewerModule,
     OverlayModule,
     EventsViewerModule,
+    EventDataViewerModule,
     InstanceSelectorModule,
   ],
   declarations: [

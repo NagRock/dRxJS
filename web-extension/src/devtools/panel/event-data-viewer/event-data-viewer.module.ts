@@ -1,16 +1,18 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {EventsViewerComponent} from './events-viewer.component';
 import {MatListModule} from '@angular/material/list';
+import {EventDataViewerComponent} from './event-data-viewer.component';
 
 @NgModule({
-  declarations: [EventsViewerComponent],
+  declarations: [EventDataViewerComponent],
   exports: [
-    EventsViewerComponent
+    EventDataViewerComponent
   ],
   imports: [
     CommonModule,
     MatListModule,
   ]
 })
-export class EventsViewerModule { }
+export class EventDataViewerModule {
+}
+

@@ -19,7 +19,16 @@ app-instance-selector {
   height: 0;
 }
 
-app-tree-viewer {
+.events-viewer {
+  min-width: 250px;
+}
+
+.tree-viewer {
   flex-grow: 1;
 }
+
+.event-data-viewer {
+  min-width: 250px;
+}
+
 

@@ -1,7 +1,17 @@
-<div
-  *ngFor="let event of events; let index=index;"
-  (click)="onEventClicked(index)"
-  [ngClass]="{'selected': index === selectedEventIndex}"
-  class="event">
-  {{event.kind}}
-</div>
+<mat-action-list>
+  <a *ngFor="let event of events; let index=index;"
+     mat-list-item
+     (click)="onEventClicked(index)"
+     [ngClass]="{'selected': index === selectedEventIndex}"
+     class="event-item">
+    <div class="event-content">
+      <span>{{ event.kind }}</span>
+      <span class="event-details">
+        <span class="has-data" [ngSwitch]="event.valueRef > 0">
+          <span *ngSwitchCase="true" title="Has data: #{{ event.valueRef }}">📦</span>
+          <ng-container *ngSwitchDefault>&nbsp;</ng-container>
+        </span>
+      </span>
+    </div>
+  </a>
+</mat-action-list>

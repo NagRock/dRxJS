@@ -2,22 +2,37 @@
   overflow: auto;
 }
 
-.event {
-  display: flex;
-  justify-content: space-between;
-  width: 100px;
-  height: 32px;
-  align-items: center;
-  padding: 0 8px;
-  border-left: 1px solid black;
-  border-bottom: 1px solid black;
+.event-item:nth-child(even) {
+  background-color: #efefef;
 }
 
-.event:last-child {
-  border-bottom: 0;
-}
-
-.selected {
+.event-item.selected {
   color: white;
   background-color: firebrick;
+}
+
+.event-content {
+  display: flex;
+  align-content: flex-end;
+  text-align: right;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.event-details {
+  flex: auto;
+  margin-left: 5px;
+}
+
+.time, .has-data {
+  font-size: 90%;
+  margin-left: 5px;
+}
+
+.time {
+  color: #ccc;
+}
+
+.has-data {
+  color: orange;
 }
