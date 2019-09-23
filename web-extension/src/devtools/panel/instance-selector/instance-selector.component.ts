@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Instance} from '../state';
+import {Instance, SourcePosition} from '../state';
 import {BehaviorSubject, combineLatest} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -35,6 +35,7 @@ export class InstanceSelectorComponent {
           || (instance.definition.position.functionName && instance.definition.position.functionName.includes(phrase))
           || instance.definition.name.includes(phrase)
         )
+        .reverse()
         .slice(0, 16);
     }),
   );
@@ -48,5 +49,19 @@ export class InstanceSelectorComponent {
   instanceSelected(instance: Instance) {
     this.search = false;
     this.instanceChange.emit(instance);
+  }
+
+  getFormattedPosition(position: SourcePosition) {
+    const items : Array<string | number> = [position.file];
+
+    if (position.line > 0) {
+      items.push(position.line);
+    }
+
+    if (position.column > 0) {
+      items.push(position.column);
+    }
+
+    return items.join(':');
   }
 }

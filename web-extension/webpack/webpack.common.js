@@ -76,13 +76,13 @@ module.exports = env => {
         entryModule: './web-extension/src/devtools/panel/panel.module#PanelModule',
         sourceMap: true,
       }),
-      new CopyPlugin([{
-        from: './web-extension/src',
-        to: buildConfig.DIST_DIR,
-        ignore: [
-          '*.ts'
-        ],
-      }], {
+      new CopyPlugin([
+        { from: './web-extension/src', to: buildConfig.DIST_DIR, ignore: [ '*.ts' ], },
+        {
+          from: './node_modules/@angular/material/prebuilt-themes/indigo-pink.css',
+          to: path.join(buildConfig.DIST_DIR, 'devtools/panel/theme.css')
+        },
+      ], {
         copyUnmodified: true
       }),
 
