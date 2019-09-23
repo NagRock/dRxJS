@@ -15,7 +15,7 @@ export class EventDataViewerComponent {
   set event(event: Event) {
     this._event = event;
 
-    if (!!(event as any).valueRef) {
+    if (event && !!(event as any).valueRef) {
       this.eventDataService.loadEventData((event as any).valueRef)
         .then((data) => this.eventData = data)
     } else {

@@ -1,6 +1,7 @@
 import {Directive, HostBinding, Input} from '@angular/core';
 import {getX, getY} from './coords';
 import {InstanceLink} from './types';
+const POINT_OFFSET = 20;
 
 @Directive({
   selector: 'path[appTreeViewerLink]'
@@ -22,9 +23,9 @@ export class TreeViewerLinkDirective {
 
   @HostBinding('attr.d')
   get attrD() {
-    const sx = getX(this.appTreeViewerLink.source.x);
+    const sx = getX(this.appTreeViewerLink.source.x) + POINT_OFFSET;
     const sy = getY(this.appTreeViewerLink.source.y);
-    const tx = getX(this.appTreeViewerLink.target.x);
+    const tx = getX(this.appTreeViewerLink.target.x) - POINT_OFFSET;
     const ty = getY(this.appTreeViewerLink.target.y);
     return `M${sx},${sy}C${(sx + tx) / 2},${sy} ${(sx + tx) / 2},${ty} ${tx},${ty}`;
   }

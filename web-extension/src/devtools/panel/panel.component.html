@@ -1,30 +1,42 @@
-<app-instance-selector
-  [instances]="instances$ | async"
-  [instance]="selectedInstance$ | async"
-  (instanceChange)="selectInstance($event.id)"
-></app-instance-selector>
+<ng-container *ngIf="selectedInstance$ | async as selectedInstance; else selectInstanceMain">
+  <nav class="instance-navbar">
+    <button mat-raised-button (click)="selectInstance(null)">&larr;</button>
+    <span class="nav-title">
+      <ng-container *ngIf="getFormattedPosition(selectedInstance.definition.position) as formattedPosition">
+        {{ formattedPosition }}
+      </ng-container>
+      | {{selectedInstance.definition.position.functionName}}
+      | {{selectedInstance.definition.name}} #{{selectedInstance.id}}
+    </span>
+  </nav>
+  <div
+    class="content"
+  >
+    <app-events-viewer
+      class="events-viewer"
+      [events]="selectedInstanceEvents$ | async"
+      [selectedEventIndex]="selectedEventIndexSubject | async"
+      (selectedEventIndexChange)="selectedEventIndexSubject.next($event)"
+    ></app-events-viewer>
 
-<div
-  class="content"
->
-  <app-events-viewer
-    class="events-viewer"
-    [events]="selectedInstanceEvents$ | async"
-    [selectedEventIndex]="selectedEventIndexSubject | async"
-    (selectedEventIndexChange)="selectedEventIndexSubject.next($event)"
-  ></app-events-viewer>
+    <app-event-data-viewer
+      class="event-data-viewer"
+      [event]="selectedEvent$ | async"
+    ></app-event-data-viewer>
 
-  <app-event-data-viewer
-    class="event-data-viewer"
-    [event]="selectedEvent$ | async"
-  ></app-event-data-viewer>
+    <app-tree-viewer
+      class="tree-viewer"
+      [instance]="selectedInstance"
+      [event]="selectedEvent$ | async"
+      (instanceChange)="selectInstance($event.id)"
+    ></app-tree-viewer>
+  </div>
+</ng-container>
 
-  <app-tree-viewer
-    class="tree-viewer"
+<ng-template #selectInstanceMain>
+  <app-instance-selector
+    [instances]="instances$ | async"
     [instance]="selectedInstance$ | async"
-    [event]="selectedEvent$ | async"
     (instanceChange)="selectInstance($event.id)"
-  ></app-tree-viewer>
-</div>
-
-
+  ></app-instance-selector>
+</ng-template>

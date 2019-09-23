@@ -5,6 +5,18 @@
   flex-direction: column;
 }
 
+.instance-navbar {
+  background-color: firebrick;
+  padding: 15px;
+}
+
+.nav-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 0 15px;
+}
+
 app-instance-selector {
   width: 100%;
   flex-grow: 0;
@@ -16,7 +28,7 @@ app-instance-selector {
   flex-direction: row;
   flex-grow: 1;
   flex-shrink: 1;
-  height: 0;
+  height: 100%
 }
 
 .events-viewer {

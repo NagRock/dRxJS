@@ -1,49 +1,39 @@
-<div class="info" *ngIf="!search; else searchPanel">
-  <button mat-raised-button (click)="search=true">&larr;</button>
-  <span
-    *ngIf="instance">
-    <ng-container *ngIf="getFormattedPosition(instance.definition.position) as formattedPosition">
-      {{ formattedPosition }}
-    </ng-container>
-    | {{instance.definition.position.functionName}}
-    | {{instance.definition.name}} #{{instance.id}}
-  </span>
+<h3>
+  Select instance
+</h3>
+
+<div class="instance-search">
+  <form class="phrase-input">
+    <mat-form-field>
+      <input matInput #phraseInput (keyup)="phraseChange(phraseInput.value)" placeholder="Search ..."/>
+    </mat-form-field>
+    <mat-checkbox name="hideEmptyReceivers"
+                  [ngModel]="hideEmptyReceivers"
+                  (ngModelChange)="onHideEmptyReceivers($event)"
+    >hide without receivers
+    </mat-checkbox>
+  </form>
 </div>
 
-<ng-template #searchPanel>
-  <div>
-    <form class="phrase-input">
-      <mat-form-field>
-        <input matInput #phraseInput (keyup)="phraseChange(phraseInput.value)" placeholder="Search ..."/>
-      </mat-form-field>
-      <mat-checkbox name="hideEmptyReceivers"
-                    [ngModel]="hideEmptyReceivers"
-                    (ngModelChange)="onHideEmptyReceivers($event)"
-      >hide empty receivers</mat-checkbox>
-    </form>
-
-    <div class="instance-container">
-      <a
-        *ngFor="let instance of result$ | async"
-        (click)="instanceSelected(instance)"
-        class="instance-item"
-      >
-        <mat-card>
-          <mat-card-title>{{instance.definition.name}} #{{instance.id}}</mat-card-title>
-          <mat-card-content>
-            <ng-container *ngIf="instance.definition.position.functionName as functionName">
-              in {{ functionName }}
-            </ng-container>
-          </mat-card-content>
-          <mat-card-footer>
+<div class="instance-container">
+  <a
+    *ngFor="let instance of result$ | async"
+    (click)="instanceSelected(instance)"
+    class="instance-item"
+  >
+    <mat-card>
+      <mat-card-title>{{instance.definition.name}} #{{instance.id}}</mat-card-title>
+      <mat-card-content>
+        <ng-container *ngIf="instance.definition.position.functionName as functionName">
+          in {{ functionName }}
+        </ng-container>
+      </mat-card-content>
+      <mat-card-footer>
             <span *ngIf="getFormattedPosition(instance.definition.position) as formattedPosition"
-              title="{{ formattedPosition }}">
+                  title="{{ formattedPosition }}">
               {{ formattedPosition }}
             </span>
-          </mat-card-footer>
-        </mat-card>
-      </a>
-    </div>
-
-  </div>
-</ng-template>
+      </mat-card-footer>
+    </mat-card>
+  </a>
+</div>
