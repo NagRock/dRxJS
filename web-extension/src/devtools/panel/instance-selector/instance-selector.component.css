@@ -3,7 +3,22 @@
   background-color: firebrick;
   font-size: 16px;
   padding: 6px 20px 8px 20px;
-  height: 36x;
+  min-height: 36px;
   display: block;
   box-sizing: border-box;
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.phrase-input {
+  height: 36px;
+}
+
+.instance-button {
+  width: 100%;
+  margin: 8px 0;
 }

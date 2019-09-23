@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InstanceSelectorComponent } from './instance-selector.component';
+import {MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule} from '@angular/material';
 
 @NgModule({
   declarations: [InstanceSelectorComponent],
@@ -8,7 +9,11 @@ import { InstanceSelectorComponent } from './instance-selector.component';
     InstanceSelectorComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule
   ]
 })
 export class InstanceSelectorModule { }

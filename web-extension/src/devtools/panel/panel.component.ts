@@ -16,10 +16,11 @@ export class PanelComponent {
   constructor(private readonly stateService: StateService) {
   }
 
-  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(30);
+  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(0);
   readonly selectedEventIndexSubject = new BehaviorSubject<number>(0);
 
   readonly state$ = this.stateService.state$.pipe(debounceTime(0, asapScheduler));
+  readonly instances$ = this.state$.pipe(map((state) => Object.values(state.instances)));
   readonly selectedInstance$ = combineLatest(
     this.state$,
     this.selectedInstanceIdSubject.asObservable(),

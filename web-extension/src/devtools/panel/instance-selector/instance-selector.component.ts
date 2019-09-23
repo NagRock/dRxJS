@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Event, Instance} from '../state';
+import {Instance} from '../state';
+import {BehaviorSubject, combineLatest} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-instance-selector',
@@ -7,10 +9,44 @@ import {Event, Instance} from '../state';
   styleUrls: ['./instance-selector.component.css']
 })
 export class InstanceSelectorComponent {
+  private readonly instancesSubject = new BehaviorSubject<Instance[]>([]);
+  private readonly phraseSubject = new BehaviorSubject<string>('');
 
   @Input()
   instance: Instance;
 
+  @Input()
+  set instances(instances: Instance[]) {
+    this.instancesSubject.next(instances ? instances : []);
+  }
+
   @Output()
   readonly instanceChange = new EventEmitter<Instance>();
+
+  result$ = combineLatest([
+    this.instancesSubject,
+    this.phraseSubject,
+  ]).pipe(
+    map(([instances, phrase]) => {
+      console.log({instances, phrase});
+      return instances
+        .filter((instance) =>
+          instance.definition.position.file.includes(phrase)
+          || (instance.definition.position.functionName && instance.definition.position.functionName.includes(phrase))
+          || instance.definition.name.includes(phrase)
+        )
+        .slice(0, 16);
+    }),
+  );
+
+  search: boolean = true;
+
+  phraseChange(phrase: string) {
+    this.phraseSubject.next(phrase);
+  }
+
+  instanceSelected(instance: Instance) {
+    this.search = false;
+    this.instanceChange.emit(instance);
+  }
 }

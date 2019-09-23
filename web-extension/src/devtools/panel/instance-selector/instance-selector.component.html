@@ -1,8 +1,34 @@
-<ng-container
-  *ngIf="instance">
-  {{instance.definition.position.file}}
-  / {{instance.definition.position.line}}:{{instance.definition.position.column}}
-  / {{instance.definition.position.functionName}}
-  / {{instance.definition.name}}
-  / {{instance.id}}
-</ng-container>
+<div class="info" *ngIf="!search; else searchPanel">
+  <span
+    *ngIf="instance">
+    {{instance.definition.position.file}}
+    / {{instance.definition.position.line}}:{{instance.definition.position.column}}
+    / {{instance.definition.position.functionName}}
+    / {{instance.definition.name}}
+    / {{instance.id}}
+  </span>
+  <button mat-button (click)="search = true">Search</button>
+</div>
+
+<ng-template #searchPanel>
+  <div>
+    <form class="phrase-input">
+      <mat-form-field>
+        <input matInput #phraseInput (keyup)="phraseChange(phraseInput.value)">
+      </mat-form-field>
+    </form>
+
+    <button
+      *ngFor="let instance of result$ | async"
+      mat-raised-button
+      (click)="instanceSelected(instance)"
+      class="instance-button"
+    >
+      {{instance.definition.position.file}}
+      / {{instance.definition.position.line}}:{{instance.definition.position.column}}
+      / {{instance.definition.position.functionName}}
+      / {{instance.definition.name}}
+      / {{instance.id}}
+    </button>
+  </div>
+</ng-template>

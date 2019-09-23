@@ -1,5 +1,5 @@
-import {BehaviorSubject, combineLatest, concat, ConnectableObservable, EMPTY, of, range} from 'rxjs';
-import {concatAll, concatMap, distinctUntilChanged, expand, map, publish, repeat, share, tap} from 'rxjs/operators';
+import {asapScheduler, BehaviorSubject, combineLatest, concat, ConnectableObservable, EMPTY, of, range} from 'rxjs';
+import {concatAll, concatMap, distinctUntilChanged, expand, map, observeOn, publish, repeat, share, tap} from 'rxjs/operators';
 
 export const runSimpleExample = () => {
 
@@ -134,6 +134,7 @@ export const runSubjectExample = () => {
 export const runShareExample = () => {
   const stream$ = of(1, 2, 3)
     .pipe(
+      observeOn(asapScheduler),
       map((FIRST) => FIRST),
       tap((x) => console.log('tap:', x)),
       share(),

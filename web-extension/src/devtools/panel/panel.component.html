@@ -1,5 +1,7 @@
 <app-instance-selector
+  [instances]="instances$ | async"
   [instance]="selectedInstance$ | async"
+  (instanceChange)="selectInstance($event.id)"
 ></app-instance-selector>
 
 <div
