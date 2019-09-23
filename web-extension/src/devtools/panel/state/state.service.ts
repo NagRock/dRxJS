@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {EventService} from '../../event.service';
-import {concatMap, map, tap} from 'rxjs/operators';
+import {concatMap, shareReplay} from 'rxjs/operators';
 import {from} from 'rxjs';
 import {state} from './reducer';
 
@@ -11,6 +11,7 @@ export class StateService {
   readonly state$ = this.eventService.event$.pipe(
     concatMap((events) => from(events)),
     state(),
+    shareReplay(),
   );
 
   constructor(
