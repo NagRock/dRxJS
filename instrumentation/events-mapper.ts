@@ -1,5 +1,5 @@
-import * as StackFrame from 'stackframe';
 // @ts-ignore
+import * as StackFrame from 'stackframe';
 import * as StackTraceGPS from 'stacktrace-gps';
 import {createRefsStorage, RefsStorage} from './refs-storage';
 import * as DispatchedEvents from './dispatched-events';
