@@ -16,6 +16,10 @@
       <mat-form-field>
         <input matInput #phraseInput (keyup)="phraseChange(phraseInput.value)" placeholder="Search ..."/>
       </mat-form-field>
+      <mat-checkbox name="hideEmptyReceivers"
+                    [ngModel]="hideEmptyReceivers"
+                    (ngModelChange)="onHideEmptyReceivers($event)"
+      >hide empty receivers</mat-checkbox>
     </form>
 
     <div class="instance-container">

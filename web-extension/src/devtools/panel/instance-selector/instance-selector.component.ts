@@ -11,6 +11,7 @@ import {map} from 'rxjs/operators';
 export class InstanceSelectorComponent {
   private readonly instancesSubject = new BehaviorSubject<Instance[]>([]);
   private readonly phraseSubject = new BehaviorSubject<string>('');
+  readonly hideEmptyReceiversSubject = new BehaviorSubject<boolean>(true);
 
   @Input()
   instance: Instance;
@@ -26,8 +27,9 @@ export class InstanceSelectorComponent {
   result$ = combineLatest([
     this.instancesSubject,
     this.phraseSubject,
+    this.hideEmptyReceiversSubject,
   ]).pipe(
-    map(([instances, phrase]) => {
+    map(([instances, phrase, hideEmptyReceivers]) => {
       console.log({instances, phrase});
       return instances
         .filter((instance) =>
@@ -35,12 +37,14 @@ export class InstanceSelectorComponent {
           || (instance.definition.position.functionName && instance.definition.position.functionName.includes(phrase))
           || instance.definition.name.includes(phrase)
         )
+        .filter((instance) => hideEmptyReceivers ? instance.receivers.length > 0 : true)
         .reverse()
         .slice(0, 16);
     }),
   );
 
   search: boolean = true;
+  hideEmptyReceivers = true;
 
   phraseChange(phrase: string) {
     this.phraseSubject.next(phrase);
@@ -49,6 +53,11 @@ export class InstanceSelectorComponent {
   instanceSelected(instance: Instance) {
     this.search = false;
     this.instanceChange.emit(instance);
+  }
+
+  onHideEmptyReceivers(state: boolean) {
+    this.hideEmptyReceivers = state;
+    this.hideEmptyReceiversSubject.next(state);
   }
 
   getFormattedPosition(position: SourcePosition) {
