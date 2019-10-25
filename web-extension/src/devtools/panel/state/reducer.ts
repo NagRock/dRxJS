@@ -7,10 +7,10 @@ import {clock} from './clock';
 function handleCreatorDefinition(state: State.State, event: Event.CreatorDefinitionEvent) {
   const definition: State.CreatorDefinition = {
     kind: 'creator-definition',
-    name: event.functionName,
+    name: event.function.name,
     id: event.definition,
-    functionRef: event.functionRef,
-    argsRefs: event.argsRefs,
+    function: event.function,
+    args: event.args,
     position: event.position,
     instances: [],
   };
@@ -23,10 +23,10 @@ function handleCreatorDefinition(state: State.State, event: Event.CreatorDefinit
 function handleOperatorDefinition(state: State.State, event: Event.OperatorDefinitionEvent) {
   const definition: State.OperatorDefinition = {
     kind: 'operator-definition',
-    name: event.functionName,
+    name: event.function.name,
     id: event.definition,
-    functionRef: event.functionRef,
-    argsRefs: event.argsRefs,
+    function: event.function,
+    args: event.args,
     position: event.position,
     instances: [],
   };
@@ -41,9 +41,9 @@ function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDef
     kind: 'subscribe-definition',
     name: 'subscribe',
     id: event.definition,
-    nextRef: event.nextRef,
-    errorRef: event.errorRef,
-    completeRef: event.completeRef,
+    next: event.next,
+    error: event.error,
+    complete: event.complete,
     position: event.position,
     instances: [],
   };
@@ -57,9 +57,9 @@ function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDef
 function handleSubjectDefinition(state: State.State, event: Event.SubjectDefinitionEvent) {
   const definition: State.SubjectDefinition = {
     kind: 'subject-definition',
-    name: event.constructorName,
+    name: event.constructor.name,
     id: event.definition,
-    constructorRef: event.constructorRef,
+    constructor: event.constructor,
     position: event.position,
     instances: [],
   };
@@ -68,6 +68,21 @@ function handleSubjectDefinition(state: State.State, event: Event.SubjectDefinit
 
   return state;
 }
+
+function handleUnknownDefinition(state: State.State, event: Event.UnknownDefinitionEvent) {
+  const definition: State.UnknownDefinition = {
+    kind: 'unknown-definition',
+    name: 'unknown',
+    id: event.definition,
+    position: event.position,
+    instances: [],
+  };
+
+  state.definitions[definition.id] = definition;
+
+  return state;
+}
+
 
 function snapshot<P extends Properties = Properties, K extends keyof P = never>(
   instance: Instance, time: number, propertyKey: K, propertyValue: P[K],
@@ -89,6 +104,8 @@ function handleInstance(state: State.State, event: Event.InstanceEvent) {
     definition,
     receivers: [],
     senders: [],
+    contextReceivers: [],
+    contextSenders: [],
     events: [],
     snapshots: [],
   };
@@ -155,8 +172,8 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
     time: clock(),
     sender,
     receiver,
-    ...event.kind === 'next' ? {valueRef: event.valueRef} : {},
-    ...event.kind === 'error' ? {errorRef: event.errorRef} : {},
+    ...event.kind === 'next' ? {value: event.value} : {},
+    ...event.kind === 'error' ? {error: event.error} : {},
   };
 
   sender.events.push(notification);
@@ -170,16 +187,26 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
 
 function handleSubjectCall(state: State.State, event: Event.SubjectEvent) {
   const subject = state.instances[event.subject];
+  const context: Instance<Properties> = state.instances[event.context];
   const call: State.SubjectCall = {
     kind: event.kind as any,
     time: clock(),
-    sender: undefined,
+    sender: context,
     receiver: subject,
-    ...event.kind === 'subject-next' ? {valueRef: event.valueRef} : {},
-    ...event.kind === 'subject-error' ? {errorRef: event.errorRef} : {},
+    ...event.kind === 'subject-next' ? {value: event.value} : {},
+    ...event.kind === 'subject-error' ? {error: event.error} : {},
   };
 
   subject.events.push(call);
+
+  if (event.context !== event.subject) {
+    if (context.contextReceivers.indexOf(subject) === -1) {
+      context.contextReceivers.push(subject);
+      subject.contextSenders.push(context);
+    }
+
+    context.events.push(call);
+  }
 
   return state;
 }
@@ -208,6 +235,8 @@ export const state = () => scan((state: State.State, event: Event.Event): State.
       return handleSubscribeDefinition(state, event);
     case 'subject-definition':
       return handleSubjectDefinition(state, event);
+    case 'unknown-definition':
+      return handleUnknownDefinition(state, event);
     case 'instance':
       return handleInstance(state, event);
     case 'subscribe':

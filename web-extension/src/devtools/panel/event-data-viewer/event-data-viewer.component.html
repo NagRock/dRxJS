@@ -1,7 +1,9 @@
-<ng-container *ngIf="eventData !== undefined">
-  <h3>Data:</h3>
-  <span class="type"
-        [ngClass]="getEventDataType(eventData)">
-    {{ eventData }}
-  </span>
-</ng-container>
+<d-data-explorer
+  *ngIf="event && event.value"
+  [data]="event.value"></d-data-explorer>
+
+<div
+  *ngIf="event && event.value">
+  {{event.value | json}}
+</div>
+

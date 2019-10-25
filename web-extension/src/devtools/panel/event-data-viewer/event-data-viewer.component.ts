@@ -8,26 +8,6 @@ import {EventDataService} from './event-data.service';
   styleUrls: ['./event-data-viewer.component.css']
 })
 export class EventDataViewerComponent {
-  _event: Event;
-  eventData: any;
-
   @Input()
-  set event(event: Event) {
-    this._event = event;
-
-    if (event && !!(event as any).valueRef) {
-      this.eventDataService.loadEventData((event as any).valueRef)
-        .then((data) => this.eventData = data)
-    } else {
-      this.eventData = undefined;
-    }
-  }
-
-
-  constructor(private readonly eventDataService: EventDataService) {
-  }
-
-  getEventDataType(eventData: any) {
-    return typeof eventData;
-  }
+  event: any;
 }

@@ -7,5 +7,5 @@ import * as examples from './examples';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  examples = examples;
+  examples = Object.entries(examples).map(([name, run]) => ({name, run}));
 }

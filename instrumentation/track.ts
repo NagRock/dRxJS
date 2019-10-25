@@ -14,7 +14,7 @@ import {
   SubjectErrorEvent,
   SubjectNextEvent,
   SubscribeDefinitionEvent,
-  SubscribeEvent,
+  SubscribeEvent, UnknownDefinitionEvent,
   UnsubscribeEvent
 } from './dispatched-events';
 import {rxInspector} from './rx-inspector';
@@ -23,6 +23,12 @@ import {createRxInspectorBuffer} from './rx-inspector-buffer';
 
 // TODO: find better place for this init
 const buffer = createRxInspectorBuffer(rxInspector);
+
+const unknownSourcePosition: SourcePosition = {
+  file: 'unknown',
+  line: 0,
+  column: 0,
+};
 
 export function getSourcePosition(stackTraceOffset: number): SourcePosition {
   const stackFrame = StackTrace.getSync({offline: true})[stackTraceOffset + 1];
@@ -75,7 +81,7 @@ export function trackSubscribeDefinition(next, error, complete) {
     next,
     error,
     complete,
-    position: getSourcePosition(2),
+    position: getSourcePosition(3),
   };
 
   rxInspector.dispatch(event);
@@ -98,6 +104,21 @@ export function trackSubjectDefinition(constructor: any, args: any[]) {
 
   return definition;
 }
+
+export function trackUnknownDefinition() {
+  const definition = getNextDefinitionId();
+
+  const event: UnknownDefinitionEvent = {
+    kind: 'unknown-definition',
+    definition,
+    position: unknownSourcePosition,
+  };
+
+  rxInspector.dispatch(event);
+
+  return definition;
+}
+
 export function trackInstance(definition: number): number {
   const instance = getNextInstanceId();
 
@@ -111,7 +132,6 @@ export function trackInstance(definition: number): number {
 
   return instance;
 }
-
 
 export function trackSubscribe(sender: number, receiver: number): void {
   const event: SubscribeEvent = {
@@ -133,7 +153,7 @@ export function trackUnsubscribe(sender: number, receiver: number): void {
   rxInspector.dispatch(event);
 }
 
-export function trackNextNotification(sender: number, receiver: number, value: any, cause: Cause) {
+export function trackNextNotification(sender: number, receiver: number, value: any, cause?: Cause) {
   const notification = getNextNotificationId();
 
   const event: NextNotificationEvent = {
@@ -150,7 +170,7 @@ export function trackNextNotification(sender: number, receiver: number, value: a
   return notification;
 }
 
-export function trackErrorNotification(sender: number, receiver: number, error: any, cause: Cause) {
+export function trackErrorNotification(sender: number, receiver: number, error: any, cause?: Cause) {
   const notification = getNextNotificationId();
 
   const event: ErrorNotificationEvent = {
@@ -167,7 +187,7 @@ export function trackErrorNotification(sender: number, receiver: number, error: 
   return notification;
 }
 
-export function trackCompleteNotification(sender: number, receiver: number, cause: Cause) {
+export function trackCompleteNotification(sender: number, receiver: number, cause?: Cause) {
   const notification = getNextNotificationId();
 
   const event: CompleteNotificationEvent = {
@@ -190,30 +210,33 @@ export function getCause(notification: number, kind: 'sync' | 'async' = 'sync'):
   };
 }
 
-export function trackSubjectNext(subject: number, value: any) {
+export function trackSubjectNext(subject: number, context: number, value: any) {
   const event: SubjectNextEvent = {
     kind: 'subject-next',
     subject,
+    context,
     value,
   };
 
   rxInspector.dispatch(event);
 }
 
-export function trackSubjectError(subject: number, error: any) {
+export function trackSubjectError(subject: number, context: number, error: any) {
   const event: SubjectErrorEvent = {
     kind: 'subject-error',
     subject,
+    context,
     error,
   };
 
   rxInspector.dispatch(event);
 }
 
-export function trackSubjectComplete(subject: number) {
+export function trackSubjectComplete(subject: number, context: number) {
   const event: SubjectCompleteEvent = {
     kind: 'subject-complete',
     subject,
+    context,
   };
 
   rxInspector.dispatch(event);

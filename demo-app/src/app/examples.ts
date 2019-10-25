@@ -1,5 +1,132 @@
-import {asapScheduler, BehaviorSubject, combineLatest, concat, ConnectableObservable, EMPTY, of, range} from 'rxjs';
-import {concatAll, concatMap, distinctUntilChanged, expand, map, observeOn, publish, repeat, share, tap} from 'rxjs/operators';
+import {
+  asapScheduler,
+  asyncScheduler,
+  BehaviorSubject,
+  concat,
+  ConnectableObservable,
+  EMPTY,
+  interval,
+  Observable,
+  of,
+  onErrorResumeNext,
+  range,
+  Subject,
+  throwError
+} from 'rxjs';
+import {
+  concatAll,
+  concatMap,
+  delayWhen,
+  distinctUntilChanged,
+  expand,
+  finalize,
+  map, mapTo,
+  mergeMap,
+  observeOn,
+  publish,
+  repeat,
+  share,
+  subscribeOn,
+  take,
+  withLatestFrom
+} from 'rxjs/operators';
+
+export const runObservableExample = () => {
+  const o = new Observable((s) => {
+    s.next('sync');
+    s.next('sync');
+    setTimeout(() => {
+      s.next('async');
+      s.complete();
+    });
+  });
+
+  const subject = new Subject();
+
+
+  subject.subscribe((x) => console.log('sub1', x));
+  subject.subscribe((x) => console.log('sub2', x));
+
+  o.subscribe({
+    next(value) {
+      subject.next(value);
+    },
+    complete() {
+      subject.complete();
+    }
+  });
+  o.subscribe(subject);
+
+
+};
+
+export const runNestedSubscribesExample = () => {
+  const o$ = of(1, 2);
+
+  of('a', 'b').subscribe((a) => {
+    o$.subscribe((n) => console.log(a, n));
+  });
+};
+
+export const runNestedSubscribeWithSubjectExample = () => {
+  const o$ = of(1, 2);
+  const subject$ = new Subject();
+
+  of('a', 'b').subscribe((a) => {
+    o$.subscribe(subject$);
+  });
+};
+
+export const runNestedSubscribeWithSubjectProxyExample = () => {
+  const o$ = of(1, 2);
+  const subject$ = new BehaviorSubject('');
+
+  of('a', 'b').subscribe((a) => {
+    o$.subscribe((n) => subject$.next(`${a}:${n}`));
+  });
+};
+
+export const runWithLatestFromExample = () => {
+  interval(66).pipe(
+    withLatestFrom(
+      interval(99).pipe(mapTo('a')),
+      interval(33).pipe(mapTo('b')),
+    ),
+    take(10),
+  ).subscribe();
+};
+
+export const runDelayExample = () => {
+  of(1, 2, 3).pipe(
+    delayWhen((n) => interval(n * 1000).pipe(take(n))),
+  ).subscribe();
+};
+
+export const runIntervalExample = () => {
+  interval(1000).pipe(
+    finalize(() => console.log('finalize')),
+    take(3),
+    take(1),
+  ).subscribe((x) => console.log(x));
+};
+
+export const runRepeatExample = () => {
+  of(1, 2).pipe(
+    // tap((x) => console.log('tap', x)),
+    repeat(2),
+  )
+    .subscribe((x) => console.log('sub', x));
+};
+
+export const runSubscribeOnExample = () => {
+  of(1, 2).pipe(
+    mergeMap((n) => of(n).pipe(
+      repeat(n),
+      subscribeOn(asyncScheduler),
+      observeOn(asyncScheduler)
+    )),
+  ).subscribe((n) => console.log(n));
+};
 
 export const runSimpleExample = () => {
 
@@ -13,17 +140,25 @@ export const runSimpleExample = () => {
 };
 
 export const runConcatMapExample = () => {
-  of(0, 1, 2).pipe(
-    concatMap((i) => range(i).pipe(map((j) => `${j} of ${i}`)))
-  ).subscribe();
+  of(0, 1, 2)
+    .pipe(
+      concatMap(
+        (i) => range(i)
+          .pipe(
+            map((j) => `${j} of ${i}`),
+          ),
+      )
+    )
+    .subscribe();
 };
 
 export const runConcatAllExample = () => {
   of(
-    // of(0),
-    // of(0, 1),
-    // of(0, 1, 2),
+    of(),
+    of(0),
+    of(1, 2),
   ).pipe(
+    observeOn(asyncScheduler),
     concatAll(),
   ).subscribe((x) => console.log(x));
 };
@@ -32,7 +167,7 @@ export const runConcatAllExample = () => {
 export const runExpandExample = () => {
   const stream$ = of(0, 1, 2).pipe(
     expand((x) => {
-      if (x == 0) {
+      if (x === 0) {
         return EMPTY;
       } else {
         return of(x - 1).pipe(repeat(x - 1));
@@ -40,23 +175,47 @@ export const runExpandExample = () => {
     })
   );
 
-  stream$.subscribe((x) => console.log(x));
+  stream$.subscribe((x) => console.log(x)).unsubscribe();
 };
 
-export const runCombineExample = () => {
+export const runConcatExample = () => {
+
+  const a$ = of('a', 'aa')
+    .pipe(
+      map((x) => x.toUpperCase()),
+    );
+  const b$ = of('b', 'bb')
+    .pipe(
+      map((x) => x.toUpperCase()),
+    );
+
+  concat(
+    a$,
+    b$,
+    asyncScheduler,
+    // Promise.resolve(42),
+  ).subscribe((x) => console.log(x));
+};
+
+export const runOnErrorResumeNextExample = () => {
 
   const a$ = of('a', 'aa', 'aaa')
     .pipe(
       map((x) => x.toUpperCase()),
     );
+
+  const err$ = throwError('error!');
+
   const b$ = of('b', 'bb', 'bbb')
     .pipe(
       map((x) => x.toUpperCase()),
     );
 
-  const c$ = combineLatest(a$, b$);
-
-  concat(a$, b$, c$, Promise.resolve(42)).subscribe((x) => console.log(x));
+  onErrorResumeNext(
+    a$,
+    err$,
+    b$,
+  ).subscribe((x) => console.log(x));
 };
 
 export const runSimpleExample3 = () => {
@@ -136,33 +295,30 @@ export const runShareExample = () => {
     .pipe(
       observeOn(asapScheduler),
       map((FIRST) => FIRST),
-      tap((x) => console.log('tap:', x)),
+      // tap((x) => console.log('tap:', x)),
       share(),
     );
 
-  stream$
-    .pipe(map((AFTER_SHARE1) => AFTER_SHARE1))
-    .subscribe(((x) => console.log('sub1:', x)));
-
-  stream$
-    .pipe(map((AFTER_SHARE2) => AFTER_SHARE2))
-    .subscribe(((x) => console.log('sub2:', x)));
+  stream$.subscribe(((x) => console.log('sub1:', x)));
+  stream$.subscribe(((x) => console.log('sub2:', x)));
+  stream$.subscribe(((x) => console.log('sub3:', x)));
 };
 
 export const runConnectableExample = () => {
   const stream$ = of(1, 2, 3)
     .pipe(
-      map((FIRST) => FIRST),
-      tap((x) => console.log('tap:', x)),
+      // map((FIRST) => FIRST),
+      // tap((x) => console.log('tap:', x)),
       publish(),
+      // refCount(),
     ) as ConnectableObservable<any>;
 
   stream$
-    .pipe(map((AFTER_SHARE1) => AFTER_SHARE1))
+  // .pipe(map((AFTER_SHARE1) => AFTER_SHARE1))
     .subscribe(((x) => console.log('sub1:', x)));
 
   stream$
-    .pipe(map((AFTER_SHARE2) => AFTER_SHARE2))
+  // .pipe(map((AFTER_SHARE2) => AFTER_SHARE2))
     .subscribe(((x) => console.log('sub2:', x)));
 
   stream$.connect();

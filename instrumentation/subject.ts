@@ -24,17 +24,17 @@ export function instrumentSubject(subject) {
     }
 
     next(value?: T): void {
-      trackSubjectNext(this.instance, value);
+      trackSubjectNext(this.instance, this.instance, value);
       super.next(value);
     }
 
     error(error: any): void {
-      trackSubjectError(this.instance, error);
+      trackSubjectError(this.instance, this.instance, error);
       super.error(error);
     }
 
     complete(): void {
-      trackSubjectComplete(this.instance);
+      trackSubjectComplete(this.instance, this.instance);
       super.complete();
     }
 

@@ -5,18 +5,30 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 import {PanelComponent} from './panel.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatIconModule, MatTreeModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCheckboxModule,
+  MatIconModule,
+  MatMenuModule,
+  MatSlideToggleModule,
+  MatToolbarModule,
+  MatTreeModule
+} from '@angular/material';
 import {TreeViewerModule} from './tree-viewer/tree-viewer.module';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {EventsViewerModule} from './events-viewer/events-viewer.module';
 import {InstanceSelectorModule} from './instance-selector/instance-selector.module';
 import {EventDataViewerModule} from './event-data-viewer/event-data-viewer.module';
+import {IconsRegistryModule} from './icons/icons-registry.module';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   imports: [
     CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
+    IconsRegistryModule,
     MatTreeModule,
     MatIconModule,
     MatButtonModule,
@@ -25,6 +37,10 @@ import {EventDataViewerModule} from './event-data-viewer/event-data-viewer.modul
     EventsViewerModule,
     EventDataViewerModule,
     InstanceSelectorModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatCheckboxModule,
+    MatSlideToggleModule,
   ],
   declarations: [
     PanelComponent

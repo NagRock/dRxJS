@@ -10,7 +10,7 @@ import * as R from 'ramda';
 import {InstanceLayout} from './types';
 
 function getProperties(instance: Instance, time: number) {
-  const snapshot = R.findLast((s) => s.time <= time, instance.snapshots);
+  const snapshot = R.findLast((s) => s.time < time, instance.snapshots);
   return snapshot !== undefined ? snapshot.properties : {};
 }
 
@@ -23,13 +23,17 @@ function getProperties(instance: Instance, time: number) {
 export class TreeViewerComponent implements AfterViewInit {
   private readonly instanceSubject = new BehaviorSubject<Instance>(undefined);
   private readonly eventSubject = new BehaviorSubject<Event>(undefined);
+  private readonly showContextConnectionsSubject = new BehaviorSubject<boolean>(false);
   private animation: AnimationPlayer;
 
-  readonly layout$ = this.instanceSubject.asObservable().pipe(
-    map((observable) => doubleTreeLayout(
+  readonly layout$ = combineLatest(
+    this.instanceSubject,
+    this.showContextConnectionsSubject,
+  ).pipe(
+    map(([observable, showContextConnections]) => doubleTreeLayout(
       observable,
-      (node) => node.senders,
-      node => node.receivers,
+      showContextConnections ? (node) => [...node.senders, ...node.contextSenders] : (node) => node.senders,
+      showContextConnections ? (node) => [...node.receivers, ...node.contextReceivers] : (node) => node.receivers,
     )),
     map((layout) => changeDirection(layout, 'right')),
   );
@@ -77,6 +81,11 @@ export class TreeViewerComponent implements AfterViewInit {
   @Input('event')
   set eventInput(event: Event) {
     this.eventSubject.next(event);
+  }
+
+  @Input('showContextConnections')
+  set showContextConnectionsInput(showContextConnections: boolean) {
+    this.showContextConnectionsSubject.next(showContextConnections);
   }
 
   @Output()

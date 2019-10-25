@@ -5,42 +5,67 @@ export interface SourcePosition {
   functionName: string;
 }
 
+export type Value
+  = null
+  | undefined
+  | boolean
+  | number
+  | string
+  | symbol
+  | bigint;
+
+export interface ValueReference {
+  kind: 'value';
+  value: Value;
+}
+
+export interface ObjectReference {
+  kind: 'object';
+  type: 'object' | 'array' | 'function';
+  name: string; // __proto__.constructor for objects/arrays, name for functions
+  ref: number;
+}
+
+export type Reference
+  = ValueReference
+  | ObjectReference;
+
 export interface CreatorDefinitionEvent {
   kind: 'creator-definition';
   definition: number;
-  functionName: string;
-  functionRef: number;
-  argsRefs: number[];
+  function: ObjectReference;
+  args: Reference[];
   position: SourcePosition;
 }
 
 export interface OperatorDefinitionEvent {
   kind: 'operator-definition';
   definition: number;
-  functionName: string;
-  functionRef: number;
-  argsRefs: number[];
+  function: ObjectReference;
+  args: Reference[];
   position: SourcePosition;
 }
 
 export interface SubscribeDefinitionEvent {
   kind: 'subscribe-definition';
   definition: number;
-  nextName?: string;
-  nextRef?: number;
-  errorName?: string;
-  errorRef?: number;
-  completeName?: string;
-  completeRef?: number;
+  next: Reference;
+  error: Reference;
+  complete: Reference;
   position: SourcePosition;
 }
 
 export interface SubjectDefinitionEvent {
   kind: 'subject-definition';
   definition: number;
-  constructorName: string;
-  constructorRef: number;
-  argsRefs: number[];
+  constructor: ObjectReference;
+  args: Reference[];
+  position: SourcePosition;
+}
+
+export interface UnknownDefinitionEvent {
+  kind: 'unknown-definition';
+  definition: number;
   position: SourcePosition;
 }
 
@@ -49,6 +74,7 @@ export type DefinitionEvent
   | OperatorDefinitionEvent
   | SubscribeDefinitionEvent
   | SubjectDefinitionEvent
+  | UnknownDefinitionEvent;
 
 export interface InstanceEvent {
   kind: 'instance';
@@ -73,7 +99,7 @@ export interface NextNotificationEvent {
   sender: number;
   receiver: number;
   notification: number;
-  valueRef: number;
+  value: Reference;
 }
 
 export interface ErrorNotificationEvent {
@@ -81,7 +107,7 @@ export interface ErrorNotificationEvent {
   sender: number;
   receiver: number;
   notification: number;
-  errorRef: number;
+  error: Reference;
 }
 
 export interface CompleteNotificationEvent {
@@ -94,21 +120,21 @@ export interface CompleteNotificationEvent {
 export interface SubjectNextEvent {
   kind: 'subject-next';
   subject: number;
-  valueRef: number;
-  // todo: stacktrace / context;
+  context: number;
+  value: Reference;
 }
 
 export interface SubjectErrorEvent {
   kind: 'subject-error';
   subject: number;
-  errorRef: number;
-  // todo: stacktrace / context;
+  context: number;
+  error: Reference;
 }
 
 export interface SubjectCompleteEvent {
   kind: 'subject-complete';
   subject: number;
-  // todo: stacktrace / context;
+  context: number;
 }
 
 export interface ConnectEvent {
@@ -134,15 +160,3 @@ export type Event
   | NotificationEvent
   | SubjectEvent
   | ConnectEvent;
-
-export function isDefinitionEvent(x: Event): x is DefinitionEvent {
-  switch (x.kind) {
-    case 'creator-definition':
-    case 'operator-definition':
-    case 'subject-definition':
-    case 'subscribe-definition':
-      return true;
-    default:
-      return false;
-  }
-}

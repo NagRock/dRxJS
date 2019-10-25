@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
 import {Event} from '../state';
 
 @Component({
@@ -8,16 +8,29 @@ import {Event} from '../state';
 })
 export class EventsViewerComponent {
 
+  selectedEventIndex: number;
+
+  @ViewChildren('item', {read: ElementRef})
+  items: QueryList<ElementRef<HTMLElement>>;
+
   @Input()
   events: Event[];
 
-  @Input()
-  selectedEventIndex: number;
+  @Input('selectedEventIndex')
+  set selectedEventIndexInput(value: number) {
+    this.selectedEventIndex = value;
+    if (this.items) {
+      const selectedItem = this.items.find((_, i) => i === value);
+      if (selectedItem) {
+        selectedItem.nativeElement.scrollIntoView({behavior: 'smooth', inline: 'center'});
+      }
+    }
+  }
 
   @Output()
   readonly selectedEventIndexChange = new EventEmitter<number>();
 
-  onEventClicked(index: number) {
+  setSelectedEventIndex(index: number) {
     this.selectedEventIndex = index;
     this.selectedEventIndexChange.emit(index);
   }

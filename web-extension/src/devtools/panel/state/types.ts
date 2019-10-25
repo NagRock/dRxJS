@@ -1,3 +1,5 @@
+import {ObjectReference, Reference} from '@drxjs/events';
+
 export interface Index<T> {
   [key: number]: T;
 }
@@ -13,8 +15,8 @@ export interface CreatorDefinition {
   kind: 'creator-definition';
   name: string;
   id: number;
-  functionRef: number;
-  argsRefs: number[];
+  function: ObjectReference;
+  args: Reference[];
   position: SourcePosition;
   instances: Instance[];
 }
@@ -23,8 +25,8 @@ export interface OperatorDefinition {
   kind: 'operator-definition';
   name: string;
   id: number;
-  functionRef: number;
-  argsRefs: number[];
+  function: ObjectReference;
+  args: Reference[];
   position: SourcePosition;
   instances: Instance[];
 }
@@ -33,9 +35,9 @@ export interface SubscribeDefinition {
   kind: 'subscribe-definition';
   name: string;
   id: number;
-  nextRef?: number;
-  errorRef?: number;
-  completeRef?: number;
+  next: Reference;
+  error: Reference;
+  complete: Reference;
   position: SourcePosition;
   instances: Instance[];
 }
@@ -44,7 +46,15 @@ export interface SubjectDefinition {
   kind: 'subject-definition';
   name: string;
   id: number;
-  constructorRef: number;
+  constructor: ObjectReference;
+  position: SourcePosition;
+  instances: Instance[];
+}
+
+export interface UnknownDefinition {
+  kind: 'unknown-definition';
+  name: string;
+  id: number;
   position: SourcePosition;
   instances: Instance[];
 }
@@ -53,7 +63,8 @@ export type Definition
   = CreatorDefinition
   | OperatorDefinition
   | SubscribeDefinition
-  | SubjectDefinition;
+  | SubjectDefinition
+  | UnknownDefinition;
 
 export interface Properties {
   active?: boolean;
@@ -70,6 +81,8 @@ export interface Instance<P extends Properties = Properties> {
   definition: Definition;
   receivers: Instance[];
   senders: Instance[];
+  contextReceivers: Instance[];
+  contextSenders: Instance[];
   events: Event[];
   snapshots: InstanceSnapshot<P>[];
 }
@@ -94,7 +107,7 @@ export interface NextNotification {
   time: number;
   sender: Instance;
   receiver: Instance;
-  valueRef: number;
+  value: Reference;
 }
 
 export interface ErrorNotification {
@@ -103,7 +116,7 @@ export interface ErrorNotification {
   time: number;
   sender: Instance;
   receiver: Instance;
-  errorRef: number;
+  error: Reference;
 }
 
 export interface CompleteNotification {
@@ -122,23 +135,23 @@ export type Notification
 export interface SubjectNextCall {
   kind: 'subject-next';
   time: number;
-  sender: undefined;
+  sender: Instance;
   receiver: Instance;
-  valueRef: number;
+  value: Reference;
 }
 
 export interface SubjectErrorCall {
   kind: 'subject-error';
   time: number;
-  sender: undefined;
+  sender: Instance;
   receiver: Instance;
-  errorRef: number;
+  error: Reference;
 }
 
 export interface SubjectCompleteCall {
   kind: 'subject-complete';
   time: number;
-  sender: undefined;
+  sender: Instance;
   receiver: Instance;
 }
 
@@ -154,12 +167,15 @@ export interface ConnectCall {
   receiver: Instance;
 }
 
+export type Call
+  = SubjectCall
+  | ConnectCall;
+
 export type Event
   = Notification
   | Subscribe
   | Unsubscribe
-  | SubjectCall
-  | ConnectCall;
+  | Call;
 
 export interface State {
   definitions: Index<Definition>;

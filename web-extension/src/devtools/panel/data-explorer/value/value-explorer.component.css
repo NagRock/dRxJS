@@ -1,0 +1,37 @@
+:host {
+  display: inline;
+  font-family: monospace;
+}
+
+:host.null,
+:host.undefined {
+  color: gray;
+}
+
+:host.boolean,
+:host.number {
+  color: blue;
+}
+
+:host.string {
+  color: red;
+}
+
+:host.string::before,
+:host.string::after {
+  display: inline;
+  content: '"';
+}
+
+:host.symbol {
+  color: red;
+}
+
+:host.bigint {
+  color: green;
+}
+
+:host.bigint::after {
+  display: inline;
+  content: 'n';
+}

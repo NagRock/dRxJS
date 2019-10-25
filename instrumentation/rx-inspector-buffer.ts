@@ -21,7 +21,7 @@ class RxInspectorBuffer {
   flush(): Array<Event> {
     const returnVal = this.mappedEvents.slice();
     this.mappedEvents = [];
-    console.log('flush', returnVal);
+    // console.log('flush', returnVal);
     return returnVal;
   }
 

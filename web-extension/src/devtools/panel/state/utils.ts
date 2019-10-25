@@ -7,20 +7,28 @@ const concatEvents = R.pipe(
   R.uniqBy((x: Event) => x.time),
 );
 
-export function getIncomingEvents(instance: Instance): Event[] {
+export function getIncomingEvents(instance: Instance, showContextConnections: boolean): Event[] {
+  const senders = showContextConnections
+    ? [...instance.senders, ...instance.contextSenders]
+    : instance.senders;
+
   return concatEvents([
-    instance.events.filter((event) => event.receiver === instance),
-    ...instance.senders.map(getIncomingEvents),
+    instance.events.filter((event) => event.receiver === instance && senders.includes(event.sender)),
+    ...senders.map((x) => getIncomingEvents(x, showContextConnections)),
   ]);
 }
 
-export function getOutgoingEvents(instance: Instance): Event[] {
+export function getOutgoingEvents(instance: Instance, showContextConnections: boolean): Event[] {
+  const receivers = showContextConnections
+  ? [...instance.receivers, ...instance.contextReceivers]
+    : instance.receivers;
+
   return concatEvents([
-    instance.events.filter((event) => event.sender === instance),
-    ...instance.receivers.map(getOutgoingEvents),
+    instance.events.filter((event) => event.sender === instance && receivers.includes(event.receiver)),
+    ...receivers.map((x) => getOutgoingEvents(x, showContextConnections)),
   ]);
 }
 
-export function getEvents(instance: Instance): Event[] {
-  return concatEvents([getIncomingEvents(instance), getOutgoingEvents(instance)]);
+export function getEvents(instance: Instance, showContextConnections: boolean): Event[] {
+  return concatEvents([getIncomingEvents(instance, showContextConnections), getOutgoingEvents(instance, showContextConnections)]);
 }

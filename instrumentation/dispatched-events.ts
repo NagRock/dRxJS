@@ -41,8 +41,14 @@ export interface SubscribeDefinitionEvent {
 export interface SubjectDefinitionEvent {
   kind: 'subject-definition';
   definition: number;
-  constructor: any;
+  constructor: new (...args: any) => void;
   args: any[];
+  position: SourcePosition;
+}
+
+export interface UnknownDefinitionEvent {
+  kind: 'unknown-definition';
+  definition: number;
   position: SourcePosition;
 }
 
@@ -51,6 +57,7 @@ export type DefinitionEvent
   | OperatorDefinitionEvent
   | SubscribeDefinitionEvent
   | SubjectDefinitionEvent
+  | UnknownDefinitionEvent;
 
 export interface InstanceEvent {
   kind: 'instance';
@@ -99,21 +106,21 @@ export interface CompleteNotificationEvent {
 export interface SubjectNextEvent {
   kind: 'subject-next';
   subject: number;
+  context: number;
   value: any;
-  // todo: stacktrace / context;
 }
 
 export interface SubjectErrorEvent {
   kind: 'subject-error';
   subject: number;
+  context: number;
   error: any;
-  // todo: stacktrace / context;
 }
 
 export interface SubjectCompleteEvent {
   kind: 'subject-complete';
   subject: number;
-  // todo: stacktrace / context;
+  context: number;
 }
 
 export interface ConnectEvent {
@@ -146,6 +153,7 @@ export function isDefinitionEvent(x: DispatchedEvent): x is DefinitionEvent {
     case 'operator-definition':
     case 'subject-definition':
     case 'subscribe-definition':
+    case 'unknown-definition':
       return true;
     default:
       return false;

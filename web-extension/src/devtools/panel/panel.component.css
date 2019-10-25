@@ -6,16 +6,24 @@
   overflow: hidden;
 }
 
-.instance-navbar {
-  background-color: firebrick;
-  padding: 15px;
-}
-
-.nav-title {
+.toolbr-text {
   font-weight: 600;
   font-size: 1.2rem;
   color: #fff;
   margin: 0 15px;
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: rtl;
+  text-align: left;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.toolbar-menu {
+  padding: 8px;
 }
 
 app-instance-selector {
@@ -24,7 +32,7 @@ app-instance-selector {
   flex-shrink: 0;
 }
 
-.content {
+.hbox {
   display: flex;
   flex-direction: row;
   flex-grow: 1;
@@ -32,8 +40,17 @@ app-instance-selector {
   min-height: 0;
 }
 
+.vbox {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
 .events-viewer {
-  min-width: 250px;
+  align-self: center;
+  max-width: 100%;
 }
 
 .tree-viewer {
@@ -43,5 +60,3 @@ app-instance-selector {
 .event-data-viewer {
   min-width: 250px;
 }
-
-

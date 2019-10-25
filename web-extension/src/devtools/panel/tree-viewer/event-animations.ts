@@ -1,6 +1,6 @@
 import anime from 'animejs';
 import {makeCircle, makeGroup, makeLine} from '../svg-util';
-import {Event, Notification, Subscribe, Unsubscribe} from '../state';
+import {Call, Event, Notification, Subscribe, Unsubscribe} from '../state';
 
 export interface AnimationPlayer {
   play(): void;
@@ -17,7 +17,7 @@ const buildSubscriptionAnimation = (svg: SVGElement, event: Subscribe | Unsubscr
 
   const [strokeDashoffset, opacity] = event.kind === 'subscribe'
     ? [[-pathElementClone.getTotalLength(), 0], [1, 0]]
-    : [[0, -pathElementClone.getTotalLength()], [0, 1]];
+    : [[0, pathElementClone.getTotalLength()], [0, 1]];
 
   const animation = anime({
     autoplay: false,
@@ -113,8 +113,66 @@ const buildNotificationAnimation = (svg: SVGElement, event: Notification, loop: 
   };
 };
 
+function makeCallElement(kind: 'subject-next' | 'subject-error' | 'subject-complete' | 'connect') {
+  let color;
+  switch (kind) {
+    case 'subject-next':
+      color = 'blue';
+      break;
+    case 'subject-error':
+      color = 'red';
+      break;
+    case 'subject-complete':
+      color = 'green';
+      break;
+    case 'connect':
+      color = 'black';
+      break;
+  }
+  return makeCircle({
+    r: 16,
+    // cx: 0,
+    // cy: 0,
+    fill: color,
+    // stroke: color,
+    // strokeWidth: 4,
+  })
+}
+
+const buildCallAnimation = (svg: SVGElement, event: Call, loop: boolean): AnimationPlayer => {
+  const selector = `g[data-node="${event.receiver.id}"]`;
+  const groupElement = svg.querySelector(selector) as SVGGElement;
+
+  const callElement = makeCallElement(event.kind);
+  // callElement.setAttribute('transform', targetElement.getAttribute('transform'));
+
+  const animation = anime({
+    autoplay: false,
+    targets: callElement,
+    keyframes: [
+      {r: [16, 32], opacity: [1, 0], duration: 1000, easing: 'easeOutQuad'},
+      ...loop ? [{delay: 500}] : [],
+    ],
+    loop,
+  });
+
+  return {
+    play(): void {
+      groupElement.prepend(callElement);
+      animation.play();
+    },
+    stop(): void {
+      callElement.remove();
+      animation.restart();
+      animation.pause();
+    }
+  };
+
+};
+
 export const buildAnimation = (svg: SVGElement, event: Event, loop: boolean): AnimationPlayer => {
   switch (event.kind) {
+
     case 'subscribe':
     case 'unsubscribe':
       return buildSubscriptionAnimation(svg, event, loop);
@@ -122,6 +180,11 @@ export const buildAnimation = (svg: SVGElement, event: Event, loop: boolean): An
     case 'error':
     case 'complete':
       return buildNotificationAnimation(svg, event, loop);
+    case 'subject-next':
+    case 'subject-error':
+    case 'subject-complete':
+    case 'connect':
+      return buildCallAnimation(svg, event, loop);
     default:
       return undefined;
   }

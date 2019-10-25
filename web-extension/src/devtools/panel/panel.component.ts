@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, HostListener} from '@angular/core';
 import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
 import {debounceTime, map} from 'rxjs/operators';
 import {getEvents, SourcePosition} from './state';
@@ -16,8 +16,9 @@ export class PanelComponent {
   constructor(private readonly stateService: StateService) {
   }
 
-  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(0);
-  readonly selectedEventIndexSubject = new BehaviorSubject<number>(0);
+  readonly selectedInstanceIdSubject = new BehaviorSubject<number>(undefined);
+  readonly selectedEventIndexSubject = new BehaviorSubject<number>(undefined);
+  readonly showContextConnectionsSubject$ = new BehaviorSubject<boolean>(false);
 
   readonly state$ = this.stateService.state$.pipe(debounceTime(0, asapScheduler));
   readonly instances$ = this.state$.pipe(map((state) => Object.values(state.instances)));
@@ -29,10 +30,12 @@ export class PanelComponent {
       return state.instances[selectedInstanceId];
     }),
   );
-  readonly selectedInstanceEvents$ = this.selectedInstance$
-    .pipe(
-      map((instance) => instance ? getEvents(instance) : []),
-    );
+  readonly selectedInstanceEvents$ = combineLatest(
+    this.selectedInstance$,
+    this.showContextConnectionsSubject$,
+  ).pipe(
+    map(([instance, showContextConnections]) => instance ? getEvents(instance, showContextConnections) : []),
+  );
   readonly selectedEvent$ = combineLatest(
     this.selectedInstanceEvents$,
     this.selectedEventIndexSubject.asObservable(),
@@ -43,7 +46,7 @@ export class PanelComponent {
   }
 
   getFormattedPosition(position: SourcePosition) {
-    const items : Array<string | number> = [position.file];
+    const items: Array<string | number> = [position.file];
 
     if (position.line > 0) {
       items.push(position.line);
@@ -56,4 +59,9 @@ export class PanelComponent {
     return items.join(':');
   }
 
+  @HostListener('document:keydown.space', ['$event'])
+  onSpaceKeyDown(event: KeyboardEvent): void {
+    event.preventDefault();
+    this.selectedEventIndexSubject.next(this.selectedEventIndexSubject.getValue() + 1);
+  }
 }

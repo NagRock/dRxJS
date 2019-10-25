@@ -1,11 +1,5 @@
-<button mat-raised-button (click)="examples.runSimpleExample()">runSimpleExample</button>
-<button mat-raised-button (click)="examples.runConcatMapExample()">runConcatMapExample</button>
-<button mat-raised-button (click)="examples.runConcatAllExample()">runConcatAllExample</button>
-<button mat-raised-button (click)="examples.runExpandExample()">runExpandExample</button>
-<button mat-raised-button (click)="examples.runCombineExample()">runCombineExample</button>
-<button mat-raised-button (click)="examples.runSimpleExample3()">runSimpleExample3</button>
-<button mat-raised-button (click)="examples.runSimpleExample2()">runSimpleExample2</button>
-<button mat-raised-button (click)="examples.runSimpleExampleWithPrimitives()">runSimpleExampleWithPrimitives</button>
-<button mat-raised-button (click)="examples.runSubjectExample()">runSubjectExample</button>
-<button mat-raised-button (click)="examples.runShareExample()">runShareExample</button>
-<button mat-raised-button (click)="examples.runConnectableExample()">runConnectableExample</button>
+<button
+  *ngFor="let example of examples"
+  mat-raised-button (click)="example.run()">
+  {{example.name}}
+</button>
