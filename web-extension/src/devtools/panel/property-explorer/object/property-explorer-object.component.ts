@@ -1,14 +1,14 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
-import {ObjectProperty, ObjectReference, ValueReference} from '@drxjs/events';
+import {Property, ObjectReference, ValueReference} from '@drxjs/events';
 import {RefsStorageService} from '../refs-storage.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'd-object-ref-explorer',
-  templateUrl: './object-ref-explorer.component.html',
-  styleUrls: ['./object-ref-explorer.component.scss'],
+  selector: 'dr-property-explorer-object',
+  templateUrl: './property-explorer-object.component.html',
+  styleUrls: ['./property-explorer-object.component.scss'],
 })
-export class ObjectRefExplorerComponent {
+export class PropertyExplorerObjectComponent {
 
   @Input()
   name: string;
@@ -20,7 +20,7 @@ export class ObjectRefExplorerComponent {
   enumerable: boolean;
 
   expanded = false;
-  properties: ObjectProperty[];
+  properties: Property[];
 
   constructor(
     private readonly refsStorageService: RefsStorageService,

@@ -3,11 +3,11 @@ import {Reference} from '@drxjs/events';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'd-ref-explorer',
-  templateUrl: './ref-explorer.component.html',
-  styleUrls: ['./ref-explorer.component.scss'],
+  selector: 'dr-property-explorer',
+  templateUrl: './property-explorer.component.html',
+  styleUrls: ['./property-explorer.component.scss'],
 })
-export class RefExplorerComponent {
+export class PropertyExplorerComponent {
   @Input()
   name: string;
 

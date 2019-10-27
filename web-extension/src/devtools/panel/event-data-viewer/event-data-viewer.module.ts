@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {MatListModule} from '@angular/material/list';
 import {EventDataViewerComponent} from './event-data-viewer.component';
 import {MatCardModule} from '@angular/material';
-import {RefExplorerModule} from '../data-explorer/ref-explorer.module';
+import {PropertyExplorerModule} from '../property-explorer';
 
 @NgModule({
   declarations: [EventDataViewerComponent],
@@ -14,7 +14,7 @@ import {RefExplorerModule} from '../data-explorer/ref-explorer.module';
     CommonModule,
     MatListModule,
     MatCardModule,
-    RefExplorerModule,
+    PropertyExplorerModule,
   ]
 })
 export class EventDataViewerModule {

@@ -4,10 +4,10 @@
 </span>
 
 <div *ngIf="expanded" class="properties">
-  <d-ref-explorer
+  <dr-property-explorer
     *ngFor="let property of properties"
     [name]="property.name"
     [reference]="property.reference"
     [enumerable]="property.enumerable"
-  ></d-ref-explorer>
+  ></dr-property-explorer>
 </div>

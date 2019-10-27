@@ -1,4 +1,4 @@
-import {LazyReference, ObjectProperty, ObjectReference, Reference, Value, ValueReference} from '@drxjs/events';
+import {LazyReference, Property, ObjectReference, Reference, Value, ValueReference} from '@drxjs/events';
 
 
 export class RefsStorage {
@@ -44,11 +44,11 @@ export class RefsStorage {
     }
   }
 
-  get(ref: number): ObjectProperty[] {
+  get(ref: number): Property[] {
     const object = this.load(ref);
-    const enumerableProperties: ObjectProperty[] = [];
-    const properties: ObjectProperty[] = [];
-    const accessors: ObjectProperty[] = [];
+    const enumerableProperties: Property[] = [];
+    const properties: Property[] = [];
+    const accessors: Property[] = [];
 
     Object.entries(Object.getOwnPropertyDescriptors(object))
       .forEach(([name, descriptor]) => {
@@ -73,7 +73,7 @@ export class RefsStorage {
         }
       });
 
-    const proto: ObjectProperty = {name: '__proto__', reference: this.create(Object.getPrototypeOf(object)), enumerable: false};
+    const proto: Property = {name: '__proto__', reference: this.create(Object.getPrototypeOf(object)), enumerable: false};
 
     return [...enumerableProperties, ...properties, ...accessors, proto];
   }

@@ -22,7 +22,7 @@ export interface ValueReference {
 export interface ObjectReference {
   kind: 'object';
   type: 'object' | 'array' | 'function';
-  name: string; // __proto__.constructor for objects/arrays, name for functions
+  name: string; // .constructor.name for objects/arrays, .name for functions
   ref: number;
 }
 
@@ -37,10 +37,10 @@ export type Reference
   | ObjectReference
   | LazyReference;
 
-export interface ObjectProperty {
+export interface Property {
   name: string;
-  reference: Reference;
   enumerable: boolean;
+  reference: Reference;
 }
 
 export interface CreatorDefinitionEvent {

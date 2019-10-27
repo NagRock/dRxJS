@@ -4,11 +4,11 @@ import {RefsStorageService} from '../refs-storage.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'd-lazy-ref-explorer',
-  templateUrl: './lazy-ref-explorer.component.html',
-  styleUrls: ['./lazy-ref-explorer.component.css'],
+  selector: 'dr-property-explorer-lazy',
+  templateUrl: './property-explorer-lazy.component.html',
+  styleUrls: ['./property-explorer-lazy.component.scss'],
 })
-export class LazyRefExplorerComponent {
+export class PropertyExplorerLazyComponent {
 
   @Input()
   name: string;

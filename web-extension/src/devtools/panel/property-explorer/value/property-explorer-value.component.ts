@@ -1,13 +1,13 @@
 import {ChangeDetectionStrategy, Component, HostBinding, Input} from '@angular/core';
-import {ObjectProperty, ValueReference} from '@drxjs/events';
+import {Property, ValueReference} from '@drxjs/events';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'd-value-ref-explorer',
+  selector: 'dr-property-explorer-value',
   template: `<span class="property-name" [ngClass]="{enumerable: enumerable}">{{name}}</span><span [ngClass]="type">{{value}}</span>`,
-  styleUrls: ['./value-ref-explorer.component.css'],
+  styleUrls: ['./property-explorer-value.component.scss'],
 })
-export class ValueRefExplorerComponent {
+export class PropertyExplorerValueComponent {
 
   @Input()
   name: string;
