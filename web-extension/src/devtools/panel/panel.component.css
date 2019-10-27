@@ -37,6 +37,7 @@ app-instance-selector {
   flex-direction: row;
   flex-grow: 1;
   flex-shrink: 1;
+  min-width: 0;
   min-height: 0;
 }
 
@@ -46,11 +47,14 @@ app-instance-selector {
   flex-grow: 1;
   flex-shrink: 1;
   min-width: 0;
+  min-height: 0;
 }
 
 .events-viewer {
   align-self: center;
   max-width: 100%;
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 .tree-viewer {

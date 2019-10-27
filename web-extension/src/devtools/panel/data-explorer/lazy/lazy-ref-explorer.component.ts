@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, HostBinding, Input} from '@angular/core';
-import {LazyReference, ObjectProperty, Reference, ValueReference} from '@drxjs/events';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {LazyReference, Reference} from '@drxjs/events';
 import {RefsStorageService} from '../refs-storage.service';
 
 @Component({
