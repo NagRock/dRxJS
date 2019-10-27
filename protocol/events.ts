@@ -30,6 +30,12 @@ export type Reference
   = ValueReference
   | ObjectReference;
 
+export interface ObjectProperty {
+  name: string;
+  reference: Reference;
+  enumerable: boolean;
+}
+
 export interface CreatorDefinitionEvent {
   kind: 'creator-definition';
   definition: number;

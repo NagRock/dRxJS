@@ -1,0 +1,13 @@
+<span (click)="toggle()">
+  <span class="property-name expandable" [ngClass]="{enumerable: enumerable, expanded: expanded}">{{name}}</span>
+  <span [ngClass]="reference.type">{{reference.name}}</span>
+</span>
+
+<ng-container *ngIf="expanded">
+  <d-ref-explorer
+    *ngFor="let property of properties"
+    [name]="property.name"
+    [reference]="property.reference"
+    [enumerable]="property.enumerable"
+  ></d-ref-explorer>
+</ng-container>

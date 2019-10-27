@@ -31,6 +31,24 @@ import {
   withLatestFrom
 } from 'rxjs/operators';
 
+function doStuff(a) {}
+class Thing {}
+
+export const runDataExample = () => {
+  of(
+    null,
+    undefined,
+    true,
+    false,
+    42,
+    'string',
+    {string: 'hello', number: 42},
+    ['first', 2, true],
+    doStuff,
+    new Thing(),
+  ).subscribe();
+};
+
 export const runObservableExample = () => {
   const o = new Observable((s) => {
     s.next('sync');

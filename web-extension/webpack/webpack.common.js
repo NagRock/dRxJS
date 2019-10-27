@@ -51,7 +51,10 @@ module.exports = env => {
           ],
           exclude: /node_modules/
         },
-
+        {
+          test: /\.html$/,
+          use: 'raw-loader',
+        },
         {
           test: /\.css$/,
           use: [
@@ -60,9 +63,23 @@ module.exports = env => {
           ],
         },
         {
-          test: /\.html$/,
-          use: 'raw-loader',
-        },
+          test: /\.(scss|sass)$/,
+          use: [
+            'to-string-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                sourceMap: true
+              }
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                sourceMap: true
+              }
+            }
+          ],
+        }
       ]
     },
     resolve: {

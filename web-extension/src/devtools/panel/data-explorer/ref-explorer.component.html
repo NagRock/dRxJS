@@ -1,0 +1,14 @@
+<ng-container [ngSwitch]="reference.kind">
+  <d-value-ref-explorer
+    *ngSwitchCase="'value'"
+    [name]="name"
+    [reference]="reference"
+    [enumerable]="enumerable"
+  ></d-value-ref-explorer>
+  <d-object-ref-explorer
+    *ngSwitchCase="'object'"
+    [name]="name"
+    [reference]="reference"
+    [enumerable]="enumerable"
+  ></d-object-ref-explorer>
+</ng-container>

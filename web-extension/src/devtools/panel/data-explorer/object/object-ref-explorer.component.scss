@@ -1,0 +1,29 @@
+.object {
+
+  &::after {
+    display: inline;
+    content: '{\2026}';
+  }
+}
+
+.array {
+  &::after {
+    display: inline;
+    content: '[\2026]';
+  }
+}
+
+.function {
+  font-style: italic;
+
+  &::before {
+    display: inline;
+    content: 'f ';
+    color: blue;
+  }
+
+  &::after {
+    display: inline;
+    content: '()';
+  }
+}

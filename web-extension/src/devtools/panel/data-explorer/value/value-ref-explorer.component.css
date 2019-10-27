@@ -1,0 +1,32 @@
+.null,
+.undefined {
+  color: gray;
+}
+
+.boolean,
+.number {
+  color: blue;
+}
+
+.string {
+  color: red;
+}
+
+.string::before,
+.string::after {
+  display: inline;
+  content: '"';
+}
+
+.symbol {
+  color: red;
+}
+
+.bigint {
+  color: green;
+}
+
+.bigint::after {
+  display: inline;
+  content: 'n';
+}

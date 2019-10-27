@@ -1,9 +1,8 @@
-<d-data-explorer
+<d-ref-explorer
   *ngIf="event && event.value"
-  [data]="event.value"></d-data-explorer>
+  [name]="'value'"
+  [reference]="event.value"
+  [enumerable]="true"
+></d-ref-explorer>
 
-<div
-  *ngIf="event && event.value">
-  {{event.value | json}}
-</div>
 
