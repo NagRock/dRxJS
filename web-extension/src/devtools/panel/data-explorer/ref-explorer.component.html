@@ -1,4 +1,10 @@
 <ng-container [ngSwitch]="reference.kind">
+  <d-lazy-ref-explorer
+    *ngSwitchCase="'lazy'"
+    [name]="name"
+    [reference]="reference"
+    [enumerable]="enumerable"
+  ></d-lazy-ref-explorer>
   <d-value-ref-explorer
     *ngSwitchCase="'value'"
     [name]="name"

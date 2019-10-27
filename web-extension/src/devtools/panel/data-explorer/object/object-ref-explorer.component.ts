@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {ObjectProperty, ObjectReference, ValueReference} from '@drxjs/events';
-import {RefsStorageService} from './refs-storage.service';
+import {RefsStorageService} from '../refs-storage.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

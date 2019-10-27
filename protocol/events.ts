@@ -26,9 +26,16 @@ export interface ObjectReference {
   ref: number;
 }
 
+export interface LazyReference {
+  kind: 'lazy';
+  ref: number;
+  property: string;
+}
+
 export type Reference
   = ValueReference
-  | ObjectReference;
+  | ObjectReference
+  | LazyReference;
 
 export interface ObjectProperty {
   name: string;

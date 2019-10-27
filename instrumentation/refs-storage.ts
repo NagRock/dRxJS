@@ -1,4 +1,4 @@
-import {ObjectProperty, ObjectReference, Reference, Value, ValueReference} from '@drxjs/events';
+import {LazyReference, ObjectProperty, ObjectReference, Reference, Value, ValueReference} from '@drxjs/events';
 
 
 export class RefsStorage {
@@ -63,7 +63,8 @@ export class RefsStorage {
         } else {
           const {get, set, enumerable} = descriptor;
           if (get !== undefined) {
-            enumerableProperties.push({name, reference: this.create(object[name]), enumerable}); // todo: lazy eval
+            const lazy: LazyReference = {kind: 'lazy', ref, property: name};
+            enumerableProperties.push({name, reference: lazy, enumerable});
             accessors.push({name: `get ${name}`, reference: this.create(get), enumerable: false});
           }
           if (set !== undefined) {
@@ -75,6 +76,10 @@ export class RefsStorage {
     const proto: ObjectProperty = {name: '__proto__', reference: this.create(Object.getPrototypeOf(object)), enumerable: false};
 
     return [...enumerableProperties, ...properties, ...accessors, proto];
+  }
+
+  evalLazy(ref: number, property: string): Reference {
+    return this.create(this.load(ref)[property]);
   }
 
   private store(value: Object): number {

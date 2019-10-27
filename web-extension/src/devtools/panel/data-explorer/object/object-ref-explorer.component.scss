@@ -1,5 +1,8 @@
-.object {
+.properties {
+  margin-left: 8px;
+}
 
+.object {
   &::after {
     display: inline;
     content: '{\2026}';

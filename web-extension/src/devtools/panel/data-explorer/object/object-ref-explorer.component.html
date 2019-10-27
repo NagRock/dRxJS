@@ -3,11 +3,11 @@
   <span [ngClass]="reference.type">{{reference.name}}</span>
 </span>
 
-<ng-container *ngIf="expanded">
+<div *ngIf="expanded" class="properties">
   <d-ref-explorer
     *ngFor="let property of properties"
     [name]="property.name"
     [reference]="property.reference"
     [enumerable]="property.enumerable"
   ></d-ref-explorer>
-</ng-container>
+</div>

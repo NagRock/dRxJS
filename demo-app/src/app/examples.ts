@@ -35,6 +35,19 @@ function doStuff(a) {}
 class Thing {}
 
 export const runDataExample = () => {
+  const x = {};
+  Object.defineProperties(x, {
+    hello: {
+      value: 'world',
+    },
+    universe: {
+      get(): any {
+        return {answer: 42};
+      },
+      enumerable: true,
+    },
+  });
+
   of(
     null,
     undefined,
@@ -46,6 +59,7 @@ export const runDataExample = () => {
     ['first', 2, true],
     doStuff,
     new Thing(),
+    x,
   ).subscribe();
 };
 

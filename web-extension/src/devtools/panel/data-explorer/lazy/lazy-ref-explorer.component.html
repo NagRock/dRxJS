@@ -1,0 +1,14 @@
+<ng-container *ngIf="evaluatedReference === undefined; else evaluated">
+  <span class="property-name" [ngClass]="{enumerable: enumerable}">{{name}}</span>
+  <span *ngIf="evaluationError === undefined; else error" class="evaluate" (click)="evaluate()">(...)</span>
+  <ng-template #error>
+    <span class="error">{{evaluationError}}</span>
+  </ng-template>
+</ng-container>
+<ng-template #evaluated>
+  <d-ref-explorer
+    [name]="name"
+    [reference]="evaluatedReference"
+    [enumerable]="enumerable"
+  ></d-ref-explorer>
+</ng-template>
