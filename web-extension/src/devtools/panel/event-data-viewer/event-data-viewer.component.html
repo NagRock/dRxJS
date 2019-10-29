@@ -1,13 +1,3 @@
-<mat-accordion [multi]="true">
-  <dr-event-explorer [event]="event"></dr-event-explorer>
-  <dr-event-explorer [event]="event"></dr-event-explorer>
-  <dr-event-explorer [event]="event"></dr-event-explorer>
-</mat-accordion>
+<dr-event-explorer *ngIf="event" [name]="'event'" [event]="event"></dr-event-explorer>
 
-<mat-divider></mat-divider>
 
-<mat-accordion [multi]="true">
-  <dr-event-explorer [event]="event"></dr-event-explorer>
-  <dr-event-explorer [event]="event"></dr-event-explorer>
-  <dr-event-explorer [event]="event"></dr-event-explorer>
-</mat-accordion>

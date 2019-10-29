@@ -10,5 +10,8 @@ import {Event} from '../state';
 export class EventExplorerComponent {
 
   @Input()
+  name: string;
+
+  @Input()
   event: Event;
 }

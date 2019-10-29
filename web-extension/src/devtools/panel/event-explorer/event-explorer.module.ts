@@ -3,6 +3,7 @@ import {EventExplorerComponent} from './event-explorer.component';
 import {MatButtonModule, MatCardModule, MatExpansionModule, MatIconModule} from '@angular/material';
 import {CommonModule} from '@angular/common';
 import {PropertyExplorerModule} from '../property-explorer';
+import {PropertyModule} from '../property';
 
 @NgModule({
   declarations: [EventExplorerComponent],
@@ -13,7 +14,8 @@ import {PropertyExplorerModule} from '../property-explorer';
     CommonModule,
     PropertyExplorerModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    PropertyModule
   ]
 })
 export class EventExplorerModule {

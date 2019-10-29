@@ -1,37 +1,70 @@
-<mat-expansion-panel *ngIf="event">
-  <mat-expansion-panel-header>
-    <ng-container [ngSwitch]="event.kind">
-      <ng-container *ngSwitchCase="'next'">Next</ng-container>
-      <ng-container *ngSwitchCase="'error'">Error</ng-container>
-      <ng-container *ngSwitchCase="'complete'">Complete</ng-container>
-      <ng-container *ngSwitchCase="'subscribe'">Subscribe</ng-container>
-      <ng-container *ngSwitchCase="'unsubscribe'">Unsubscribe</ng-container>
-      <ng-container *ngSwitchCase="'subject-next'">Subject next</ng-container>
-      <ng-container *ngSwitchCase="'subject-error'">Subject error</ng-container>
-      <ng-container *ngSwitchCase="'subject-complete'">Subject complete</ng-container>
-      <ng-container *ngSwitchCase="'connect'">Connect</ng-container>
-    </ng-container>
-  </mat-expansion-panel-header>
+<!--<mat-expansion-panel *ngIf="event">-->
+<!--  <mat-expansion-panel-header>-->
+<!--    <ng-container [ngSwitch]="event.kind">-->
+<!--      <ng-container *ngSwitchCase="'next'">Next</ng-container>-->
+<!--      <ng-container *ngSwitchCase="'error'">Error</ng-container>-->
+<!--      <ng-container *ngSwitchCase="'complete'">Complete</ng-container>-->
+<!--      <ng-container *ngSwitchCase="'subscribe'">Subscribe</ng-container>-->
+<!--      <ng-container *ngSwitchCase="'unsubscribe'">Unsubscribe</ng-container>-->
+<!--      <ng-container *ngSwitchCase="'subject-next'">Subject next</ng-container>-->
+<!--      <ng-container *ngSwitchCase="'subject-error'">Subject error</ng-container>-->
+<!--      <ng-container *ngSwitchCase="'subject-complete'">Subject complete</ng-container>-->
+<!--      <ng-container *ngSwitchCase="'connect'">Connect</ng-container>-->
+<!--    </ng-container>-->
+<!--  </mat-expansion-panel-header>-->
 
-<div>
-  <button mat-icon-button>
-    <mat-icon svgIcon="arrow-back"></mat-icon>
-  </button>
-</div>
+<!--<div>-->
+<!--  <button mat-icon-button>-->
+<!--    <mat-icon svgIcon="arrow-back"></mat-icon>-->
+<!--  </button>-->
+<!--</div>-->
 
-  <div class="content">
-    <dr-property-explorer
-      *ngIf="event.value"
-      [name]="'value'"
-      [enumerable]="true"
-      [reference]="event.value"
-    ></dr-property-explorer>
+<!--  <div class="content">-->
+<!--    <dr-property-explorer-->
+<!--      *ngIf="event.value"-->
+<!--      [name]="'value'"-->
+<!--      [enumerable]="true"-->
+<!--      [reference]="event.value"-->
+<!--    ></dr-property-explorer>-->
 
-    <dr-property-explorer
-      *ngIf="event.error"
-      [name]="'error'"
-      [enumerable]="true"
-      [reference]="event.error"
-    ></dr-property-explorer>
-  </div>
-</mat-expansion-panel>
+<!--    <dr-property-explorer-->
+<!--      *ngIf="event.error"-->
+<!--      [name]="'error'"-->
+<!--      [enumerable]="true"-->
+<!--      [reference]="event.error"-->
+<!--    ></dr-property-explorer>-->
+<!--  </div>-->
+<!--</mat-expansion-panel>-->
+
+<dr-property
+  [name]="name"
+  [variant]="'primary'"
+>
+  <span [ngSwitch]="event.kind">
+    <ng-container *ngSwitchCase="'next'">Next</ng-container>
+    <ng-container *ngSwitchCase="'error'">Error</ng-container>
+    <ng-container *ngSwitchCase="'complete'">Complete</ng-container>
+    <ng-container *ngSwitchCase="'subscribe'">Subscribe</ng-container>
+    <ng-container *ngSwitchCase="'unsubscribe'">Unsubscribe</ng-container>
+    <ng-container *ngSwitchCase="'subject-next'">Subject next</ng-container>
+    <ng-container *ngSwitchCase="'subject-error'">Subject error</ng-container>
+    <ng-container *ngSwitchCase="'subject-complete'">Subject complete</ng-container>
+    <ng-container *ngSwitchCase="'connect'">Connect</ng-container>
+  </span>
+
+  <ng-container *drPropertyExpandable>
+      <dr-property-explorer
+        *ngIf="event.value"
+        [name]="'value'"
+        [enumerable]="true"
+        [reference]="event.value"
+      ></dr-property-explorer>
+
+      <dr-property-explorer
+        *ngIf="event.error"
+        [name]="'error'"
+        [enumerable]="true"
+        [reference]="event.error"
+      ></dr-property-explorer>
+  </ng-container>
+</dr-property>
