@@ -4,6 +4,7 @@ import {CommonModule} from '@angular/common';
 import {PropertyExplorerValueComponent} from './value/property-explorer-value.component';
 import {PropertyExplorerObjectComponent} from './object/property-explorer-object.component';
 import {PropertyExplorerLazyComponent} from './lazy/property-explorer-lazy.component';
+import {PropertyModule} from '../property/property.module';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import {PropertyExplorerLazyComponent} from './lazy/property-explorer-lazy.compo
   ],
   exports: [PropertyExplorerComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    PropertyModule
   ]
 })
 export class PropertyExplorerModule {

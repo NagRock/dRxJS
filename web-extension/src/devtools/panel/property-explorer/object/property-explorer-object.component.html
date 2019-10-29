@@ -1,13 +1,14 @@
-<span (click)="toggle()">
-  <span class="property-name expandable" [ngClass]="{enumerable: enumerable, expanded: expanded}">{{name}}</span>
+<dr-property
+  [name]="name"
+  [variant]="enumerable ? 'primary' : 'secondary'">
   <span [ngClass]="reference.type">{{reference.name}}</span>
-</span>
 
-<div *ngIf="expanded" class="properties">
-  <dr-property-explorer
-    *ngFor="let property of properties"
-    [name]="property.name"
-    [reference]="property.reference"
-    [enumerable]="property.enumerable"
-  ></dr-property-explorer>
-</div>
+  <ng-container *drPropertyExpandable>
+    <dr-property-explorer
+      *ngFor="let property of properties | async"
+      [name]="property.name"
+      [reference]="property.reference"
+      [enumerable]="property.enumerable"
+    ></dr-property-explorer>
+  </ng-container>
+</dr-property>

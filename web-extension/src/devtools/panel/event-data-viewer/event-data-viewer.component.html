@@ -1,8 +1,13 @@
-<dr-property-explorer
-  *ngIf="event && event.value"
-  [name]="'value'"
-  [reference]="event.value"
-  [enumerable]="true"
-></dr-property-explorer>
+<mat-accordion [multi]="true">
+  <dr-event-explorer [event]="event"></dr-event-explorer>
+  <dr-event-explorer [event]="event"></dr-event-explorer>
+  <dr-event-explorer [event]="event"></dr-event-explorer>
+</mat-accordion>
 
+<mat-divider></mat-divider>
 
+<mat-accordion [multi]="true">
+  <dr-event-explorer [event]="event"></dr-event-explorer>
+  <dr-event-explorer [event]="event"></dr-event-explorer>
+  <dr-event-explorer [event]="event"></dr-event-explorer>
+</mat-accordion>

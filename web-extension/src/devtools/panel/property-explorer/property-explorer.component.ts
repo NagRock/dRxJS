@@ -15,5 +15,5 @@ export class PropertyExplorerComponent {
   reference: Reference;
 
   @Input()
-  enumerable: boolean;
+  enumerable: boolean = true;
 }

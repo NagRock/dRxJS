@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {Property, ObjectReference, ValueReference} from '@drxjs/events';
 import {RefsStorageService} from '../refs-storage.service';
+import {defer, from, Observable} from 'rxjs';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,33 +20,10 @@ export class PropertyExplorerObjectComponent {
   @Input()
   enumerable: boolean;
 
-  expanded = false;
-  properties: Property[];
+  properties = defer(() => this.refsStorageService.get(this.reference.ref));
 
   constructor(
     private readonly refsStorageService: RefsStorageService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {
-  }
-
-  toggle() {
-    if (this.expanded) {
-      this.collapse();
-    } else {
-      this.expand();
-    }
-  }
-
-  private async expand() {
-    if (!this.properties) {
-      this.properties = await this.refsStorageService.get(this.reference.ref);
-    }
-    this.expanded = true;
-    this.changeDetectorRef.markForCheck();
-  }
-
-  private collapse() {
-    this.expanded = false;
-    this.changeDetectorRef.markForCheck();
   }
 }

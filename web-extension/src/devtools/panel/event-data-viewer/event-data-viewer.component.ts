@@ -1,6 +1,5 @@
 import {Component, Input} from '@angular/core';
 import {Event} from '../state';
-import {EventDataService} from './event-data.service';
 
 @Component({
   selector: 'app-event-data-viewer',
@@ -9,5 +8,5 @@ import {EventDataService} from './event-data.service';
 })
 export class EventDataViewerComponent {
   @Input()
-  event: any;
+  event: Event;
 }
