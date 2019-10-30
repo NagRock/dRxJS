@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {LazyReference, ObjectReference, Reference, ValueReference} from '@drxjs/events';
 import {PropertyLazyNode, PropertyLeafNode, PropertyNode, PropertyTreeNode} from '../property-node/property-node';
 import {defer} from 'rxjs';
-import {RefsStorageService} from '../property-explorer/refs-storage.service';
+import {RefsStorageService} from './refs-storage.service';
 import {map} from 'rxjs/operators';
 import {ValuePropertiesService} from './value-properties.service';
 
