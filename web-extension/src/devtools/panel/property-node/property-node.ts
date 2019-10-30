@@ -1,17 +1,17 @@
 import {Observable} from 'rxjs';
 
 export type PropertyType
-  = { tag: 'null' }
-  | { tag: 'undefined' }
-  | { tag: 'boolean' }
-  | { tag: 'number' }
-  | { tag: 'string' }
-  | { tag: 'symbol' }
-  | { tag: 'bigint' }
-  | { tag: 'object' }
-  | { tag: 'array' }
-  | { tag: 'function' }
-  | { tag: 'decorated', prefix: string, suffix: string };
+  = 'null'
+  | 'undefined'
+  | 'boolean'
+  | 'number'
+  | 'string'
+  | 'symbol'
+  | 'bigint'
+  | 'object'
+  | 'array'
+  | 'function'
+  | 'decorated';
 
 export interface PropertyLazyNode {
   lazy: true;
@@ -25,18 +25,22 @@ export interface PropertyLeafNode {
   lazy: false;
   expandable: false;
   key: string;
+  primary: boolean;
   value: string;
   type: PropertyType;
-  primary: boolean;
+  prefix?: string;
+  suffix?: string;
 }
 
 export interface PropertyTreeNode {
   lazy: false;
   expandable: true;
   key: string;
+  primary: boolean;
   value: string;
   type: PropertyType;
-  primary: boolean;
+  prefix?: string;
+  suffix?: string;
   children: Observable<PropertyNode[]>;
 }
 

@@ -92,6 +92,12 @@ $arrow-long: 6px;
   }
 
   &.array {
+    &::before {
+      display: inline;
+      content: attr(data-prefix);
+      color: blue;
+    }
+
     &::after {
       display: inline;
       content: '[\2026]';

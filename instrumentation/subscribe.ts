@@ -15,7 +15,7 @@ export function instrumentSubscribe() {
     } else {
       const subscriber = new instrumentedRx.Subscriber(observerOrNext, error, complete);
       const receiver = subscriber as any as Receiver;
-      const definitionId = trackSubscribeDefinition(observerOrNext, error, complete);
+      const definitionId = trackSubscribeDefinition([observerOrNext, error, complete]);
       receiver.__receiver_id__ = trackInstance(definitionId);
       receiver.__set_last_received_notification_id__ = () => {
       }; // todo: set cause for callback functions

@@ -32,9 +32,7 @@ export interface OperatorDefinitionEvent {
 export interface SubscribeDefinitionEvent {
   kind: 'subscribe-definition';
   definition: number;
-  next: (value) => void;
-  error: (error) => void;
-  complete: () => void;
+  args: any[],
   position: SourcePosition;
 }
 

@@ -23,6 +23,7 @@ export interface ObjectReference {
   kind: 'object';
   type: 'object' | 'array' | 'function';
   name: string; // .constructor.name for objects/arrays, .name for functions
+  size?: number; // .length for arrays
   ref: number;
 }
 
@@ -37,10 +38,10 @@ export type Reference
   | ObjectReference
   | LazyReference;
 
-export interface Property {
-  name: string;
-  enumerable: boolean;
-  reference: Reference;
+export interface Property<R extends Reference = Reference> {
+  readonly name: string;
+  readonly enumerable: boolean;
+  readonly reference: R;
 }
 
 export interface CreatorDefinitionEvent {
@@ -62,9 +63,7 @@ export interface OperatorDefinitionEvent {
 export interface SubscribeDefinitionEvent {
   kind: 'subscribe-definition';
   definition: number;
-  next: Reference;
-  error: Reference;
-  complete: Reference;
+  args: Reference[],
   position: SourcePosition;
 }
 

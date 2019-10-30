@@ -4,7 +4,7 @@ import {PropertyNode} from './property-node';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'dr-properties-tree',
+  selector: 'dr-property-node',
   templateUrl: './property-node.component.html',
   styleUrls: ['./property-node.component.scss'],
 })

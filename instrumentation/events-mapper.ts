@@ -65,9 +65,7 @@ export class EventsMapper {
           return {
             kind: 'subscribe-definition',
             definition: event.definition,
-            next: this.refsStorage.create(event.next),
-            error: this.refsStorage.create(event.error),
-            complete: this.refsStorage.create(event.complete),
+            args: event.args.map((arg) => this.refsStorage.create(arg)),
             position,
           };
         case 'unknown-definition':

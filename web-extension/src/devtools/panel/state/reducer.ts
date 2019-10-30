@@ -41,9 +41,7 @@ function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDef
     kind: 'subscribe-definition',
     name: 'subscribe',
     id: event.definition,
-    next: event.next,
-    error: event.error,
-    complete: event.complete,
+    args: event.args,
     position: event.position,
     instances: [],
   };
@@ -60,6 +58,7 @@ function handleSubjectDefinition(state: State.State, event: Event.SubjectDefinit
     name: event.constructor.name,
     id: event.definition,
     constructor: event.constructor,
+    args: event.args,
     position: event.position,
     instances: [],
   };

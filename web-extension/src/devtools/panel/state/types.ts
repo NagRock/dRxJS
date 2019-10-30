@@ -35,9 +35,7 @@ export interface SubscribeDefinition {
   kind: 'subscribe-definition';
   name: string;
   id: number;
-  next: Reference;
-  error: Reference;
-  complete: Reference;
+  args: Reference[],
   position: SourcePosition;
   instances: Instance[];
 }
@@ -47,6 +45,7 @@ export interface SubjectDefinition {
   name: string;
   id: number;
   constructor: ObjectReference;
+  args: Reference[],
   position: SourcePosition;
   instances: Instance[];
 }

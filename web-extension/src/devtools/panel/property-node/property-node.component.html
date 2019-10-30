@@ -5,24 +5,24 @@
       [ngClass]="{
         primary: node.primary,
         expandable: node.expandable,
-        expanded: expanded,
+        expanded: expanded
       }"
     >{{node.key}}</span>
     <span
       class="value"
-      [ngClass]="node.type.tag"
-      [attr.data-prefix]="node.type.prefix"
-      [attr.data-suffix]="node.type.suffix"
+      [ngClass]="node.type"
+      [attr.data-prefix]="node.prefix"
+      [attr.data-suffix]="node.suffix"
     >{{node.value}}</span>
   </span>
   <div
     *ngIf="node.expandable && expanded"
     class="properties"
   >
-    <dr-properties-tree
+    <dr-property-node
       *ngFor="let child of node.children | async"
       [node]="child"
-    ></dr-properties-tree>
+    ></dr-property-node>
   </div>
 </ng-container>
 <ng-template #lazy>
@@ -30,8 +30,8 @@
     <span
       class="key"
       [ngClass]="{
-      primary: node.primary,
-    }"
+        primary: node.primary
+      }"
     >{{node.key}}</span>
     <span
       class="value lazy"
@@ -40,5 +40,5 @@
   </span>
 </ng-template>
 <ng-template #evaluated>
-  <dr-properties-tree [node]="evaluationResult"></dr-properties-tree>
+  <dr-property-node [node]="evaluationResult"></dr-property-node>
 </ng-template>

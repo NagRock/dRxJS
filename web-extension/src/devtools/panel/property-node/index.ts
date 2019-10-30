@@ -1,3 +1,3 @@
-export * from './properties-tree.module';
-export * from './properties-tree.component';
-export * from './properties-tree-node';
+export * from './property-node.module';
+export * from './property-node.component';
+export * from './property-node';

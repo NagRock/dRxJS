@@ -72,15 +72,13 @@ export function trackOperatorDefinition(func: (...args: any[]) => any, args: any
   return definition;
 }
 
-export function trackSubscribeDefinition(next, error, complete) {
+export function trackSubscribeDefinition(args: any[]) {
   const definition = getNextDefinitionId();
 
   const event: SubscribeDefinitionEvent = {
     kind: 'subscribe-definition',
     definition,
-    next,
-    error,
-    complete,
+    args,
     position: getSourcePosition(3),
   };
 

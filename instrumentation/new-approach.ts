@@ -31,12 +31,8 @@ type InstrumentationContext = {
   originalRxjsOperators: RxJSOperators;
 }
 
-function trackSubscribeInstance(
-  observerOrNext: Observer<unknown> | ((value: unknown) => void),
-  error: (error: any) => void,
-  complete: () => void,
-) {
-  const definitionId = trackSubscribeDefinition(observerOrNext, error, complete);
+function trackSubscribeInstance(args: any[]) {
+  const definitionId = trackSubscribeDefinition(args);
   return trackInstance(definitionId);
 }
 
@@ -81,7 +77,7 @@ function instrumentSubscribe<T extends Observable<unknown>>({originalRxjs}: Inst
         const destinationInstanceId =
           (observerOrNext && (observerOrNext as any).__doctor__instance_id) // Subject
           || Zone.current.get('__doctor__instance_id') // subscriber that called this subscribe
-          || trackSubscribeInstance(observerOrNext, error, complete); // direct subscribe call
+          || trackSubscribeInstance([observerOrNext, error, complete]); // direct subscribe call
 
         const subscriber = instrumentSubscriber(
           toSubscriber(originalRxjs, observerOrNext, error, complete),
