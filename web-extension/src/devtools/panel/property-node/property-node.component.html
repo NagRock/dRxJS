@@ -1,0 +1,44 @@
+<ng-container *ngIf="!node.lazy">
+  <span (click)="expanded = !expanded">
+    <span
+      class="key"
+      [ngClass]="{
+        primary: node.primary,
+        expandable: node.expandable,
+        expanded: expanded,
+      }"
+    >{{node.key}}</span>
+    <span
+      class="value"
+      [ngClass]="node.type.tag"
+      [attr.data-prefix]="node.type.prefix"
+      [attr.data-suffix]="node.type.suffix"
+    >{{node.value}}</span>
+  </span>
+  <div
+    *ngIf="node.expandable && expanded"
+    class="properties"
+  >
+    <dr-properties-tree
+      *ngFor="let child of node.children | async"
+      [node]="child"
+    ></dr-properties-tree>
+  </div>
+</ng-container>
+<ng-template #lazy>
+  <span *ngIf="evaluationResult === undefined; else evaluated">
+    <span
+      class="key"
+      [ngClass]="{
+      primary: node.primary,
+    }"
+    >{{node.key}}</span>
+    <span
+      class="value lazy"
+      (click)="eval()"
+    >{{evaluationError ? evaluationError : '(...)'}}</span>
+  </span>
+</ng-template>
+<ng-template #evaluated>
+  <dr-properties-tree [node]="evaluationResult"></dr-properties-tree>
+</ng-template>
