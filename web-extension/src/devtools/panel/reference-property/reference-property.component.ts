@@ -13,7 +13,7 @@ export class ReferencePropertyComponent {
   name: string;
 
   @Input()
-  enumerable: boolean;
+  enumerable: boolean = true;
 
   @Input()
   reference: Reference;

@@ -22,7 +22,7 @@ export class PropertyComponent {
   key: string;
 
   @Input()
-  primary: boolean;
+  primary: boolean = true;
 
   @ContentChild(PropertyExpandDirective)
   expand: PropertyExpandDirective;
