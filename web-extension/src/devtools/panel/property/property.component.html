@@ -1,0 +1,14 @@
+<span (click)="expanded = !expanded">
+  <span
+    class="key"
+    [ngClass]="{
+      primary: primary,
+      expandable: expandable,
+      expanded: expanded
+    }"
+  >{{key}}</span>
+  <ng-content></ng-content>
+</span>
+<div *ngIf="expandable && expanded" class="expand">
+  <ng-container [ngTemplateOutlet]="expand.templateRef"></ng-container>
+</div>

@@ -95,21 +95,22 @@ export class StatePropertiesService {
 
   private getDefinitionChildren(definition: Definition): PropertyNode[] {
     const children: PropertyNode[] = [];
+  console.log(definition);
 
     children.push(this.valuePropertiesService.fromValue('id', true, definition.id));
     children.push(this.valuePropertiesService.fromValue('name', true, definition.name));
     children.push(this.valuePropertiesService.fromValue('position', true, definition.position)); // todo: add navigation
     if ('function' in definition) {
-      children.push(this.referencePropertiesService.fromReference('position', true, definition.function));
+      children.push(this.referencePropertiesService.fromReference('function', true, definition.function));
     }
     if ('constructor' in definition) {
-      children.push(this.referencePropertiesService.fromReference('position', true, definition.constructor as Reference));
+      children.push(this.referencePropertiesService.fromReference('constructor', true, definition.constructor as Reference));
     }
     if ('args' in definition) {
-      children.push(this.fromArray('position', true, definition.args, (key, value) => this.referencePropertiesService.fromReference(key, true, value)));
+      children.push(this.fromArray('args', true, definition.args, (key, value) => this.referencePropertiesService.fromReference(key, true, value)));
     }
     if ('instances' in definition) {
-      children.push(this.fromArray('position', true, definition.instances, (key, value) => this.fromInstance(key, true, value)));
+      children.push(this.fromArray('instances', true, definition.instances, (key, value) => this.fromInstance(key, true, value)));
     }
 
     return children;

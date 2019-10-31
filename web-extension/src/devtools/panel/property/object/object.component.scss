@@ -1,0 +1,6 @@
+.proto {
+  &::after {
+    display: inline;
+    content: '{\2026}';
+  }
+}

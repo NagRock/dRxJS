@@ -50,39 +50,7 @@ $arrow-long: 6px;
     background-color: lightgray;
   }
 
-  &.null,
-  &.undefined {
-    color: gray;
-  }
 
-  &.boolean,
-  &.number {
-    color: blue;
-  }
-
-  &.string {
-    color: red;
-  }
-
-  &.string::before,
-  &.string::after {
-    display: inline;
-    content: '"';
-    color: black;
-  }
-
-  &.symbol {
-    color: red;
-  }
-
-  &.bigint {
-    color: green;
-  }
-
-  &.bigint::after {
-    display: inline;
-    content: 'n';
-  }
 
   &.object {
     &::after {
