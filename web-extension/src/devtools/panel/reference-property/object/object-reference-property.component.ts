@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {ObjectReference, Property} from '@drxjs/events';
 import {defer, Observable} from 'rxjs';
-import {RefsStorageService} from '../../properties/refs-storage.service';
+import {ReferenceService} from '../reference.service';
 import {shareReplay} from 'rxjs/operators';
 
 @Component({
@@ -28,7 +28,7 @@ export class ObjectReferencePropertyComponent {
   properties: Observable<Property[]>;
 
   constructor(
-    private readonly refs: RefsStorageService,
+    private readonly refs: ReferenceService,
   ) {
   }
 

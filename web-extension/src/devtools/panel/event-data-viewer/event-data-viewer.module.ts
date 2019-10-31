@@ -3,7 +3,6 @@ import {CommonModule} from '@angular/common';
 import {MatListModule} from '@angular/material/list';
 import {EventDataViewerComponent} from './event-data-viewer.component';
 import {MatCardModule, MatExpansionModule} from '@angular/material';
-import {PropertyNodeModule} from '../property-node/property-node.module';
 import {StatePropertyModule} from '../state-property';
 
 @NgModule({
@@ -16,7 +15,6 @@ import {StatePropertyModule} from '../state-property';
     MatListModule,
     MatCardModule,
     MatExpansionModule,
-    PropertyNodeModule,
     StatePropertyModule,
   ]
 })

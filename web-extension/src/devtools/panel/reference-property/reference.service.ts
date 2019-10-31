@@ -5,7 +5,7 @@ import {browser} from '../../../types/webextension-polyfill-ts';
 @Injectable({
   providedIn: 'root',
 })
-export class RefsStorageService {
+export class ReferenceService {
   get(ref: number): Promise<Property[]> {
     return browser.devtools.inspectedWindow.eval(`__doctor__refs.get(${ref})`)
       .then(value => {

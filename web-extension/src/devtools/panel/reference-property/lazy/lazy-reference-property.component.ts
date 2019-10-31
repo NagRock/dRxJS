@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {LazyReference, Reference} from '@drxjs/events';
-import {RefsStorageService} from '../../properties/refs-storage.service';
+import {ReferenceService} from '../reference.service';
 
 @Component({
   selector: 'dr-lazy-reference-property',
@@ -20,7 +20,7 @@ export class LazyReferencePropertyComponent {
   reference: LazyReference;
 
   constructor(
-    private readonly refs: RefsStorageService,
+    private readonly refs: ReferenceService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
