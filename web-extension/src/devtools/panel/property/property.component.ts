@@ -30,6 +30,6 @@ export class PropertyComponent {
   expanded = false;
 
   get expandable() {
-    return this.expand !== null;
+    return this.expand !== undefined;
   }
 }
