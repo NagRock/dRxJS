@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, ContentChild, Directive, Input, TemplateRef} from '@angular/core';
-import {Instance} from '../state';
+import {Instance} from '../../state';
 
 @Component({
   selector: 'dr-instance-property',

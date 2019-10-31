@@ -1,6 +1,12 @@
 $arrow-short: 4px;
 $arrow-long: 6px;
 
+:host {
+  display: block;
+  font-family: monospace;
+  font-size: 12px;
+}
+
 .key {
   &.primary {
     color: deeppink;
@@ -13,6 +19,7 @@ $arrow-long: 6px;
   &::after {
     display: inline;
     content: ': ';
+    color: black;
   }
 
   &::before {

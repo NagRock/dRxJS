@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, ContentChild, Directive, Input, TemplateRef} from '@angular/core';
-import {Event} from '../state';
+import {Event} from '../../state';
 
 @Component({
   selector: 'dr-event-property',

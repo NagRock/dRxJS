@@ -4,6 +4,7 @@ import {MatListModule} from '@angular/material/list';
 import {EventDataViewerComponent} from './event-data-viewer.component';
 import {MatCardModule, MatExpansionModule} from '@angular/material';
 import {PropertyNodeModule} from '../property-node/property-node.module';
+import {StatePropertyModule} from '../state-property';
 
 @NgModule({
   declarations: [EventDataViewerComponent],
@@ -16,6 +17,7 @@ import {PropertyNodeModule} from '../property-node/property-node.module';
     MatCardModule,
     MatExpansionModule,
     PropertyNodeModule,
+    StatePropertyModule,
   ]
 })
 export class EventDataViewerModule {

@@ -5,11 +5,12 @@
   &::before {
     display: inline;
     content: attr(data-prefix);
-    color: green;
+    color: darkgreen;
   }
 
   &::after {
     display: inline;
     content: attr(data-suffix);
+    color: darkgreen;
   }
 }
