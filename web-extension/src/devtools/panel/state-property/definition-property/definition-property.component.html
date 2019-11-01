@@ -7,9 +7,8 @@
     <dr-property [key]="'name'">
       <dr-value [value]="definition.name"></dr-value>
     </dr-property>
-    <dr-property [key]="'position'">
-      <!-- todo: add navigation -->
-      <span class="position">{{definition.position | json}}</span>
+    <dr-property [key]="'location'">
+      <span class="location" [attr.title]="longLocation" (click)="openLocation()">{{shortLocation}}</span>
     </dr-property>
     <dr-reference-property
       *ngIf="definition.hasOwnProperty('function')"
