@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@drxjs": ["./instrumentation"],
+      "@drxjs": ["./instrumentation/new-approach.ts"],
       "@drxjs/events": ["./protocol/events"]
     },
     "types": [

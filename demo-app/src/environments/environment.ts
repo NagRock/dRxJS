@@ -6,14 +6,11 @@
 import * as rxjs from 'rxjs';
 import * as rxjsOperators from 'rxjs/operators';
 
-import {instrument} from '../../../instrumentation/new-approach';
-import {enableInstrumentation} from '@drxjs';
+import {instrument} from '@drxjs';
 
 export const environment = {
   production: false
 };
-
-// enableInstrumentation();
 
 instrument(rxjs, rxjsOperators);
 
