@@ -8,11 +8,6 @@ export interface SourcePosition {
   column: number;
 }
 
-export interface Cause {
-  kind: 'sync' | 'async';
-  notification: number;
-}
-
 export interface CreatorDefinitionEvent {
   kind: 'creator-definition';
   definition: number;
@@ -80,7 +75,6 @@ export interface NextNotificationEvent {
   sender: number;
   receiver: number;
   notification: number;
-  cause: Cause;
   value: any;
 }
 
@@ -89,7 +83,6 @@ export interface ErrorNotificationEvent {
   sender: number;
   receiver: number;
   notification: number;
-  cause: Cause;
   error: any;
 }
 
@@ -98,7 +91,6 @@ export interface CompleteNotificationEvent {
   sender: number;
   receiver: number;
   notification: number;
-  cause: Cause;
 }
 
 export interface SubjectNextEvent {

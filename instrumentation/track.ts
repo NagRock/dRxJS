@@ -1,6 +1,5 @@
 import {getNextDefinitionId, getNextInstanceId, getNextNotificationId} from './ids';
 import {
-  Cause,
   CompleteNotificationEvent,
   ConnectEvent,
   CreatorDefinitionEvent,
@@ -151,7 +150,7 @@ export function trackUnsubscribe(sender: number, receiver: number): void {
   rxInspector.dispatch(event);
 }
 
-export function trackNextNotification(sender: number, receiver: number, value: any, cause?: Cause) {
+export function trackNextNotification(sender: number, receiver: number, value: any) {
   const notification = getNextNotificationId();
 
   const event: NextNotificationEvent = {
@@ -159,7 +158,6 @@ export function trackNextNotification(sender: number, receiver: number, value: a
     sender,
     receiver,
     notification,
-    cause,
     value,
   };
 
@@ -168,7 +166,7 @@ export function trackNextNotification(sender: number, receiver: number, value: a
   return notification;
 }
 
-export function trackErrorNotification(sender: number, receiver: number, error: any, cause?: Cause) {
+export function trackErrorNotification(sender: number, receiver: number, error: any) {
   const notification = getNextNotificationId();
 
   const event: ErrorNotificationEvent = {
@@ -176,7 +174,6 @@ export function trackErrorNotification(sender: number, receiver: number, error: 
     sender,
     receiver,
     notification,
-    cause,
     error,
   };
 
@@ -185,7 +182,7 @@ export function trackErrorNotification(sender: number, receiver: number, error: 
   return notification;
 }
 
-export function trackCompleteNotification(sender: number, receiver: number, cause?: Cause) {
+export function trackCompleteNotification(sender: number, receiver: number) {
   const notification = getNextNotificationId();
 
   const event: CompleteNotificationEvent = {
@@ -193,19 +190,11 @@ export function trackCompleteNotification(sender: number, receiver: number, caus
     sender,
     receiver,
     notification,
-    cause,
   };
 
   rxInspector.dispatch(event);
 
   return notification;
-}
-
-export function getCause(notification: number, kind: 'sync' | 'async' = 'sync'): Cause {
-  return {
-    kind,
-    notification,
-  };
 }
 
 export function trackSubjectNext(subject: number, context: number, value: any) {
