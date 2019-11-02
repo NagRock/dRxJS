@@ -4,7 +4,7 @@ import {Event} from '../state';
 @Component({
   selector: 'app-events-viewer',
   templateUrl: './events-viewer.component.html',
-  styleUrls: ['./events-viewer.component.css']
+  styleUrls: ['./events-viewer.component.scss']
 })
 export class EventsViewerComponent {
 
@@ -33,5 +33,9 @@ export class EventsViewerComponent {
   setSelectedEventIndex(index: number) {
     this.selectedEventIndex = index;
     this.selectedEventIndexChange.emit(index);
+  }
+
+  getEventName(event: Event) {
+    return event.kind.replace(/-/g, ' ').replace(/^./, (s) => s.toUpperCase());
   }
 }

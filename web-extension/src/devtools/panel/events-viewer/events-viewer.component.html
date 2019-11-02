@@ -1,13 +1,13 @@
-<mat-button-toggle-group
-    #group="matButtonToggleGroup"
-    [value]="selectedEventIndex"
-    (valueChange)="setSelectedEventIndex($event)"
->
-  <mat-button-toggle
-    #item
-    *ngFor="let event of events; let index=index;"
-    [value]="index"
+<div class="events">
+  <div
+      #item
+      *ngFor="let event of events; let index=index;"
+      class="event"
+      [ngClass]="{selected: index === selectedEventIndex}"
+      (click)="setSelectedEventIndex(index)"
   >
-    {{event.kind}}
-  </mat-button-toggle>
-</mat-button-toggle-group>
+    <div class="event-name">{{getEventName(event)}}</div>
+    <div class="event-id">#{{event.id}}</div>
+    <div class="event-time">21:09:36.123</div>
+  </div>
+</div>
