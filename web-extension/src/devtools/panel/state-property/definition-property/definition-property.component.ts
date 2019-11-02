@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Definition} from '../../state';
 import {browser} from '../../../../types/webextension-polyfill-ts';
+import {ResourcesService} from '../../resources';
 
 @Component({
   selector: 'dr-definition-property',
@@ -15,6 +16,12 @@ export class DefinitionPropertyComponent {
 
   @Input()
   definition: Definition;
+
+  constructor(
+    private readonly resources: ResourcesService,
+  ) {
+  }
+
 
   get suffix() {
     return ` #${this.definition.id}`;
@@ -32,7 +39,6 @@ export class DefinitionPropertyComponent {
 
   openLocation() {
     const {file, line} = this.definition.position;
-    // @ts-ignore
-    browser.devtools.panels.openResource(file/*.replace('webpack:///', 'webpack:///./')*/, line - 1);
+    this.resources.open(file, line);
   }
 }

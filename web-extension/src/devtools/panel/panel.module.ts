@@ -11,6 +11,7 @@ import {
   MatIconModule,
   MatMenuModule,
   MatSlideToggleModule,
+  MatSnackBarModule,
   MatToolbarModule,
   MatTreeModule
 } from '@angular/material';
@@ -41,6 +42,7 @@ import {HttpClientModule} from '@angular/common/http';
     MatToolbarModule,
     MatCheckboxModule,
     MatSlideToggleModule,
+    MatSnackBarModule,
   ],
   declarations: [
     PanelComponent
