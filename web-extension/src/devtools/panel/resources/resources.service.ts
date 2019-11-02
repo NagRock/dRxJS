@@ -13,6 +13,8 @@ export class ResourcesService {
   }
 
   open(file: string, line: number) {
+    // todo: because of the issue with BasicSourceMapConsumer (source-map package), relative url parts are truncated
+    // todo: this should b fixed in the 0.8.0 version in source-map
     // @ts-ignore
     browser.devtools.panels.openResource(file/*.replace('webpack:///', 'webpack:///./')*/, line - 1, (result) => {
       if (result.isError) {
