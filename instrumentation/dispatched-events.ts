@@ -10,30 +10,30 @@ export interface SourcePosition {
 
 export interface CreatorDefinitionEvent {
   kind: 'creator-definition';
-  definition: number;
-  func: (...args: any[]) => Observable;
+  id: number;
+  function: (...args: any[]) => Observable;
   args: any[];
   position: SourcePosition;
 }
 
 export interface OperatorDefinitionEvent {
   kind: 'operator-definition';
-  definition: number;
-  func: (...args: any[]) => OperatorFunction;
+  id: number;
+  function: (...args: any[]) => OperatorFunction;
   args: any[];
   position: SourcePosition;
 }
 
 export interface SubscribeDefinitionEvent {
   kind: 'subscribe-definition';
-  definition: number;
+  id: number;
   args: any[],
   position: SourcePosition;
 }
 
 export interface SubjectDefinitionEvent {
   kind: 'subject-definition';
-  definition: number;
+  id: number;
   constructor: new (...args: any) => void;
   args: any[];
   position: SourcePosition;
@@ -41,7 +41,7 @@ export interface SubjectDefinitionEvent {
 
 export interface UnknownDefinitionEvent {
   kind: 'unknown-definition';
-  definition: number;
+  id: number;
   position: SourcePosition;
 }
 
@@ -54,47 +54,50 @@ export type DefinitionEvent
 
 export interface InstanceEvent {
   kind: 'instance';
+  id: number;
   definition: number;
-  instance: number;
 }
 
 export interface SubscribeEvent {
   kind: 'subscribe';
+  id: number;
   sender: number;
   receiver: number;
 }
 
 export interface UnsubscribeEvent {
   kind: 'unsubscribe';
+  id: number;
   sender: number;
   receiver: number;
 }
 
 export interface NextNotificationEvent {
   kind: 'next';
+  id: number;
   sender: number;
   receiver: number;
-  notification: number;
   value: any;
 }
 
 export interface ErrorNotificationEvent {
   kind: 'error';
+  id: number;
   sender: number;
   receiver: number;
-  notification: number;
   error: any;
 }
 
 export interface CompleteNotificationEvent {
   kind: 'complete';
+  id: number;
   sender: number;
   receiver: number;
-  notification: number;
 }
 
 export interface SubjectNextEvent {
   kind: 'subject-next';
+  id: number;
   subject: number;
   context: number;
   value: any;
@@ -102,6 +105,7 @@ export interface SubjectNextEvent {
 
 export interface SubjectErrorEvent {
   kind: 'subject-error';
+  id: number;
   subject: number;
   context: number;
   error: any;
@@ -109,12 +113,14 @@ export interface SubjectErrorEvent {
 
 export interface SubjectCompleteEvent {
   kind: 'subject-complete';
+  id: number;
   subject: number;
   context: number;
 }
 
 export interface ConnectEvent {
   kind: 'connect';
+  id: number;
   connectable: number;
 }
 

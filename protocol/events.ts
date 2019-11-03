@@ -46,7 +46,7 @@ export interface Property<R extends Reference = Reference> {
 
 export interface CreatorDefinitionEvent {
   kind: 'creator-definition';
-  definition: number;
+  id: number;
   function: ObjectReference;
   args: Reference[];
   position: SourcePosition;
@@ -54,7 +54,7 @@ export interface CreatorDefinitionEvent {
 
 export interface OperatorDefinitionEvent {
   kind: 'operator-definition';
-  definition: number;
+  id: number;
   function: ObjectReference;
   args: Reference[];
   position: SourcePosition;
@@ -62,14 +62,14 @@ export interface OperatorDefinitionEvent {
 
 export interface SubscribeDefinitionEvent {
   kind: 'subscribe-definition';
-  definition: number;
+  id: number;
   args: Reference[],
   position: SourcePosition;
 }
 
 export interface SubjectDefinitionEvent {
   kind: 'subject-definition';
-  definition: number;
+  id: number;
   constructor: ObjectReference;
   args: Reference[];
   position: SourcePosition;
@@ -77,7 +77,7 @@ export interface SubjectDefinitionEvent {
 
 export interface UnknownDefinitionEvent {
   kind: 'unknown-definition';
-  definition: number;
+  id: number;
   position: SourcePosition;
 }
 
@@ -90,47 +90,50 @@ export type DefinitionEvent
 
 export interface InstanceEvent {
   kind: 'instance';
+  id: number;
   definition: number;
-  instance: number;
 }
 
 export interface SubscribeEvent {
   kind: 'subscribe';
+  id: number;
   sender: number;
   receiver: number;
 }
 
 export interface UnsubscribeEvent {
   kind: 'unsubscribe';
+  id: number;
   sender: number;
   receiver: number;
 }
 
 export interface NextNotificationEvent {
   kind: 'next';
+  id: number;
   sender: number;
   receiver: number;
-  notification: number;
   value: Reference;
 }
 
 export interface ErrorNotificationEvent {
   kind: 'error';
+  id: number;
   sender: number;
   receiver: number;
-  notification: number;
   error: Reference;
 }
 
 export interface CompleteNotificationEvent {
   kind: 'complete';
+  id: number;
   sender: number;
   receiver: number;
-  notification: number;
 }
 
 export interface SubjectNextEvent {
   kind: 'subject-next';
+  id: number;
   subject: number;
   context: number;
   value: Reference;
@@ -138,6 +141,7 @@ export interface SubjectNextEvent {
 
 export interface SubjectErrorEvent {
   kind: 'subject-error';
+  id: number;
   subject: number;
   context: number;
   error: Reference;
@@ -145,12 +149,14 @@ export interface SubjectErrorEvent {
 
 export interface SubjectCompleteEvent {
   kind: 'subject-complete';
+  id: number;
   subject: number;
   context: number;
 }
 
 export interface ConnectEvent {
   kind: 'connect';
+  id: number;
   connectable: number;
 }
 

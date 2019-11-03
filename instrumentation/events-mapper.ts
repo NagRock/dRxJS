@@ -40,23 +40,23 @@ export class EventsMapper {
         case 'creator-definition':
           return {
             kind: 'creator-definition',
-            definition: event.definition,
-            function: this.refsStorage.create(event.func),
+            id: event.id,
+            function: this.refsStorage.create(event.function),
             args: event.args.map((arg) => this.refsStorage.create(arg)),
             position,
           };
         case 'operator-definition':
           return {
             kind: 'operator-definition',
-            definition: event.definition,
-            function: this.refsStorage.create(event.func),
+            id: event.id,
+            function: this.refsStorage.create(event.function),
             args: event.args.map((arg) => this.refsStorage.create(arg)),
             position,
           };
         case 'subject-definition':
           return {
             kind: 'subject-definition',
-            definition: event.definition,
+            id: event.id,
             constructor: this.refsStorage.create(event.constructor),
             args: event.args.map((arg) => this.refsStorage.create(arg)),
             position,
@@ -64,14 +64,14 @@ export class EventsMapper {
         case 'subscribe-definition':
           return {
             kind: 'subscribe-definition',
-            definition: event.definition,
+            id: event.id,
             args: event.args.map((arg) => this.refsStorage.create(arg)),
             position,
           };
         case 'unknown-definition':
           return {
             kind: 'unknown-definition',
-            definition: event.definition,
+            id: event.id,
             position,
           };
       }
@@ -80,22 +80,23 @@ export class EventsMapper {
         case 'next':
           return {
             kind: 'next',
+            id: event.id,
             sender: event.sender,
             receiver: event.receiver,
-            notification: event.notification,
             value: this.refsStorage.create(event.value),
           };
         case 'error':
           return {
             kind: 'error',
+            id: event.id,
             sender: event.sender,
             receiver: event.receiver,
-            notification: event.notification,
             error: this.refsStorage.create(event.error),
           };
         case 'subject-next':
           return {
             kind: 'subject-next',
+            id: event.id,
             subject: event.subject,
             context: event.context,
             value: this.refsStorage.create(event.value),
@@ -103,6 +104,7 @@ export class EventsMapper {
         case 'subject-error':
           return {
             kind: 'subject-error',
+            id: event.id,
             subject: event.subject,
             context: event.context,
             error: this.refsStorage.create(event.error),

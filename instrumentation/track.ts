@@ -1,4 +1,4 @@
-import {getNextDefinitionId, getNextInstanceId, getNextNotificationId} from './ids';
+import {getNextDefinitionId, getNextInstanceId, getNextEventId} from './ids';
 import {
   CompleteNotificationEvent,
   ConnectEvent,
@@ -40,200 +40,230 @@ export function getSourcePosition(stackTraceOffset: number): SourcePosition {
 }
 
 export function trackCreatorDefinition(func: (...args: any[]) => any, args: any[]): number {
-  const definition = getNextDefinitionId();
+  const id = getNextDefinitionId();
 
   const event: CreatorDefinitionEvent = {
     kind: 'creator-definition',
-    definition,
-    func,
+    id,
+    function: func,
     args,
     position: getSourcePosition(2),
   };
 
   rxInspector.dispatch(event);
 
-  return definition;
+  return id;
 }
 
 export function trackOperatorDefinition(func: (...args: any[]) => any, args: any[]): number {
-  const definition = getNextDefinitionId();
+  const id = getNextDefinitionId();
 
   const event: OperatorDefinitionEvent = {
     kind: 'operator-definition',
-    definition,
-    func,
+    id,
+    function: func,
     args,
     position: getSourcePosition(2),
   };
 
   rxInspector.dispatch(event);
 
-  return definition;
+  return id;
 }
 
 export function trackSubscribeDefinition(args: any[]) {
-  const definition = getNextDefinitionId();
+  const id = getNextDefinitionId();
 
   const event: SubscribeDefinitionEvent = {
     kind: 'subscribe-definition',
-    definition,
+    id,
     args,
     position: getSourcePosition(3),
   };
 
   rxInspector.dispatch(event);
 
-  return definition;
+  return id;
 }
 
 export function trackSubjectDefinition(constructor: any, args: any[]) {
-  const definition = getNextDefinitionId();
+  const id = getNextDefinitionId();
 
   const event: SubjectDefinitionEvent = {
     kind: 'subject-definition',
     constructor,
     args,
-    definition,
+    id,
     position: getSourcePosition(2),
   };
 
   rxInspector.dispatch(event);
 
-  return definition;
+  return id;
 }
 
 export function trackUnknownDefinition() {
-  const definition = getNextDefinitionId();
+  const id = getNextDefinitionId();
 
   const event: UnknownDefinitionEvent = {
     kind: 'unknown-definition',
-    definition,
+    id,
     position: unknownSourcePosition,
   };
 
   rxInspector.dispatch(event);
 
-  return definition;
+  return id;
 }
 
 export function trackInstance(definition: number): number {
-  const instance = getNextInstanceId();
+  const id = getNextInstanceId();
 
   const event: InstanceEvent = {
     kind: 'instance',
     definition,
-    instance,
+    id,
   };
 
   rxInspector.dispatch(event);
 
-  return instance;
+  return id;
 }
 
-export function trackSubscribe(sender: number, receiver: number): void {
+export function trackSubscribe(sender: number, receiver: number) {
+  const id = getNextEventId();
+
   const event: SubscribeEvent = {
     kind: 'subscribe',
+    id,
     sender,
     receiver,
   };
 
   rxInspector.dispatch(event);
+
+  return id;
 }
 
-export function trackUnsubscribe(sender: number, receiver: number): void {
+export function trackUnsubscribe(sender: number, receiver: number) {
+  const id = getNextEventId();
+
   const event: UnsubscribeEvent = {
     kind: 'unsubscribe',
+    id,
     sender,
     receiver,
   };
 
   rxInspector.dispatch(event);
+
+  return id;
 }
 
 export function trackNextNotification(sender: number, receiver: number, value: any) {
-  const notification = getNextNotificationId();
+  const id = getNextEventId();
 
   const event: NextNotificationEvent = {
     kind: 'next',
     sender,
     receiver,
-    notification,
+    id,
     value,
   };
 
   rxInspector.dispatch(event);
 
-  return notification;
+  return id;
 }
 
 export function trackErrorNotification(sender: number, receiver: number, error: any) {
-  const notification = getNextNotificationId();
+  const id = getNextEventId();
 
   const event: ErrorNotificationEvent = {
     kind: 'error',
     sender,
     receiver,
-    notification,
+    id,
     error,
   };
 
   rxInspector.dispatch(event);
 
-  return notification;
+  return id;
 }
 
 export function trackCompleteNotification(sender: number, receiver: number) {
-  const notification = getNextNotificationId();
+  const id = getNextEventId();
 
   const event: CompleteNotificationEvent = {
     kind: 'complete',
     sender,
     receiver,
-    notification,
+    id,
   };
 
   rxInspector.dispatch(event);
 
-  return notification;
+  return id;
 }
 
 export function trackSubjectNext(subject: number, context: number, value: any) {
+  const id = getNextEventId();
+
   const event: SubjectNextEvent = {
     kind: 'subject-next',
+    id,
     subject,
     context,
     value,
   };
 
   rxInspector.dispatch(event);
+
+  return id;
 }
 
 export function trackSubjectError(subject: number, context: number, error: any) {
+  const id = getNextEventId();
+
   const event: SubjectErrorEvent = {
     kind: 'subject-error',
+    id,
     subject,
     context,
     error,
   };
 
   rxInspector.dispatch(event);
+
+  return id;
 }
 
 export function trackSubjectComplete(subject: number, context: number) {
+  const id = getNextEventId();
+
   const event: SubjectCompleteEvent = {
     kind: 'subject-complete',
+    id,
     subject,
     context,
   };
 
   rxInspector.dispatch(event);
+
+  return id;
 }
 
 export function trackConnect(connectable: number) {
+  const id = getNextEventId();
+
   const event: ConnectEvent = {
     kind: 'connect',
+    id,
     connectable,
   };
 
   rxInspector.dispatch(event);
+
+  return id;
 }

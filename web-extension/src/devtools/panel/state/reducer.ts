@@ -8,7 +8,7 @@ function handleCreatorDefinition(state: State.State, event: Event.CreatorDefinit
   const definition: State.CreatorDefinition = {
     kind: 'creator-definition',
     name: event.function.name,
-    id: event.definition,
+    id: event.id,
     function: event.function,
     args: event.args,
     position: event.position,
@@ -24,7 +24,7 @@ function handleOperatorDefinition(state: State.State, event: Event.OperatorDefin
   const definition: State.OperatorDefinition = {
     kind: 'operator-definition',
     name: event.function.name,
-    id: event.definition,
+    id: event.id,
     function: event.function,
     args: event.args,
     position: event.position,
@@ -40,7 +40,7 @@ function handleSubscribeDefinition(state: State.State, event: Event.SubscribeDef
   const definition: State.SubscribeDefinition = {
     kind: 'subscribe-definition',
     name: 'subscribe',
-    id: event.definition,
+    id: event.id,
     args: event.args,
     position: event.position,
     instances: [],
@@ -56,7 +56,7 @@ function handleSubjectDefinition(state: State.State, event: Event.SubjectDefinit
   const definition: State.SubjectDefinition = {
     kind: 'subject-definition',
     name: event.constructor.name,
-    id: event.definition,
+    id: event.id,
     constructor: event.constructor,
     args: event.args,
     position: event.position,
@@ -72,7 +72,7 @@ function handleUnknownDefinition(state: State.State, event: Event.UnknownDefinit
   const definition: State.UnknownDefinition = {
     kind: 'unknown-definition',
     name: 'unknown',
-    id: event.definition,
+    id: event.id,
     position: event.position,
     instances: [],
   };
@@ -99,7 +99,7 @@ function handleInstance(state: State.State, event: Event.InstanceEvent) {
   const definition = state.definitions[event.definition];
   const instance: State.Instance = {
     kind: 'instance',
-    id: event.instance,
+    id: event.id,
     definition,
     receivers: [],
     senders: [],
@@ -121,6 +121,7 @@ function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
   const receiver = state.instances[event.receiver];
   const subscribe: State.Subscribe = {
     kind: 'subscribe',
+    id: event.id,
     time: clock(),
     sender,
     receiver,
@@ -137,6 +138,8 @@ function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
   sender.receivers.push(receiver);
   receiver.senders.push(sender);
 
+  state.events[subscribe.id] = subscribe;
+
   return state;
 }
 
@@ -145,6 +148,7 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
   const receiver = state.instances[event.receiver];
   const unsubscribe: State.Unsubscribe = {
     kind: 'unsubscribe',
+    id: event.id,
     time: clock(),
     sender,
     receiver,
@@ -158,6 +162,8 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
   sender.events.push(unsubscribe);
   receiver.events.push(unsubscribe);
 
+  state.events[unsubscribe.id] = unsubscribe;
+
   return state;
 }
 
@@ -167,7 +173,7 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
 
   const notification: State.Notification = {
     kind: event.kind as any,
-    id: event.notification,
+    id: event.id,
     time: clock(),
     sender,
     receiver,
@@ -178,7 +184,7 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
   sender.events.push(notification);
   receiver.events.push(notification);
 
-  state.notifications[notification.id] = notification;
+  state.events[notification.id] = notification;
 
   return state;
 }
@@ -189,6 +195,7 @@ function handleSubjectCall(state: State.State, event: Event.SubjectEvent) {
   const context: Instance<Properties> = state.instances[event.context];
   const call: State.SubjectCall = {
     kind: event.kind as any,
+    id: event.id,
     time: clock(),
     sender: context,
     receiver: subject,
@@ -207,6 +214,8 @@ function handleSubjectCall(state: State.State, event: Event.SubjectEvent) {
     context.events.push(call);
   }
 
+  state.events[call.id] = call;
+
   return state;
 }
 
@@ -214,12 +223,15 @@ function handleConnectCall(state: State.State, event: Event.ConnectEvent) {
   const connectable = state.instances[event.connectable];
   const call: State.SubjectCall = {
     kind: event.kind as any,
+    id: event.id,
     time: clock(),
     sender: undefined,
     receiver: connectable,
   };
 
   connectable.events.push(call);
+
+  state.events[call.id] = call;
 
   return state;
 }
@@ -258,5 +270,5 @@ export const state = () => scan((state: State.State, event: Event.Event): State.
 }, {
   definitions: {},
   instances: {},
-  notifications: {},
+  events: {},
 });

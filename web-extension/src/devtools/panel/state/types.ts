@@ -88,6 +88,7 @@ export interface Instance<P extends Properties = Properties> {
 
 export interface Subscribe {
   kind: 'subscribe';
+  id: number;
   time: number;
   sender: Instance;
   receiver: Instance;
@@ -95,6 +96,7 @@ export interface Subscribe {
 
 export interface Unsubscribe {
   kind: 'unsubscribe';
+  id: number;
   time: number;
   sender: Instance;
   receiver: Instance;
@@ -133,6 +135,7 @@ export type Notification
 
 export interface SubjectNextCall {
   kind: 'subject-next';
+  id: number;
   time: number;
   sender: Instance;
   receiver: Instance;
@@ -141,6 +144,7 @@ export interface SubjectNextCall {
 
 export interface SubjectErrorCall {
   kind: 'subject-error';
+  id: number;
   time: number;
   sender: Instance;
   receiver: Instance;
@@ -149,6 +153,7 @@ export interface SubjectErrorCall {
 
 export interface SubjectCompleteCall {
   kind: 'subject-complete';
+  id: number;
   time: number;
   sender: Instance;
   receiver: Instance;
@@ -161,6 +166,7 @@ export type SubjectCall
 
 export interface ConnectCall {
   kind: 'connect';
+  id: number;
   time: number;
   sender: undefined;
   receiver: Instance;
@@ -179,5 +185,5 @@ export type Event
 export interface State {
   definitions: Index<Definition>;
   instances: Index<Instance>;
-  notifications: Index<Notification>;
+  events: Index<Event>;
 }
