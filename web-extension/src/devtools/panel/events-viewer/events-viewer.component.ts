@@ -38,4 +38,5 @@ export class EventsViewerComponent {
   getEventName(event: Event) {
     return event.kind.replace(/-/g, ' ').replace(/^./, (s) => s.toUpperCase());
   }
+
 }
