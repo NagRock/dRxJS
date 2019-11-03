@@ -11,6 +11,13 @@ export interface SourcePosition {
   functionName: string;
 }
 
+export interface Task {
+  kind: 'task';
+  id: number;
+  type: 'macroTask' | 'microTask' | 'eventTask';
+  source: string;
+}
+
 export interface CreatorDefinition {
   kind: 'creator-definition';
   name: string;
@@ -195,4 +202,5 @@ export interface State {
   definitions: Index<Definition>;
   instances: Index<Instance>;
   events: Index<Event>;
+  lastTask: Task;
 }

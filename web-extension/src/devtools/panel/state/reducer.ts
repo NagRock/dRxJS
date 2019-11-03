@@ -3,6 +3,12 @@ import * as State from './types';
 import {Instance, Properties} from './types';
 import {scan} from 'rxjs/operators';
 
+function handleTask(state: State.State, event: Event.TaskEvent) {
+  state.lastTask = event;
+
+  return state;
+}
+
 function handleCreatorDefinition(state: State.State, event: Event.CreatorDefinitionEvent) {
   const definition: State.CreatorDefinition = {
     kind: 'creator-definition',
@@ -242,6 +248,8 @@ function handleConnectCall(state: State.State, event: Event.ConnectEvent) {
 
 export const state = () => scan((state: State.State, event: Event.Event): State.State => {
   switch (event.kind) {
+    case 'task':
+      return handleTask(state, event);
     case 'creator-definition':
       return handleCreatorDefinition(state, event);
     case 'operator-definition':
@@ -275,4 +283,5 @@ export const state = () => scan((state: State.State, event: Event.Event): State.
   definitions: {},
   instances: {},
   events: {},
+  lastTask: undefined,
 });

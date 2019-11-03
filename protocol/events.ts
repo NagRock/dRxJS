@@ -44,6 +44,13 @@ export interface Property<R extends Reference = Reference> {
   readonly reference: R;
 }
 
+export interface TaskEvent {
+  kind: 'task';
+  id: number;
+  type: 'macroTask' | 'microTask' | 'eventTask';
+  source: string;
+}
+
 export interface CreatorDefinitionEvent {
   kind: 'creator-definition';
   id: number;
@@ -97,6 +104,7 @@ export interface InstanceEvent {
 export interface SubscribeEvent {
   kind: 'subscribe';
   id: number;
+  task: number;
   timestamp: number;
   sender: number;
   receiver: number;
@@ -105,6 +113,7 @@ export interface SubscribeEvent {
 export interface UnsubscribeEvent {
   kind: 'unsubscribe';
   id: number;
+  task: number;
   timestamp: number;
   sender: number;
   receiver: number;
@@ -113,6 +122,7 @@ export interface UnsubscribeEvent {
 export interface NextNotificationEvent {
   kind: 'next';
   id: number;
+  task: number;
   timestamp: number;
   sender: number;
   receiver: number;
@@ -122,6 +132,7 @@ export interface NextNotificationEvent {
 export interface ErrorNotificationEvent {
   kind: 'error';
   id: number;
+  task: number;
   timestamp: number;
   sender: number;
   receiver: number;
@@ -131,6 +142,7 @@ export interface ErrorNotificationEvent {
 export interface CompleteNotificationEvent {
   kind: 'complete';
   id: number;
+  task: number;
   timestamp: number;
   sender: number;
   receiver: number;
@@ -139,6 +151,7 @@ export interface CompleteNotificationEvent {
 export interface SubjectNextEvent {
   kind: 'subject-next';
   id: number;
+  task: number;
   timestamp: number;
   subject: number;
   context: number;
@@ -148,6 +161,7 @@ export interface SubjectNextEvent {
 export interface SubjectErrorEvent {
   kind: 'subject-error';
   id: number;
+  task: number;
   timestamp: number;
   subject: number;
   context: number;
@@ -157,6 +171,7 @@ export interface SubjectErrorEvent {
 export interface SubjectCompleteEvent {
   kind: 'subject-complete';
   id: number;
+  task: number;
   timestamp: number;
   subject: number;
   context: number;
@@ -165,6 +180,7 @@ export interface SubjectCompleteEvent {
 export interface ConnectEvent {
   kind: 'connect';
   id: number;
+  task: number;
   timestamp: number;
   connectable: number;
 }
@@ -180,7 +196,8 @@ export type SubjectEvent
   | SubjectCompleteEvent;
 
 export type Event
-  = DefinitionEvent
+  = TaskEvent
+  | DefinitionEvent
   | InstanceEvent
   | SubscribeEvent
   | UnsubscribeEvent

@@ -81,6 +81,7 @@ export class EventsMapper {
           return {
             kind: 'next',
             id: event.id,
+            task: event.task,
             timestamp: event.timestamp,
             sender: event.sender,
             receiver: event.receiver,
@@ -90,6 +91,7 @@ export class EventsMapper {
           return {
             kind: 'error',
             id: event.id,
+            task: event.task,
             timestamp: event.timestamp,
             sender: event.sender,
             receiver: event.receiver,
@@ -99,6 +101,7 @@ export class EventsMapper {
           return {
             kind: 'subject-next',
             id: event.id,
+            task: event.task,
             timestamp: event.timestamp,
             subject: event.subject,
             context: event.context,
@@ -108,6 +111,7 @@ export class EventsMapper {
           return {
             kind: 'subject-error',
             id: event.id,
+            task: event.task,
             timestamp: event.timestamp,
             subject: event.subject,
             context: event.context,
