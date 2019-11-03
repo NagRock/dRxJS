@@ -98,6 +98,7 @@ export interface Subscribe {
   id: number;
   timestamp: number;
   vtimestamp: number;
+  task: Task;
   sender: Instance;
   receiver: Instance;
 }
@@ -107,6 +108,7 @@ export interface Unsubscribe {
   id: number;
   timestamp: number;
   vtimestamp: number;
+  task: Task;
   sender: Instance;
   receiver: Instance;
 }
@@ -116,6 +118,7 @@ export interface NextNotification {
   id: number;
   timestamp: number;
   vtimestamp: number;
+  task: Task;
   sender: Instance;
   receiver: Instance;
   value: Reference;
@@ -126,6 +129,7 @@ export interface ErrorNotification {
   id: number;
   timestamp: number;
   vtimestamp: number;
+  task: Task;
   sender: Instance;
   receiver: Instance;
   error: Reference;
@@ -136,6 +140,7 @@ export interface CompleteNotification {
   id: number;
   timestamp: number;
   vtimestamp: number;
+  task: Task;
   sender: Instance;
   receiver: Instance;
 }
@@ -150,6 +155,7 @@ export interface SubjectNextCall {
   id: number;
   timestamp: number;
   vtimestamp: number;
+  task: Task;
   sender: Instance;
   receiver: Instance;
   value: Reference;
@@ -160,6 +166,7 @@ export interface SubjectErrorCall {
   id: number;
   timestamp: number;
   vtimestamp: number;
+  task: Task;
   sender: Instance;
   receiver: Instance;
   error: Reference;
@@ -170,6 +177,7 @@ export interface SubjectCompleteCall {
   id: number;
   timestamp: number;
   vtimestamp: number;
+  task: Task;
   sender: Instance;
   receiver: Instance;
 }
@@ -184,6 +192,7 @@ export interface ConnectCall {
   id: number;
   timestamp: number;
   vtimestamp: number;
+  task: Task;
   sender: undefined;
   receiver: Instance;
 }

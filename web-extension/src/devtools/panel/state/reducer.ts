@@ -129,6 +129,7 @@ function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
     id: event.id,
     timestamp: event.timestamp,
     vtimestamp: event.id,
+    task: state.lastTask,
     sender,
     receiver,
   };
@@ -157,6 +158,7 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
     id: event.id,
     timestamp: event.timestamp,
     vtimestamp: event.id,
+    task: state.lastTask,
     sender,
     receiver,
   };
@@ -183,6 +185,7 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
     id: event.id,
     timestamp: event.timestamp,
     vtimestamp: event.id,
+    task: state.lastTask,
     sender,
     receiver,
     ...event.kind === 'next' ? {value: event.value} : {},
@@ -206,6 +209,7 @@ function handleSubjectCall(state: State.State, event: Event.SubjectEvent) {
     id: event.id,
     timestamp: event.timestamp,
     vtimestamp: event.id,
+    task: state.lastTask,
     sender: context,
     receiver: subject,
     ...event.kind === 'subject-next' ? {value: event.value} : {},
@@ -235,6 +239,7 @@ function handleConnectCall(state: State.State, event: Event.ConnectEvent) {
     id: event.id,
     timestamp: event.timestamp,
     vtimestamp: event.id,
+    task: state.lastTask,
     sender: undefined,
     receiver: connectable,
   };

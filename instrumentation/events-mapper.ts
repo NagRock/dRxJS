@@ -117,6 +117,7 @@ export class EventsMapper {
             context: event.context,
             error: this.refsStorage.create(event.error),
           };
+        case 'task':
         case 'connect':
         case 'instance':
         case 'subscribe':
