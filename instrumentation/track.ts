@@ -132,10 +132,12 @@ export function trackInstance(definition: number): number {
 
 export function trackSubscribe(sender: number, receiver: number) {
   const id = getNextEventId();
+  const timestamp = Date.now();
 
   const event: SubscribeEvent = {
     kind: 'subscribe',
     id,
+    timestamp,
     sender,
     receiver,
   };
@@ -147,10 +149,12 @@ export function trackSubscribe(sender: number, receiver: number) {
 
 export function trackUnsubscribe(sender: number, receiver: number) {
   const id = getNextEventId();
+  const timestamp = Date.now();
 
   const event: UnsubscribeEvent = {
     kind: 'unsubscribe',
     id,
+    timestamp,
     sender,
     receiver,
   };
@@ -161,10 +165,12 @@ export function trackUnsubscribe(sender: number, receiver: number) {
 }
 
 export function trackNextNotification(sender: number, receiver: number, value: any) {
-  const id = getNextEventId();
+  const id = getNextEventId()
+  const timestamp = Date.now();
 
   const event: NextNotificationEvent = {
     kind: 'next',
+    timestamp,
     sender,
     receiver,
     id,
@@ -178,12 +184,14 @@ export function trackNextNotification(sender: number, receiver: number, value: a
 
 export function trackErrorNotification(sender: number, receiver: number, error: any) {
   const id = getNextEventId();
+  const timestamp = Date.now();
 
   const event: ErrorNotificationEvent = {
     kind: 'error',
+    id,
+    timestamp,
     sender,
     receiver,
-    id,
     error,
   };
 
@@ -194,12 +202,14 @@ export function trackErrorNotification(sender: number, receiver: number, error: 
 
 export function trackCompleteNotification(sender: number, receiver: number) {
   const id = getNextEventId();
+  const timestamp = Date.now();
 
   const event: CompleteNotificationEvent = {
     kind: 'complete',
+    id,
+    timestamp,
     sender,
     receiver,
-    id,
   };
 
   rxInspector.dispatch(event);
@@ -209,10 +219,12 @@ export function trackCompleteNotification(sender: number, receiver: number) {
 
 export function trackSubjectNext(subject: number, context: number, value: any) {
   const id = getNextEventId();
+  const timestamp = Date.now();
 
   const event: SubjectNextEvent = {
     kind: 'subject-next',
     id,
+    timestamp,
     subject,
     context,
     value,
@@ -225,10 +237,12 @@ export function trackSubjectNext(subject: number, context: number, value: any) {
 
 export function trackSubjectError(subject: number, context: number, error: any) {
   const id = getNextEventId();
+  const timestamp = Date.now();
 
   const event: SubjectErrorEvent = {
     kind: 'subject-error',
     id,
+    timestamp,
     subject,
     context,
     error,
@@ -241,10 +255,12 @@ export function trackSubjectError(subject: number, context: number, error: any) 
 
 export function trackSubjectComplete(subject: number, context: number) {
   const id = getNextEventId();
+  const timestamp = Date.now();
 
   const event: SubjectCompleteEvent = {
     kind: 'subject-complete',
     id,
+    timestamp,
     subject,
     context,
   };
@@ -256,10 +272,12 @@ export function trackSubjectComplete(subject: number, context: number) {
 
 export function trackConnect(connectable: number) {
   const id = getNextEventId();
+  const timestamp = Date.now();
 
   const event: ConnectEvent = {
     kind: 'connect',
     id,
+    timestamp,
     connectable,
   };
 

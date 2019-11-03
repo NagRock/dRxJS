@@ -97,6 +97,7 @@ export interface InstanceEvent {
 export interface SubscribeEvent {
   kind: 'subscribe';
   id: number;
+  timestamp: number;
   sender: number;
   receiver: number;
 }
@@ -104,6 +105,7 @@ export interface SubscribeEvent {
 export interface UnsubscribeEvent {
   kind: 'unsubscribe';
   id: number;
+  timestamp: number;
   sender: number;
   receiver: number;
 }
@@ -111,6 +113,7 @@ export interface UnsubscribeEvent {
 export interface NextNotificationEvent {
   kind: 'next';
   id: number;
+  timestamp: number;
   sender: number;
   receiver: number;
   value: Reference;
@@ -119,6 +122,7 @@ export interface NextNotificationEvent {
 export interface ErrorNotificationEvent {
   kind: 'error';
   id: number;
+  timestamp: number;
   sender: number;
   receiver: number;
   error: Reference;
@@ -127,6 +131,7 @@ export interface ErrorNotificationEvent {
 export interface CompleteNotificationEvent {
   kind: 'complete';
   id: number;
+  timestamp: number;
   sender: number;
   receiver: number;
 }
@@ -134,6 +139,7 @@ export interface CompleteNotificationEvent {
 export interface SubjectNextEvent {
   kind: 'subject-next';
   id: number;
+  timestamp: number;
   subject: number;
   context: number;
   value: Reference;
@@ -142,6 +148,7 @@ export interface SubjectNextEvent {
 export interface SubjectErrorEvent {
   kind: 'subject-error';
   id: number;
+  timestamp: number;
   subject: number;
   context: number;
   error: Reference;
@@ -150,6 +157,7 @@ export interface SubjectErrorEvent {
 export interface SubjectCompleteEvent {
   kind: 'subject-complete';
   id: number;
+  timestamp: number;
   subject: number;
   context: number;
 }
@@ -157,6 +165,7 @@ export interface SubjectCompleteEvent {
 export interface ConnectEvent {
   kind: 'connect';
   id: number;
+  timestamp: number;
   connectable: number;
 }
 

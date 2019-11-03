@@ -70,7 +70,7 @@ export interface Properties {
 }
 
 export interface InstanceSnapshot<P extends Properties = Properties> {
-  time: number;
+  vtimestamp: number;
   properties: P;
 }
 
@@ -89,7 +89,8 @@ export interface Instance<P extends Properties = Properties> {
 export interface Subscribe {
   kind: 'subscribe';
   id: number;
-  time: number;
+  timestamp: number;
+  vtimestamp: number;
   sender: Instance;
   receiver: Instance;
 }
@@ -97,7 +98,8 @@ export interface Subscribe {
 export interface Unsubscribe {
   kind: 'unsubscribe';
   id: number;
-  time: number;
+  timestamp: number;
+  vtimestamp: number;
   sender: Instance;
   receiver: Instance;
 }
@@ -105,7 +107,8 @@ export interface Unsubscribe {
 export interface NextNotification {
   kind: 'next';
   id: number;
-  time: number;
+  timestamp: number;
+  vtimestamp: number;
   sender: Instance;
   receiver: Instance;
   value: Reference;
@@ -114,7 +117,8 @@ export interface NextNotification {
 export interface ErrorNotification {
   kind: 'error';
   id: number;
-  time: number;
+  timestamp: number;
+  vtimestamp: number;
   sender: Instance;
   receiver: Instance;
   error: Reference;
@@ -123,7 +127,8 @@ export interface ErrorNotification {
 export interface CompleteNotification {
   kind: 'complete';
   id: number;
-  time: number;
+  timestamp: number;
+  vtimestamp: number;
   sender: Instance;
   receiver: Instance;
 }
@@ -136,7 +141,8 @@ export type Notification
 export interface SubjectNextCall {
   kind: 'subject-next';
   id: number;
-  time: number;
+  timestamp: number;
+  vtimestamp: number;
   sender: Instance;
   receiver: Instance;
   value: Reference;
@@ -145,7 +151,8 @@ export interface SubjectNextCall {
 export interface SubjectErrorCall {
   kind: 'subject-error';
   id: number;
-  time: number;
+  timestamp: number;
+  vtimestamp: number;
   sender: Instance;
   receiver: Instance;
   error: Reference;
@@ -154,7 +161,8 @@ export interface SubjectErrorCall {
 export interface SubjectCompleteCall {
   kind: 'subject-complete';
   id: number;
-  time: number;
+  timestamp: number;
+  vtimestamp: number;
   sender: Instance;
   receiver: Instance;
 }
@@ -167,7 +175,8 @@ export type SubjectCall
 export interface ConnectCall {
   kind: 'connect';
   id: number;
-  time: number;
+  timestamp: number;
+  vtimestamp: number;
   sender: undefined;
   receiver: Instance;
 }

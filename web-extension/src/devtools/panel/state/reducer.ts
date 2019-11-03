@@ -2,7 +2,6 @@ import * as Event from '@drxjs/events';
 import * as State from './types';
 import {Instance, Properties} from './types';
 import {scan} from 'rxjs/operators';
-import {clock} from './clock';
 
 function handleCreatorDefinition(state: State.State, event: Event.CreatorDefinitionEvent) {
   const definition: State.CreatorDefinition = {
@@ -84,14 +83,14 @@ function handleUnknownDefinition(state: State.State, event: Event.UnknownDefinit
 
 
 function snapshot<P extends Properties = Properties, K extends keyof P = never>(
-  instance: Instance, time: number, propertyKey: K, propertyValue: P[K],
+  instance: Instance, vtimestamp: number, propertyKey: K, propertyValue: P[K],
 ) {
   if (instance.snapshots.length === 0) {
     const properties = {[propertyKey]: propertyValue};
-    instance.snapshots.push({time, properties});
+    instance.snapshots.push({vtimestamp, properties});
   } else {
     const properties = {...instance.snapshots[instance.snapshots.length - 1].properties, [propertyKey]: propertyValue};
-    instance.snapshots.push({time, properties});
+    instance.snapshots.push({vtimestamp, properties});
   }
 }
 
@@ -122,14 +121,15 @@ function handleSubscribe(state: State.State, event: Event.SubscribeEvent) {
   const subscribe: State.Subscribe = {
     kind: 'subscribe',
     id: event.id,
-    time: clock(),
+    timestamp: event.timestamp,
+    vtimestamp: event.id,
     sender,
     receiver,
   };
 
-  snapshot(sender, subscribe.time, 'active', true);
+  snapshot(sender, subscribe.vtimestamp, 'active', true);
   if (receiver.definition.kind === 'subscribe-definition') {
-    snapshot(receiver, subscribe.time, 'active', true);
+    snapshot(receiver, subscribe.vtimestamp, 'active', true);
   }
 
   sender.events.push(subscribe);
@@ -149,14 +149,15 @@ function handleUnsubscribe(state: State.State, event: Event.UnsubscribeEvent) {
   const unsubscribe: State.Unsubscribe = {
     kind: 'unsubscribe',
     id: event.id,
-    time: clock(),
+    timestamp: event.timestamp,
+    vtimestamp: event.id,
     sender,
     receiver,
   };
 
-  snapshot(sender, unsubscribe.time, 'active', false);
+  snapshot(sender, unsubscribe.vtimestamp, 'active', false);
   if (receiver.definition.kind === 'subscribe-definition') {
-    snapshot(receiver, unsubscribe.time, 'active', false);
+    snapshot(receiver, unsubscribe.vtimestamp, 'active', false);
   }
 
   sender.events.push(unsubscribe);
@@ -174,7 +175,8 @@ function handleNotification(state: State.State, event: Event.NotificationEvent) 
   const notification: State.Notification = {
     kind: event.kind as any,
     id: event.id,
-    time: clock(),
+    timestamp: event.timestamp,
+    vtimestamp: event.id,
     sender,
     receiver,
     ...event.kind === 'next' ? {value: event.value} : {},
@@ -196,7 +198,8 @@ function handleSubjectCall(state: State.State, event: Event.SubjectEvent) {
   const call: State.SubjectCall = {
     kind: event.kind as any,
     id: event.id,
-    time: clock(),
+    timestamp: event.timestamp,
+    vtimestamp: event.id,
     sender: context,
     receiver: subject,
     ...event.kind === 'subject-next' ? {value: event.value} : {},
@@ -224,7 +227,8 @@ function handleConnectCall(state: State.State, event: Event.ConnectEvent) {
   const call: State.SubjectCall = {
     kind: event.kind as any,
     id: event.id,
-    time: clock(),
+    timestamp: event.timestamp,
+    vtimestamp: event.id,
     sender: undefined,
     receiver: connectable,
   };

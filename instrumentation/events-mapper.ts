@@ -81,6 +81,7 @@ export class EventsMapper {
           return {
             kind: 'next',
             id: event.id,
+            timestamp: event.timestamp,
             sender: event.sender,
             receiver: event.receiver,
             value: this.refsStorage.create(event.value),
@@ -89,6 +90,7 @@ export class EventsMapper {
           return {
             kind: 'error',
             id: event.id,
+            timestamp: event.timestamp,
             sender: event.sender,
             receiver: event.receiver,
             error: this.refsStorage.create(event.error),
@@ -97,6 +99,7 @@ export class EventsMapper {
           return {
             kind: 'subject-next',
             id: event.id,
+            timestamp: event.timestamp,
             subject: event.subject,
             context: event.context,
             value: this.refsStorage.create(event.value),
@@ -105,6 +108,7 @@ export class EventsMapper {
           return {
             kind: 'subject-error',
             id: event.id,
+            timestamp: event.timestamp,
             subject: event.subject,
             context: event.context,
             error: this.refsStorage.create(event.error),

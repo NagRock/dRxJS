@@ -9,8 +9,8 @@ import {AnimationPlayer, buildAnimation} from './event-animations';
 import * as R from 'ramda';
 import {InstanceLayout} from './types';
 
-function getProperties(instance: Instance, time: number) {
-  const snapshot = R.findLast((s) => s.time < time, instance.snapshots);
+function getProperties(instance: Instance, vtimestamp: number) {
+  const snapshot = R.findLast((s) => s.vtimestamp < vtimestamp, instance.snapshots);
   return snapshot !== undefined ? snapshot.properties : {};
 }
 
@@ -46,13 +46,13 @@ export class TreeViewerComponent implements AfterViewInit {
   ]).pipe(
     debounceTime(0, asapScheduler),
     map(([layout, event]): InstanceLayout => {
-      const time = event ? event.time : 0;
+      const vtimestamp = event ? event.vtimestamp : 0;
 
       const nodes = layout.nodes.map((node) => ({
         x: node.x,
         y: node.y,
         instance: node.data,
-        properties: getProperties(node.data, time),
+        properties: getProperties(node.data, vtimestamp),
       }));
       const indexedNodes = R.indexBy((node: any) => String(node.instance.id), nodes);
       const links = layout.links.map((link) => {

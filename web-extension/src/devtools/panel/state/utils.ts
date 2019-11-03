@@ -3,8 +3,8 @@ import * as R from 'ramda';
 
 const concatEvents = R.pipe(
   R.reduce<Event[], Event[]>(R.concat, []),
-  R.sortBy((x: Event) => x.time),
-  R.uniqBy((x: Event) => x.time),
+  R.sortBy((x: Event) => x.vtimestamp),
+  R.uniqBy((x: Event) => x.vtimestamp),
 );
 
 export function getIncomingEvents(instance: Instance, showContextConnections: boolean): Event[] {
