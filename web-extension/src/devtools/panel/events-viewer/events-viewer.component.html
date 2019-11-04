@@ -12,11 +12,11 @@
       >
         <div class="event-name">{{getEventName(event.event)}}</div>
         <div class="event-id">#{{event.event.id}}</div>
-        <div class="event-time">{{event.event.timestamp | date:'HH:mm:ss.SSS'}}</div>
+        <div class="event-timestamp">{{event.event.timestamp | date:'HH:mm:ss.SSS'}}</div>
       </div>
     </div>
     <div class="task">
-      <span>{{task.task.source}}</span>
+      <span class="task-source">{{task.task.source}}</span>
     </div>
   </div>
 </div>

@@ -1,9 +1,10 @@
-:host {
-  overflow: auto;
-}
-
 .tasks {
   display: flex;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .events {
@@ -18,12 +19,13 @@
   flex-shrink: 0;
   background-color: white;
   border: 1px #f1f1f1 solid;
+  border-bottom: 4px #f1f1f1 solid;
   transition: border-color 96ms ease-in-out;
 }
 
 .event.selected {
-  border-color: black;
   background-color: white;
+  border-bottom: 4px red solid;
 }
 
 .event-name {
@@ -40,25 +42,26 @@
   color: darkgreen;
 }
 
-.event-time {
+.event-timestamp {
   font-family: monospace;
   font-size: 12px;
   color: gray;
 }
 
 .task {
-  color: gray;
+  flex-shrink: 0;
+  color: #e6e6e6;
+  background-color: #454545;
+  border: 1px black solid;
+}
+
+.task-source {
+  color: #e6e6e6;
   font-family: monospace;
   font-size: 12px;
   font-weight: bold;
-  flex-shrink: 0;
-  background-color: white;
-  border: 1px #f1f1f1 solid;
-
-  span {
-    display: inline-block;
-    padding: 2px 8px;
-    position: sticky;
-    left: 1px;
-  }
+  display: inline-block;
+  padding: 2px 8px;
+  position: sticky;
+  left: 1px;
 }
