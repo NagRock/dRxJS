@@ -60,7 +60,7 @@ export function trackTask(task): number {
     kind: 'task',
     id,
     type: task.type,
-    source: task.type === 'eventTask' ? task.eventName : task.source,
+    source: task.source,
   };
 
   rxInspector.dispatch(event);

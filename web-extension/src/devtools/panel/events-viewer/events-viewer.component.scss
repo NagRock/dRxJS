@@ -2,6 +2,10 @@
   overflow: auto;
 }
 
+.tasks {
+  display: flex;
+}
+
 .events {
   display: flex;
 }
@@ -40,4 +44,21 @@
   font-family: monospace;
   font-size: 12px;
   color: gray;
+}
+
+.task {
+  color: gray;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+  background-color: white;
+  border: 1px #f1f1f1 solid;
+
+  span {
+    display: inline-block;
+    padding: 2px 8px;
+    position: sticky;
+    left: 1px;
+  }
 }
