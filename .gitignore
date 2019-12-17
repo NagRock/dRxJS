@@ -2,7 +2,7 @@
 
 # compiled output
 /dist
-/web-extension/build
+/packages/web-extension/build
 /tmp
 /out-tsc
 # Only exists if Bazel was run
