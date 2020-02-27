@@ -1,0 +1,42 @@
+{
+  "name": "@doctor-rxjs/demo-app",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "ng serve"
+  },
+  "dependencies": {
+    "@angular/common": "8.2.14",
+    "@angular/compiler": "8.2.14",
+    "@angular/core": "8.2.14",
+    "@angular/platform-browser": "8.2.14",
+    "@angular/platform-browser-dynamic": "8.2.14",
+    "@angular/router": "8.2.14",
+    "@doctor-rxjs/instrumentation": "0.0.1",
+    "ngx-build-plus": "^9.0.6",
+    "rxjs": "6.4.0",
+    "tslib": "1.10.0",
+    "zone.js": "0.9.1"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "0.803.20",
+    "@angular/cli": "8.3.20",
+    "@angular/compiler-cli": "8.2.14",
+    "@angular/language-service": "8.2.14",
+    "@types/node": "8.9.4",
+    "angular2-template-loader": "0.6.2",
+    "clean-webpack-plugin": "3.0.0",
+    "cross-env": "7.0.0",
+    "css-loader": "3.4.2",
+    "merge-jsons-webpack-plugin": "1.0.20",
+    "raw-loader": "0.5.1",
+    "sass-loader": "8.0.2",
+    "to-string-loader": "1.1.6",
+    "ts-loader": "6.2.1",
+    "ts-node": "7.0.0",
+    "tslint": "5.15.0",
+    "typescript": "3.5.3",
+    "webextension-polyfill": "0.6.0",
+    "webpack": "4.41.6",
+    "webpack-cli": "3.3.11"
+  }
+}

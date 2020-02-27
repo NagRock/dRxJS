@@ -4,8 +4,5 @@
     "types": [
       "zone.js"
     ]
-  },
-  "paths": {
-    "@drxjs/events": ["./protocol/events"]
   }
 }
