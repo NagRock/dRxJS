@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {Value} from '@doctor-rxjs/protocol';
+import {Value} from '@doctor-rxjs/events';
 
 @Component({
   selector: 'dr-value',

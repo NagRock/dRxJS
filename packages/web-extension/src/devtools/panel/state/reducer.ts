@@ -1,4 +1,4 @@
-import * as Event from '@doctor-rxjs/protocol';
+import * as Event from '@doctor-rxjs/events';
 import * as State from './types';
 import {Instance, Properties} from './types';
 import {scan} from 'rxjs/operators';

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
-import {LazyReference, Reference} from '@doctor-rxjs/protocol';
+import {LazyReference, Reference} from '@doctor-rxjs/events';
 import {ReferenceService} from '../reference.service';
 
 @Component({

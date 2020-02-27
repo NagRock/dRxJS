@@ -3,7 +3,7 @@ import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
 import {debounceTime, map} from 'rxjs/operators';
 import {getEvents, SourcePosition} from './state';
 import {StateService} from './state/state.service';
-import {Event} from '@doctor-rxjs/protocol';
+import {Event} from '@doctor-rxjs/events';
 
 @Component({
   selector: 'd-panel',

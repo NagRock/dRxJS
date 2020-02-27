@@ -1,4 +1,4 @@
-import {ObjectReference, Reference} from '@doctor-rxjs/protocol';
+import {ObjectReference, Reference} from '@doctor-rxjs/events';
 
 export interface Index<T> {
   [key: number]: T;

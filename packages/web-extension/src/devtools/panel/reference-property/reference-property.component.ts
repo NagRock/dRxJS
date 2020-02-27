@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {Reference} from '@doctor-rxjs/protocol';
+import {Reference} from '@doctor-rxjs/events';
 
 @Component({
   selector: 'dr-reference-property',

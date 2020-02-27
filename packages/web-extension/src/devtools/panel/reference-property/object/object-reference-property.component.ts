@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {ObjectReference, Property} from '@doctor-rxjs/protocol';
+import {ObjectReference, Property} from '@doctor-rxjs/events';
 import {defer, Observable} from 'rxjs';
 import {ReferenceService} from '../reference.service';
 import {shareReplay} from 'rxjs/operators';

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Property, Reference} from '@doctor-rxjs/protocol';
+import {Property, Reference} from '@doctor-rxjs/events';
 import {browser} from '../../../types/webextension-polyfill-ts';
 
 @Injectable({

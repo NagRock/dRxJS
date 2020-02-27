@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {from, interval, of, ReplaySubject, throwError} from 'rxjs';
 import {concatMap, filter, map, switchMap, tap} from 'rxjs/operators';
 import {browser} from "../types/webextension-polyfill-ts";
-import {Event} from '@doctor-rxjs/protocol';
+import {Event} from '@doctor-rxjs/events';
 
 @Injectable({
   providedIn: 'root',
