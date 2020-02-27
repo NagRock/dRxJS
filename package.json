@@ -1,9 +1,7 @@
 {
+  "name": "doctor-rxjs",
   "private": true,
   "workspaces": [
-    "packages/demo-app",
-    "packages/doctor-rxjs",
-    "packages/protocol",
-    "packages/web-extension"
+    "packages/*"
   ]
 }

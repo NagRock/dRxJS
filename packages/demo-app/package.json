@@ -1,8 +1,0 @@
-{
-  "name": "demo-app",
-  "version": "0.0.1",
-
-  "dependencies": {
-    "doctor-rxjs": "0.0.1"
-  }
-}

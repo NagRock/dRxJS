@@ -1,0 +1,34 @@
+:host {
+  display: block;
+}
+
+svg {
+  width: 100%;
+  height: calc(100% - 70px);
+}
+
+svg .clickable {
+  cursor: pointer;
+}
+
+.overlay {
+  padding: 8px;
+  background-color: white;
+  border: 4px solid black;
+  border-radius: 3px;
+  color: black;
+}
+
+.overlay .location {
+  display: block;
+  white-space: pre;
+  font-size: 10px;
+  font-weight: bold;
+  color: gray;
+  margin-bottom: 8px;
+}
+
+.overlay .expression {
+  display: block;
+  white-space: pre;
+}

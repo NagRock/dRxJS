@@ -1,0 +1,41 @@
+<svg
+  #svg
+  *ngIf="state$ | async as state"
+  [attr.viewBox]="'0 0 ' + getWidth(state) + ' ' + getHeight(state)">
+    <path
+      *ngFor="let link of state.links"
+      [appTreeViewerLink]="link"
+      fill="none"
+      stroke="black"
+      stroke-width="4">
+    </path>
+
+  <g
+    *ngFor="let node of state.nodes"
+    [appTreeViewerNode]="node">
+    <circle
+      r="16"
+      [attr.fill]="node.instance === instance ? 'red' : 'white'"
+      (click)="instanceClicked(node.instance)"
+      class="clickable"
+      stroke="black"
+      stroke-width="4">
+    </circle>
+    <text
+      y="16"
+      text-anchor="middle"
+      dominant-baseline="text-before-edge"
+      font-size="12px"
+      font-weight="600">
+      {{node.instance.definition.name}} #{{node.instance.id}}
+    </text>
+  </g>
+</svg>
+
+
+<!--<ng-template #overlay let-data>-->
+<!--  <div class="overlay">-->
+<!--    <code class="location">{{data.location.file}} ({{data.location.line}}:{{data.location.char}}) #{{data.id}}</code>-->
+<!--    <code class="expression">{{data.expression}}</code>-->
+<!--  </div>-->
+<!--</ng-template>-->

@@ -1,0 +1,22 @@
+<div class="tasks">
+  <div
+    *ngFor="let task of tasks"
+  >
+    <div class="events">
+      <div
+          #item
+          *ngFor="let event of task.events"
+          class="event"
+          [ngClass]="{selected: event.index === selectedEventIndex}"
+          (click)="setSelectedEventIndex(event.index)"
+      >
+        <div class="event-name">{{getEventName(event.event)}}</div>
+        <div class="event-id">#{{event.event.id}}</div>
+        <div class="event-timestamp">{{event.event.timestamp | date:'HH:mm:ss.SSS'}}</div>
+      </div>
+    </div>
+    <div class="task">
+      <span class="task-source">{{task.task.source}}</span>
+    </div>
+  </div>
+</div>

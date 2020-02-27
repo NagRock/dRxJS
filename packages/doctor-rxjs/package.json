@@ -1,8 +1,0 @@
-{
-  "name": "doctor-rxjs",
-  "version": "0.0.1",
-
-  "dependencies": {
-    "protocol": "0.0.1"
-  }
-}

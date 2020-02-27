@@ -1,0 +1,15 @@
+.name {
+  color: black;
+  font-style: italic;
+
+  &::before {
+    display: inline;
+    content: 'f ';
+    color: blue;
+  }
+
+  &::after {
+    display: inline;
+    content: '()';
+  }
+}

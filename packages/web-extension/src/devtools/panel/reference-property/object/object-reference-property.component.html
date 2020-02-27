@@ -1,0 +1,19 @@
+<dr-property
+  [key]="name"
+  [primary]="enumerable"
+>
+  <ng-container [ngSwitch]="reference.type">
+    <dr-object *ngSwitchCase="'object'" [proto]="reference.name"></dr-object>
+    <dr-array *ngSwitchCase="'array'" [proto]="reference.name" [length]="reference.size"></dr-array>
+    <dr-function *ngSwitchCase="'function'" [name]="reference.name"></dr-function>
+  </ng-container>
+
+  <ng-container *drPropertyExpand>
+    <dr-reference-property
+      *ngFor="let property of properties | async"
+      [name]="property.name"
+      [enumerable]="property.enumerable"
+      [reference]="property.reference"
+    ></dr-reference-property>
+  </ng-container>
+</dr-property>

@@ -1,0 +1,44 @@
+<dr-property [key]="key">
+  <dr-special [value]="definition.name" [prefix]="'def '" [suffix]="suffix"></dr-special>
+  <ng-container *drPropertyExpand>
+    <dr-property [key]="'id'">
+      <dr-value [value]="definition.id"></dr-value>
+    </dr-property>
+    <dr-property [key]="'name'">
+      <dr-value [value]="definition.name"></dr-value>
+    </dr-property>
+    <dr-property [key]="'location'">
+      <span class="location" [attr.title]="longLocation" (click)="openLocation()">{{shortLocation}}</span>
+    </dr-property>
+    <dr-reference-property
+      *ngIf="definition.hasOwnProperty('function')"
+      [name]="'function'"
+      [reference]="definition.function"
+    ></dr-reference-property>
+    <dr-reference-property
+      *ngIf="definition.hasOwnProperty('constructor')"
+      [name]="'constructor'"
+      [reference]="definition.constructor"
+    ></dr-reference-property>
+    <dr-property [key]="'args'">
+      <dr-array [proto]="'Array'" [length]="definition.args.length"></dr-array>
+      <ng-container *drPropertyExpand>
+        <dr-reference-property
+          *ngFor="let arg of definition.args; let index=index"
+          [name]="index + ''"
+          [reference]="arg"
+        ></dr-reference-property>
+      </ng-container>
+    </dr-property>
+    <dr-property [key]="'instances'">
+      <dr-array [proto]="'Array'" [length]="definition.args.length"></dr-array>
+      <ng-container *drPropertyExpand>
+        <dr-instance-property
+          *ngFor="let instance of definition.instances; let index=index"
+          [key]="index + ''"
+          [instance]="instance"
+        ></dr-instance-property>
+      </ng-container>
+    </dr-property>
+  </ng-container>
+</dr-property>
