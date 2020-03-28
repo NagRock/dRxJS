@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@drxjs": ["./instrumentation/new-approach.ts"],
-      "@drxjs/events": ["./protocol/events"]
-    },
     "types": [
       "zone.js"
     ]

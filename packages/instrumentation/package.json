@@ -1,0 +1,10 @@
+{
+  "name": "@doctor-rxjs/instrumentation",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "dependencies": {
+    "@doctor-rxjs/events": "0.0.1",
+    "stacktrace-gps": "^3.0.4",
+    "stacktrace-js": "^2.0.2"
+  }
+}
