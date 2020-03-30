@@ -12,6 +12,8 @@ export const environment = {
   production: false
 };
 
+console.log('INSTRUMENTING DEMO APP');
+(window as any).__doctor_rxjs__instrument && (window as any).__doctor_rxjs__instrument(rxjs, rxjsOperators);
 instrument(rxjs, rxjsOperators);
 
 /*
