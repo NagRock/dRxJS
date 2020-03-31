@@ -1,5 +1,9 @@
-@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import "styles/theme-dark";
+@import "~primeicons/primeicons.css";
 
 body {
   margin: 0;
+  background-color: var(--background-color);
+  color: var(--foreground-color);
+  font-family: var(--font-family);
 }

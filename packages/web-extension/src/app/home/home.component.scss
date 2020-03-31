@@ -1,0 +1,26 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.head {
+  background: linear-gradient(277deg, var(--color5-lighten-2) 0%, var(--color5) 100%);
+  padding: 8px 32px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.panel {
+  max-width: 400px;
+}

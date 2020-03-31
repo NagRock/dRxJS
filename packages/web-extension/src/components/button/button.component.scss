@@ -1,0 +1,24 @@
+:host {
+  background-color: var(--color5);
+  color: white;
+  height: 32px;
+  border: none;
+  border-radius: 2px;
+  padding: 0 8px 2px;
+  font-size: 12px;
+  font-weight: 400;
+  font-family: var(--font-family);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color5-darken-1);
+  }
+
+  &:active {
+    background-color: var(--color5-darken-2);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {ContentScriptMessage, ContentScriptMessageType, DevtoolsMessage, DevtoolsMessageType} from '../../messages';
 import {BehaviorSubject} from 'rxjs';
 import {EagerSingleton} from '../eager-singletons';
@@ -16,10 +16,16 @@ export class InstrumentationStateService implements EagerSingleton {
   private readonly stateSubject = new BehaviorSubject<InstrumentationState>(InstrumentationState.VOID);
   readonly state$ = this.stateSubject.asObservable();
 
+  constructor(
+    private readonly ngZone: NgZone,
+  ) {
+  }
+
+
   eagerSingletonInit(): void {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (sender.tab.id === chrome.devtools.inspectedWindow.tabId && typeof request === 'object') {
-        this.onMessage(request, sendResponse);
+        this.ngZone.run(() => this.onMessage(request, sendResponse));
       }
     });
   }

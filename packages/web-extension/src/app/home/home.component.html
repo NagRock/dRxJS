@@ -1,3 +1,37 @@
-<p>
-  home works!
-</p>
+<div class="head">
+  <h1>Doctor RxJS</h1>
+</div>
+
+<div class="body">
+  <div class="panel" [ngSwitch]="state$ | async">
+    <ng-template [ngSwitchCase]="states.initial">
+      <p>Instrumentation needs to be injected before the inspected page is loaded.</p>
+      <p>Reload the page to enable instrumentation.</p>
+      <p>
+        <button dr-button (click)="reloadPage()">
+          <dr-icon icon="replay"></dr-icon>
+          Reload page
+        </button>
+      </p>
+    </ng-template>
+
+    <ng-template [ngSwitchCase]="states.waitingForInstrumentation">
+      <p>
+        <dr-icon icon="spinner" spin="true"></dr-icon>
+        Waiting for instrumentation...
+      </p>
+    </ng-template>
+
+    <ng-template [ngSwitchCase]="states.waitingForInstrumentationTimeout">
+      <p>Make sure that the instrumentation is enabled in the inspected page.</p>
+      <p>Reload the page again to enable instrumentation.</p>
+      <p>
+        <button dr-button (click)="reloadPage()">
+          <dr-icon icon="replay"></dr-icon>
+          Reload page
+        </button>
+      </p>
+    </ng-template>
+  </div>
+
+</div>

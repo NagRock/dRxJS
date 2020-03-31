@@ -1,0 +1,23 @@
+$color1: #020116;
+$color2: #17212A;
+$color3: #4F8075;
+$color4: #C8BD92;
+$color5: #EE7D1D;
+
+
+:root {
+  --color1: #{$color1};
+  --color2: #{$color2};
+  --color3: #{$color3};
+  --color4: #{$color4};
+  --color5: #{$color5};
+  --color5-lighten-1: #{lighten($color5, 8%)};
+  --color5-lighten-2: #{lighten($color5, 16%)};
+  --color5-darken-1: #{darken($color5, 8%)};
+  --color5-darken-2: #{darken($color5, 16%)};
+
+  --background-color: var(--color1);
+  --foreground-color: white;
+
+  --font-family: "Open Sans", "Helvetica Neue", sans-serif;
+}
