@@ -2,19 +2,18 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-// import {enableInstrumentation} from '@drxjs';
 import * as rxjs from 'rxjs';
 import * as rxjsOperators from 'rxjs/operators';
-import {instrument} from '@doctor-rxjs/instrumentation';
-
 
 export const environment = {
-  production: false
+    production: false
 };
 
-console.log('INSTRUMENTING DEMO APP');
-(window as any).__doctor_rxjs__instrument && (window as any).__doctor_rxjs__instrument(rxjs, rxjsOperators);
-instrument(rxjs, rxjsOperators);
+const doctor = (window as any).__doctor_rxjs__;
+if (doctor) {
+    console.log('INSTRUMENTING DEMO APP');
+    doctor.instrument(rxjs, rxjsOperators);
+}
 
 /*
  * For easier debugging in development mode, you can import the following file

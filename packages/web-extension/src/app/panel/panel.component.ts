@@ -3,7 +3,7 @@ import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
 import {debounceTime, map} from 'rxjs/operators';
 import {getEvents, SourcePosition} from './state';
 import {StateService} from './state/state.service';
-import {Event} from '@doctor-rxjs/events';
+import {MessageEvent} from '@doctor-rxjs/events';
 
 @Component({
   selector: 'd-panel',
@@ -11,7 +11,7 @@ import {Event} from '@doctor-rxjs/events';
   styleUrls: ['./panel.component.css'],
 })
 export class PanelComponent {
-  events: Array<Event> = [];
+  events: Array<MessageEvent> = [];
 
   constructor(private readonly stateService: StateService) {
   }

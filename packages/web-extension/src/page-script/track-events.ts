@@ -159,7 +159,7 @@ export type SubjectEvent
   | SubjectErrorEvent
   | SubjectCompleteEvent;
 
-export type DispatchedEvent
+export type TrackEvent
   = TaskEvent
   | DefinitionEvent
   | InstanceEvent
@@ -169,7 +169,7 @@ export type DispatchedEvent
   | SubjectEvent
   | ConnectEvent;
 
-export function isDefinitionEvent(x: DispatchedEvent): x is DefinitionEvent {
+export function isDefinitionEvent(x: TrackEvent): x is DefinitionEvent {
   switch (x.kind) {
     case 'creator-definition':
     case 'operator-definition':

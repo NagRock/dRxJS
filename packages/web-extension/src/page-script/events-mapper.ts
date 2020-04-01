@@ -2,7 +2,7 @@
 import * as StackFrame from 'stackframe';
 import * as StackTraceGPS from 'stacktrace-gps';
 import {createRefsStorage, RefsStorage} from './refs-storage';
-import * as DispatchedEvents from './dispatched-events';
+import * as DispatchedEvents from './track-events';
 import * as Events from '@doctor-rxjs/events';
 
 const unknownPosition = {
@@ -20,7 +20,7 @@ export class EventsMapper {
   ) {
   }
 
-  async map(event: DispatchedEvents.DispatchedEvent): Promise<Events.Event> {
+  async map(event: DispatchedEvents.TrackEvent): Promise<Events.MessageEvent> {
     if (DispatchedEvents.isDefinitionEvent(event)) {
       const {file: fileName, line: lineNumber, column: columnNumber} = event.position;
       let position: Events.SourcePosition;
@@ -130,7 +130,7 @@ export class EventsMapper {
   }
 }
 
-export function createEventsMapper() {
-  return new EventsMapper(createRefsStorage(), new StackTraceGPS);
+export function createEventsMapper(refs: RefsStorage) {
+  return new EventsMapper(refs, new StackTraceGPS);
 }
 

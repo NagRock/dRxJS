@@ -78,7 +78,7 @@ export class RefsStorage {
     return [...enumerableProperties, ...properties, ...accessors, proto];
   }
 
-  evalLazy(ref: number, property: string): Reference {
+  getLazyProperty(ref: number, property: string): Reference {
     return this.create(this.load(ref)[property]);
   }
 
@@ -94,9 +94,5 @@ export class RefsStorage {
 }
 
 export function createRefsStorage() {
-  if (!(window as any).__doctor__refs) {
-    (window as any).__doctor__refs = new RefsStorage();
-  }
-
-  return (window as any).__doctor__refs;
+  return new RefsStorage();
 }

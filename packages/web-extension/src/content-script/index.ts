@@ -9,6 +9,8 @@ chrome.runtime.sendMessage({message: ContentScriptMessageType.LOADED}, (response
   if (response && response.message === DevtoolsMessageType.READY) {
     console.log('injection');
     injectScript(chrome.extension.getURL('/page-script.js'));
+    injectScript(chrome.extension.getURL( '/page-script-vendor.js'));
+
   }
 });
 console.log('after');

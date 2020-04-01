@@ -7,10 +7,10 @@ import {inspectedWindowEval} from '../inspected-window-eval';
 })
 export class ReferenceService {
   get(ref: number): Promise<Property[]> {
-    return inspectedWindowEval(`__doctor__refs.get(${ref})`);
+    return inspectedWindowEval(`__doctor_rxjs__.getRef(${ref})`);
   }
 
   evalLazy(ref: number, property: string): Promise<Reference> {
-    return inspectedWindowEval(`__doctor__refs.evalLazy(${ref}, '${property}')`);
+    return inspectedWindowEval(`__doctor_rxjs__.getRefLazyProperty(${ref}, '${property}')`);
   }
 }

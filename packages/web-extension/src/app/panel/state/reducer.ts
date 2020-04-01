@@ -251,7 +251,7 @@ function handleConnectCall(state: State.State, event: Event.ConnectEvent) {
   return state;
 }
 
-export const state = () => scan((state: State.State, event: Event.Event): State.State => {
+export const state = () => scan((state: State.State, event: Event.MessageEvent): State.State => {
   switch (event.kind) {
     case 'task':
       return handleTask(state, event);

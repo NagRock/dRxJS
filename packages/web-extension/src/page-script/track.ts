@@ -2,7 +2,7 @@ import {getNextDefinitionId, getNextInstanceId, getNextEventId, getNextTaskId} f
 import {
   CompleteNotificationEvent,
   ConnectEvent,
-  CreatorDefinitionEvent,
+  CreatorDefinitionEvent, TrackEvent,
   ErrorNotificationEvent,
   InstanceEvent,
   NextNotificationEvent,
@@ -15,13 +15,11 @@ import {
   SubscribeDefinitionEvent,
   SubscribeEvent, TaskEvent, UnknownDefinitionEvent,
   UnsubscribeEvent
-} from './dispatched-events';
-import {rxInspector} from './rx-inspector';
+} from './track-events';
 import * as StackTrace from 'stacktrace-js';
-import {createRxInspectorBuffer} from './rx-inspector-buffer';
+import {SimpleSubject} from './simple-observables';
 
-// TODO: find better place for this init
-const buffer = createRxInspectorBuffer(rxInspector);
+export const trackEvents = new SimpleSubject<TrackEvent>();
 
 const unknownSourcePosition: SourcePosition = {
   file: 'unknown',
@@ -63,7 +61,7 @@ export function trackTask(task): number {
     source: task.source,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -79,7 +77,7 @@ export function trackCreatorDefinition(func: (...args: any[]) => any, args: any[
     position: getSourcePosition(2),
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -95,7 +93,7 @@ export function trackOperatorDefinition(func: (...args: any[]) => any, args: any
     position: getSourcePosition(2),
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -110,7 +108,7 @@ export function trackSubscribeDefinition(args: any[]) {
     position: getSourcePosition(3),
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -126,7 +124,7 @@ export function trackSubjectDefinition(constructor: any, args: any[]) {
     position: getSourcePosition(2),
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -140,7 +138,7 @@ export function trackUnknownDefinition() {
     position: unknownSourcePosition,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -154,7 +152,7 @@ export function trackInstance(definition: number): number {
     id,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -173,7 +171,7 @@ export function trackSubscribe(sender: number, receiver: number) {
     receiver,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -192,7 +190,7 @@ export function trackUnsubscribe(sender: number, receiver: number) {
     receiver,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -212,7 +210,7 @@ export function trackNextNotification(sender: number, receiver: number, value: a
     value,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -232,7 +230,7 @@ export function trackErrorNotification(sender: number, receiver: number, error: 
     error,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -251,7 +249,7 @@ export function trackCompleteNotification(sender: number, receiver: number) {
     receiver,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -271,7 +269,7 @@ export function trackSubjectNext(subject: number, context: number, value: any) {
     value,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -291,7 +289,7 @@ export function trackSubjectError(subject: number, context: number, error: any) 
     error,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -310,7 +308,7 @@ export function trackSubjectComplete(subject: number, context: number) {
     context,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }
@@ -328,7 +326,7 @@ export function trackConnect(connectable: number) {
     connectable,
   };
 
-  rxInspector.dispatch(event);
+  trackEvents.next(event);
 
   return id;
 }

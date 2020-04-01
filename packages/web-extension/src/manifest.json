@@ -28,6 +28,7 @@
     }
   ],
   "web_accessible_resources": [
-    "/page-script.js"
+    "/page-script.js",
+    "/page-script-vendor.js"
   ]
 }

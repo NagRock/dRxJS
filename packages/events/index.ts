@@ -195,7 +195,7 @@ export type SubjectEvent
   | SubjectErrorEvent
   | SubjectCompleteEvent;
 
-export type Event
+export type MessageEvent
   = TaskEvent
   | DefinitionEvent
   | InstanceEvent
