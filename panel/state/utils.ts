@@ -1,4 +1,4 @@
-import {Event, Instance} from './types';
+import {Event, Instance} from 'web-extension/src/app/model/model';
 import * as R from 'ramda';
 
 const concatEvents = R.pipe(

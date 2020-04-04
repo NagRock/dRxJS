@@ -24,7 +24,7 @@ const Zone = (window as any).Zone as any;
 type RxJS = typeof _rxjs;
 type RxJSOperators = typeof _rxjsOperators;
 
-type InstrumentationContext = {
+interface InstrumentationContext {
   rxjs: RxJS;
   rxjsOperators: RxJSOperators;
   originalRxjs: RxJS;
@@ -36,11 +36,12 @@ function trackSubscribeInstance(args: any[]) {
   return trackInstance(definitionId);
 }
 
-function fork(instanceId) {
+function fork(instanceId: number, eventId: number) {
   return Zone.current.fork({
     name: '__doctor__',
     properties: {
       __doctor__instance_id: instanceId,
+      __doctor__event_id: eventId,
     },
   });
 }
@@ -85,8 +86,8 @@ function instrumentSubscribe<T extends Observable<unknown>>({originalRxjs}: Inst
           destinationInstanceId,
         );
 
-        trackSubscribe(instanceId, destinationInstanceId);
-        return fork(instanceId).run(() => {
+        const eventId = trackSubscribe(instanceId, destinationInstanceId);
+        return fork(instanceId, eventId).run(() => {
             return subscribe.call(this, subscriber);
           }
         );
@@ -118,21 +119,30 @@ function instrumentSubjects(context: InstrumentationContext) {
       }
 
       next(value: any) {
-        const context = Zone.current.get('__doctor__instance_id') || this.__doctor__instance_id;
-        trackSubjectNext(this.__doctor__instance_id, context, value);
-        super.next(value);
+        const instanceId = Zone.current.get('__doctor__instance_id') || this.__doctor__instance_id;
+        const eventId = trackSubjectNext(this.__doctor__instance_id, instanceId, value);
+        fork(instanceId, eventId).run(() => {
+            super.next(value);
+          }
+        );
       }
 
       error(error: any) {
-        const context = Zone.current.get('__doctor__instance_id') || this.__doctor__instance_id;
-        trackSubjectError(this.__doctor__instance_id, context, error);
-        super.error(error);
+        const instanceId = Zone.current.get('__doctor__instance_id') || this.__doctor__instance_id;
+        const eventId = trackSubjectError(this.__doctor__instance_id, instanceId, error);
+        fork(instanceId, eventId).run(() => {
+            super.error(error);
+          }
+        );
       }
 
       complete() {
-        const context = Zone.current.get('__doctor__instance_id') || this.__doctor__instance_id;
-        trackSubjectComplete(this.__doctor__instance_id, context);
-        super.complete();
+        const instanceId = Zone.current.get('__doctor__instance_id') || this.__doctor__instance_id;
+        const eventId = trackSubjectComplete(this.__doctor__instance_id, instanceId);
+        fork(instanceId, eventId).run(() => {
+            super.complete();
+          }
+        );
       }
     }
 
@@ -169,40 +179,42 @@ function instrumentSubscriber(subscriber: Subscriber<unknown>, instanceId, desti
       },
       next: {
         value: function __doctor__next(value) {
-          if (!this.isStopped) {
-            trackNextNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, value);
-          }
-          fork(this.__doctor_destination_instance_id).run(() => {
+          const eventId = !this.isStopped
+            ? trackNextNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, value)
+            : undefined;
+          fork(this.__doctor_destination_instance_id, eventId).run(() => {
             next.call(this, value);
           });
         }
       },
       error: {
         value: function __doctor__error(err) {
-          if (!this.isStopped) {
-            trackErrorNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, err);
-          }
-          fork(this.__doctor_destination_instance_id).run(() => {
+          const eventId = !this.isStopped
+            ? trackErrorNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, err)
+            : undefined;
+          fork(this.__doctor_destination_instance_id, eventId).run(() => {
             error.call(this, err);
           });
         }
       },
       complete: {
         value: function __doctor__complete() {
-          if (!this.isStopped) {
-            trackCompleteNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id);
-          }
-          fork(this.__doctor_destination_instance_id).run(() => {
+          const eventId = !this.isStopped
+            ? trackCompleteNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id)
+            : undefined;
+          fork(this.__doctor_destination_instance_id, eventId).run(() => {
             complete.call(this);
           });
         }
       },
       unsubscribe: {
         value: function __doctor__unsubscribe() {
-          if (!this.closed) {
-            trackUnsubscribe(this.__doctor__instance_id, this.__doctor_destination_instance_id);
-          }
-          unsubscribe.call(this);
+          const eventId = !this.closed
+            ? trackUnsubscribe(this.__doctor__instance_id, this.__doctor_destination_instance_id)
+            : undefined;
+          fork(this.__doctor_destination_instance_id, eventId).run(() => {
+            unsubscribe.call(this);
+          });
         }
       }
     });
@@ -292,8 +304,8 @@ function instrumentConnect({}: InstrumentationContext, observable: ConnectableOb
       value: function __doctor__connect() {
         const {__doctor__instance_id: instanceId} = this;
         if (instanceId !== undefined) {
-          trackConnect(instanceId);
-          return fork(instanceId).run(() => {
+          const eventId = trackConnect(instanceId);
+          return fork(instanceId, eventId).run(() => {
             return connect.call(this);
           });
         } else {

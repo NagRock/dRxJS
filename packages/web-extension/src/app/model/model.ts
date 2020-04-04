@@ -1,7 +1,8 @@
 import {ObjectReference, Reference} from '@doctor-rxjs/events';
+import {Set} from 'immutable';
 
 export interface Index<T> {
-  [key: number]: T;
+  [index: number]: T;
 }
 
 export interface SourcePosition {
@@ -16,6 +17,7 @@ export interface Task {
   id: number;
   type: 'macroTask' | 'microTask' | 'eventTask';
   source: string;
+  events: Event[];
 }
 
 export interface CreatorDefinition {
@@ -42,7 +44,7 @@ export interface SubscribeDefinition {
   kind: 'subscribe-definition';
   name: string;
   id: number;
-  args: Reference[],
+  args: Reference[];
   position: SourcePosition;
   instances: Instance[];
 }
@@ -52,7 +54,7 @@ export interface SubjectDefinition {
   name: string;
   id: number;
   constructor: ObjectReference;
-  args: Reference[],
+  args: Reference[];
   position: SourcePosition;
   instances: Instance[];
 }
@@ -72,25 +74,20 @@ export type Definition
   | SubjectDefinition
   | UnknownDefinition;
 
-export interface Properties {
-  active?: boolean;
+export interface InstanceSnapshot {
+  readonly vtimestamp: number;
+  readonly receivers: Set<Instance>;
+  readonly senders: Set<Instance>;
+  readonly contextReceivers: Set<Instance>;
+  readonly contextSenders: Set<Instance>;
 }
 
-export interface InstanceSnapshot<P extends Properties = Properties> {
-  vtimestamp: number;
-  properties: P;
-}
-
-export interface Instance<P extends Properties = Properties> {
+export interface Instance {
   kind: 'instance';
   id: number;
   definition: Definition;
-  receivers: Instance[];
-  senders: Instance[];
-  contextReceivers: Instance[];
-  contextSenders: Instance[];
   events: Event[];
-  snapshots: InstanceSnapshot<P>[];
+  snapshots: InstanceSnapshot[];
 }
 
 export interface Subscribe {
@@ -207,9 +204,10 @@ export type Event
   | Unsubscribe
   | Call;
 
-export interface State {
+export interface Model {
   definitions: Index<Definition>;
   instances: Index<Instance>;
   events: Index<Event>;
-  lastTask: Task;
+  tasks: Index<Task>;
+  currentTask: Task | undefined;
 }

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {concatMap, shareReplay} from 'rxjs/operators';
+import {concatMap, scan, shareReplay} from 'rxjs/operators';
 import {from} from 'rxjs';
-import {state} from './reducer';
+import {handleEvent} from 'web-extension/src/app/services/model.reducer';
 import {EventService} from '../event.service';
 
 @Injectable({
@@ -10,7 +10,13 @@ import {EventService} from '../event.service';
 export class StateService {
   readonly state$ = this.eventService.event$.pipe(
     concatMap((events) => from(events)),
-    state(),
+    scan(handleEvent, {
+      definitions: {},
+      instances: {},
+      events: {},
+      tasks: {},
+      currentTask: undefined,
+    }),
     shareReplay(),
   );
 
