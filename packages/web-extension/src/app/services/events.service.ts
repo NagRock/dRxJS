@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {InstrumentationState, InstrumentationStateService} from './instrumentation-state.service';
-import {concatMap, filter, share, shareReplay, switchMap, switchMapTo, takeUntil} from 'rxjs/operators';
+import {concatMap, filter, share, switchMapTo, takeUntil, tap} from 'rxjs/operators';
 import {from, interval, Observable} from 'rxjs';
 import {MessageEvent} from '@doctor-rxjs/events';
-import {inspectedWindowEval} from '../../../../../panel/inspected-window-eval';
-import {ModelService} from './model.service';
+import {inspectedWindowEval} from '../utils/inspected-window-eval';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +13,6 @@ export class EventsService {
   readonly events$: Observable<MessageEvent>;
 
   constructor(
-    private readonly m: ModelService,
     private readonly instrumentationStateService: InstrumentationStateService,
   ) {
     const pageLoaded$ = instrumentationStateService.state$.pipe(filter((state) => state === InstrumentationState.PAGE_LOADED));

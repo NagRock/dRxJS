@@ -98,6 +98,8 @@ export interface Subscribe {
   task: Task;
   sender: Instance;
   receiver: Instance;
+  trigger: Event | undefined;
+  triggered: Event[];
 }
 
 export interface Unsubscribe {
@@ -108,6 +110,8 @@ export interface Unsubscribe {
   task: Task;
   sender: Instance;
   receiver: Instance;
+  trigger: Event | undefined;
+  triggered: Event[];
 }
 
 export interface NextNotification {
@@ -118,6 +122,8 @@ export interface NextNotification {
   task: Task;
   sender: Instance;
   receiver: Instance;
+  trigger: Event | undefined;
+  triggered: Event[];
   value: Reference;
 }
 
@@ -129,6 +135,8 @@ export interface ErrorNotification {
   task: Task;
   sender: Instance;
   receiver: Instance;
+  trigger: Event | undefined;
+  triggered: Event[];
   error: Reference;
 }
 
@@ -140,6 +148,8 @@ export interface CompleteNotification {
   task: Task;
   sender: Instance;
   receiver: Instance;
+  trigger: Event | undefined;
+  triggered: Event[];
 }
 
 export type Notification
@@ -155,6 +165,8 @@ export interface SubjectNextCall {
   task: Task;
   sender: Instance;
   receiver: Instance;
+  trigger: Event | undefined;
+  triggered: Event[];
   value: Reference;
 }
 
@@ -166,6 +178,8 @@ export interface SubjectErrorCall {
   task: Task;
   sender: Instance;
   receiver: Instance;
+  trigger: Event | undefined;
+  triggered: Event[];
   error: Reference;
 }
 
@@ -177,6 +191,8 @@ export interface SubjectCompleteCall {
   task: Task;
   sender: Instance;
   receiver: Instance;
+  trigger: Event | undefined;
+  triggered: Event[];
 }
 
 export type SubjectCall
@@ -192,6 +208,8 @@ export interface ConnectCall {
   task: Task;
   sender: undefined;
   receiver: Instance;
+  trigger: Event | undefined;
+  triggered: Event[];
 }
 
 export type Call

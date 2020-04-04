@@ -108,6 +108,7 @@ export interface SubscribeEvent {
   timestamp: number;
   sender: number;
   receiver: number;
+  trigger: number;
 }
 
 export interface UnsubscribeEvent {
@@ -117,6 +118,7 @@ export interface UnsubscribeEvent {
   timestamp: number;
   sender: number;
   receiver: number;
+  trigger: number;
 }
 
 export interface NextNotificationEvent {
@@ -126,6 +128,7 @@ export interface NextNotificationEvent {
   timestamp: number;
   sender: number;
   receiver: number;
+  trigger: number;
   value: Reference;
 }
 
@@ -136,6 +139,7 @@ export interface ErrorNotificationEvent {
   timestamp: number;
   sender: number;
   receiver: number;
+  trigger: number;
   error: Reference;
 }
 
@@ -146,6 +150,7 @@ export interface CompleteNotificationEvent {
   timestamp: number;
   sender: number;
   receiver: number;
+  trigger: number;
 }
 
 export interface SubjectNextEvent {
@@ -155,6 +160,7 @@ export interface SubjectNextEvent {
   timestamp: number;
   subject: number;
   context: number;
+  trigger: number;
   value: Reference;
 }
 
@@ -165,6 +171,7 @@ export interface SubjectErrorEvent {
   timestamp: number;
   subject: number;
   context: number;
+  trigger: number;
   error: Reference;
 }
 
@@ -175,6 +182,7 @@ export interface SubjectCompleteEvent {
   timestamp: number;
   subject: number;
   context: number;
+  trigger: number;
 }
 
 export interface ConnectEvent {
@@ -183,6 +191,7 @@ export interface ConnectEvent {
   task: number;
   timestamp: number;
   connectable: number;
+  trigger: number;
 }
 
 export type NotificationEvent

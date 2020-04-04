@@ -129,6 +129,7 @@ function getLastInstanceSnapshot(instance: Model.Instance): InstanceSnapshot {
 function handleSubscribe(model: Model.Model, event: Event.SubscribeEvent) {
   const sender = model.instances[event.sender];
   const receiver = model.instances[event.receiver];
+  const trigger = model.events[event.trigger];
   const subscribe: Model.Subscribe = {
     kind: 'subscribe',
     id: event.id,
@@ -137,7 +138,12 @@ function handleSubscribe(model: Model.Model, event: Event.SubscribeEvent) {
     task: model.currentTask,
     sender,
     receiver,
+    trigger,
+    triggered: [],
   };
+  if (trigger) {
+    trigger.triggered.push(subscribe);
+  }
 
   model.currentTask.events.push(subscribe);
 
@@ -168,6 +174,7 @@ function handleSubscribe(model: Model.Model, event: Event.SubscribeEvent) {
 function handleUnsubscribe(model: Model.Model, event: Event.UnsubscribeEvent) {
   const sender = model.instances[event.sender];
   const receiver = model.instances[event.receiver];
+  const trigger = model.events[event.trigger];
   const unsubscribe: Model.Unsubscribe = {
     kind: 'unsubscribe',
     id: event.id,
@@ -176,7 +183,12 @@ function handleUnsubscribe(model: Model.Model, event: Event.UnsubscribeEvent) {
     task: model.currentTask,
     sender,
     receiver,
+    trigger,
+    triggered: [],
   };
+  if (trigger) {
+    trigger.triggered.push(unsubscribe);
+  }
 
   model.currentTask.events.push(unsubscribe);
 
@@ -207,6 +219,7 @@ function handleUnsubscribe(model: Model.Model, event: Event.UnsubscribeEvent) {
 function handleNotification(model: Model.Model, event: Event.NotificationEvent) {
   const sender = model.instances[event.sender];
   const receiver = model.instances[event.receiver];
+  const trigger = model.events[event.trigger];
 
   const notification: Model.Notification = {
     kind: event.kind as any,
@@ -216,9 +229,14 @@ function handleNotification(model: Model.Model, event: Event.NotificationEvent) 
     task: model.currentTask,
     sender,
     receiver,
+    trigger,
+    triggered: [],
     ...event.kind === 'next' ? {value: event.value} : {},
     ...event.kind === 'error' ? {error: event.error} : {},
   };
+  if (trigger) {
+    trigger.triggered.push(notification);
+  }
 
   model.currentTask.events.push(notification);
 
@@ -234,6 +252,8 @@ function handleNotification(model: Model.Model, event: Event.NotificationEvent) 
 function handleSubjectCall(model: Model.Model, event: Event.SubjectEvent) {
   const subject = model.instances[event.subject];
   const context: Model.Instance = model.instances[event.context];
+  const trigger = model.events[event.trigger];
+
   const call: Model.SubjectCall = {
     kind: event.kind as any,
     id: event.id,
@@ -242,9 +262,14 @@ function handleSubjectCall(model: Model.Model, event: Event.SubjectEvent) {
     task: model.currentTask,
     sender: context,
     receiver: subject,
+    trigger,
+    triggered: [],
     ...event.kind === 'subject-next' ? {value: event.value} : {},
     ...event.kind === 'subject-error' ? {error: event.error} : {},
   };
+  if (trigger) {
+    trigger.triggered.push(call);
+  }
   model.currentTask.events.push(call);
 
   subject.events.push(call);
@@ -266,6 +291,8 @@ function handleSubjectCall(model: Model.Model, event: Event.SubjectEvent) {
 
 function handleConnectCall(model: Model.Model, event: Event.ConnectEvent) {
   const connectable = model.instances[event.connectable];
+  const trigger = model.events[event.trigger];
+
   const call: Model.SubjectCall = {
     kind: event.kind as any,
     id: event.id,
@@ -274,7 +301,12 @@ function handleConnectCall(model: Model.Model, event: Event.ConnectEvent) {
     task: model.currentTask,
     sender: undefined,
     receiver: connectable,
+    trigger,
+    triggered: [],
   };
+  if (trigger) {
+    trigger.triggered.push(call);
+  }
   model.currentTask.events.push(call);
 
   connectable.events.push(call);

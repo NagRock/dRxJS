@@ -1,7 +1,7 @@
 // @ts-ignore
 import * as StackFrame from 'stackframe';
 import * as StackTraceGPS from 'stacktrace-gps';
-import {createRefsStorage, RefsStorage} from './refs-storage';
+import {RefsStorage} from './refs-storage';
 import * as DispatchedEvents from './track-events';
 import * as Events from '@doctor-rxjs/events';
 
@@ -85,6 +85,7 @@ export class EventsMapper {
             timestamp: event.timestamp,
             sender: event.sender,
             receiver: event.receiver,
+            trigger: event.trigger,
             value: this.refsStorage.create(event.value),
           };
         case 'error':
@@ -95,6 +96,7 @@ export class EventsMapper {
             timestamp: event.timestamp,
             sender: event.sender,
             receiver: event.receiver,
+            trigger: event.trigger,
             error: this.refsStorage.create(event.error),
           };
         case 'subject-next':
@@ -105,6 +107,7 @@ export class EventsMapper {
             timestamp: event.timestamp,
             subject: event.subject,
             context: event.context,
+            trigger: event.trigger,
             value: this.refsStorage.create(event.value),
           };
         case 'subject-error':
@@ -115,6 +118,7 @@ export class EventsMapper {
             timestamp: event.timestamp,
             subject: event.subject,
             context: event.context,
+            trigger: event.trigger,
             error: this.refsStorage.create(event.error),
           };
         case 'task':
