@@ -61,3 +61,7 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+import * as PIXI from '@pixi/core';
+import * as PIXIUnsafeEval from '@pixi/unsafe-eval';
+PIXIUnsafeEval.install(PIXI);

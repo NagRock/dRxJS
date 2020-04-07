@@ -6,7 +6,8 @@ const pageScriptVendorDeps = [
   'stacktrace-js',
   'stackframe',
   'error-stack-parser',
-  'stack-generator'
+  'stack-generator',
+  'tslib'
 ].map((dep) => `${path.sep}node_modules${path.sep}${dep}${path.sep}`);
 
 
