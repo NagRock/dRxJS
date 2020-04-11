@@ -14,6 +14,9 @@ const unknownPosition = {
 
 export class EventsMapper {
 
+
+  private readonly cache = new Map<string, any>();
+
   constructor(
     private readonly refsStorage: RefsStorage,
     private readonly gps: StackTraceGPS,
@@ -23,9 +26,13 @@ export class EventsMapper {
   async map(event: DispatchedEvents.TrackEvent): Promise<Events.MessageEvent> {
     if (DispatchedEvents.isDefinitionEvent(event)) {
       const {file: fileName, line: lineNumber, column: columnNumber} = event.position;
+      const cacheKey = `${fileName}:${lineNumber}:${columnNumber}`;
+
       let position: Events.SourcePosition;
       if (fileName === 'unknown') {
         position = unknownPosition;
+      } else if (this.cache.has(cacheKey)) {
+        position = this.cache.get(cacheKey);
       } else {
         try {
           const sourceStackFrame = new (StackFrame as any)({fileName, lineNumber, columnNumber});
@@ -35,6 +42,7 @@ export class EventsMapper {
         } catch (e) {
           position = unknownPosition;
         }
+        this.cache.set(cacheKey, position);
       }
       switch (event.kind) {
         case 'creator-definition':

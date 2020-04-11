@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "newProjectRoot": "projects",
+  "newProjectRoot": "",
   "projects": {
     "web-extension": {
       "projectType": "application",
@@ -92,6 +92,40 @@
             "tsConfig": [
               "tsconfig.app.json",
               "tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "backend": {
+      "projectType": "library",
+      "root": "backend",
+      "sourceRoot": "backend/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-webpack:webpack",
+          "options": {
+            "webpackConfig": "backend/webpack.config.js"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "backend/src/test.ts",
+            "tsConfig": "backend/tsconfig.spec.json",
+            "karmaConfig": "backend/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "backend/tsconfig.lib.json",
+              "backend/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"

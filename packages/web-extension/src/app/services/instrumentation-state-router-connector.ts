@@ -21,7 +21,7 @@ export class InstrumentationStateRouterConnector implements EagerSingleton {
           this.router.navigate(['']);
           break;
         case InstrumentationState.PAGE_INSTRUMENTED:
-          this.router.navigate(['pixi']);
+          this.router.navigate(['events']);
           break;
       }
     });

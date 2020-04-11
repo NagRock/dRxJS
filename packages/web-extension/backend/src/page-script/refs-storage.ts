@@ -13,13 +13,16 @@ export class RefsStorage {
       case 'boolean':
       case 'number':
       case 'string':
-      case 'symbol':
       case 'bigint':
         return {
           kind: 'value',
-          value: value,
+          value,
         };
-
+      case 'symbol':
+        return {
+          kind: 'value',
+          value: `Symbol(${String(value)})`
+        };
       case 'object':
         if (value === null) {
           return {
@@ -84,7 +87,8 @@ export class RefsStorage {
 
   private store(value: Object): number {
     const ref = this.nextRef++;
-    this.refs[ref] = value;
+    // todo: uncomment
+    // this.refs[ref] = value;
     return ref;
   }
 

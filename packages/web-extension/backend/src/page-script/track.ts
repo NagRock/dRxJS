@@ -28,6 +28,7 @@ const unknownSourcePosition: SourcePosition = {
 };
 
 export function getSourcePosition(stackTraceOffset: number): SourcePosition {
+// TODO: bottleneck: new Error().stack
   const stackFrame = StackTrace.getSync({offline: true})[stackTraceOffset + 1];
 
   return {
@@ -37,16 +38,14 @@ export function getSourcePosition(stackTraceOffset: number): SourcePosition {
   };
 }
 
-const Zone = (window as any).Zone as any;
-
 let lastTask: any;
 let lastTaskId: number;
 
 export function getTask() {
-  if (lastTask === Zone.currentTask) {
+  if (lastTask === (window as any).Zone.currentTask) {
     return lastTaskId;
   } else {
-    lastTask = Zone.currentTask;
+    lastTask = (window as any).Zone.currentTask;
     lastTaskId = trackTask(lastTask);
     return lastTaskId;
   }
@@ -58,8 +57,8 @@ export function trackTask(task): number {
   const event: TaskEvent = {
     kind: 'task',
     id,
-    type: task.type,
-    source: task.source,
+    type: task ? task.type : 'unknown',
+    source: task ? task.source : 'unknown',
   };
 
   trackEvents.next(event);

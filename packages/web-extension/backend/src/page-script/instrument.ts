@@ -19,7 +19,9 @@ import {
   trackUnsubscribe
 } from './track';
 
-const Zone = (window as any).Zone as any;
+function getZoneProperty(property) {
+  return (window as any).Zone.current.get(property);
+}
 
 type RxJS = typeof _rxjs;
 type RxJSOperators = typeof _rxjsOperators;
@@ -37,7 +39,7 @@ function trackSubscribeInstance(args: any[]) {
 }
 
 function fork(instanceId: number, eventId: number) {
-  return Zone.current.fork({
+  return (window as any).Zone.current.fork({
     name: '__doctor__',
     properties: {
       __doctor__instance_id: instanceId,
@@ -77,7 +79,7 @@ function instrumentSubscribe<T extends Observable<unknown>>({originalRxjs}: Inst
           || trackInstance(this.__doctor__definition_id); // unicast
         const destinationInstanceId =
           (observerOrNext && (observerOrNext as any).__doctor__instance_id) // Subject
-          || Zone.current.get('__doctor__instance_id') // subscriber that called this subscribe
+          || getZoneProperty('__doctor__instance_id') // subscriber that called this subscribe
           || trackSubscribeInstance([observerOrNext, error, complete]); // direct subscribe call
 
         const subscriber = instrumentSubscriber(
@@ -86,7 +88,7 @@ function instrumentSubscribe<T extends Observable<unknown>>({originalRxjs}: Inst
           destinationInstanceId,
         );
 
-        const eventId = trackSubscribe(instanceId, destinationInstanceId, Zone.current.get('__doctor__event_id'));
+        const eventId = trackSubscribe(instanceId, destinationInstanceId, getZoneProperty('__doctor__event_id'));
         return fork(instanceId, eventId).run(() => {
             return subscribe.call(this, subscriber);
           }
@@ -119,8 +121,8 @@ function instrumentSubjects(context: InstrumentationContext) {
       }
 
       next(value: any) {
-        const instanceId = Zone.current.get('__doctor__instance_id') || this.__doctor__instance_id;
-        const eventId = trackSubjectNext(this.__doctor__instance_id, instanceId, Zone.current.get('__doctor__event_id'), value);
+        const instanceId = getZoneProperty('__doctor__instance_id') || this.__doctor__instance_id;
+        const eventId = trackSubjectNext(this.__doctor__instance_id, instanceId, getZoneProperty('__doctor__event_id'), value);
         fork(instanceId, eventId).run(() => {
             super.next(value);
           }
@@ -128,8 +130,8 @@ function instrumentSubjects(context: InstrumentationContext) {
       }
 
       error(error: any) {
-        const instanceId = Zone.current.get('__doctor__instance_id') || this.__doctor__instance_id;
-        const eventId = trackSubjectError(this.__doctor__instance_id, instanceId, Zone.current.get('__doctor__event_id'), error);
+        const instanceId = getZoneProperty('__doctor__instance_id') || this.__doctor__instance_id;
+        const eventId = trackSubjectError(this.__doctor__instance_id, instanceId, getZoneProperty('__doctor__event_id'), error);
         fork(instanceId, eventId).run(() => {
             super.error(error);
           }
@@ -137,8 +139,8 @@ function instrumentSubjects(context: InstrumentationContext) {
       }
 
       complete() {
-        const instanceId = Zone.current.get('__doctor__instance_id') || this.__doctor__instance_id;
-        const eventId = trackSubjectComplete(this.__doctor__instance_id, Zone.current.get('__doctor__event_id'), instanceId);
+        const instanceId = getZoneProperty('__doctor__instance_id') || this.__doctor__instance_id;
+        const eventId = trackSubjectComplete(this.__doctor__instance_id, getZoneProperty('__doctor__event_id'), instanceId);
         fork(instanceId, eventId).run(() => {
             super.complete();
           }
@@ -180,7 +182,7 @@ function instrumentSubscriber(subscriber: Subscriber<unknown>, instanceId, desti
       next: {
         value: function __doctor__next(value) {
           const eventId = !this.isStopped
-            ? trackNextNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, Zone.current.get('__doctor__event_id'), value)
+            ? trackNextNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, getZoneProperty('__doctor__event_id'), value)
             : undefined;
           fork(this.__doctor_destination_instance_id, eventId).run(() => {
             next.call(this, value);
@@ -190,7 +192,7 @@ function instrumentSubscriber(subscriber: Subscriber<unknown>, instanceId, desti
       error: {
         value: function __doctor__error(err) {
           const eventId = !this.isStopped
-            ? trackErrorNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, Zone.current.get('__doctor__event_id'), err)
+            ? trackErrorNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, getZoneProperty('__doctor__event_id'), err)
             : undefined;
           fork(this.__doctor_destination_instance_id, eventId).run(() => {
             error.call(this, err);
@@ -200,7 +202,7 @@ function instrumentSubscriber(subscriber: Subscriber<unknown>, instanceId, desti
       complete: {
         value: function __doctor__complete() {
           const eventId = !this.isStopped
-            ? trackCompleteNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, Zone.current.get('__doctor__event_id'))
+            ? trackCompleteNotification(this.__doctor__instance_id, this.__doctor_destination_instance_id, getZoneProperty('__doctor__event_id'))
             : undefined;
           fork(this.__doctor_destination_instance_id, eventId).run(() => {
             complete.call(this);
@@ -210,7 +212,7 @@ function instrumentSubscriber(subscriber: Subscriber<unknown>, instanceId, desti
       unsubscribe: {
         value: function __doctor__unsubscribe() {
           const eventId = !this.closed
-            ? trackUnsubscribe(this.__doctor__instance_id, this.__doctor_destination_instance_id, Zone.current.get('__doctor__event_id'))
+            ? trackUnsubscribe(this.__doctor__instance_id, this.__doctor_destination_instance_id, getZoneProperty('__doctor__event_id'))
             : undefined;
           fork(this.__doctor_destination_instance_id, eventId).run(() => {
             unsubscribe.call(this);
@@ -304,7 +306,7 @@ function instrumentConnect({}: InstrumentationContext, observable: ConnectableOb
       value: function __doctor__connect() {
         const {__doctor__instance_id: instanceId} = this;
         if (instanceId !== undefined) {
-          const eventId = trackConnect(instanceId, Zone.current.get('__doctor__event_id'));
+          const eventId = trackConnect(instanceId, getZoneProperty('__doctor__event_id'));
           return fork(instanceId, eventId).run(() => {
             return connect.call(this);
           });
@@ -484,7 +486,7 @@ function instrumentObservables(context: InstrumentationContext) {
   });
 }
 
-export function instrument(rxjs: RxJS, rxjsOperators: RxJSOperators) {
+export function instrumentRxJS(rxjs: RxJS, rxjsOperators: RxJSOperators) {
   const context: InstrumentationContext = {
     rxjs,
     rxjsOperators,

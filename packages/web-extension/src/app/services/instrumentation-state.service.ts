@@ -1,5 +1,5 @@
 import {Injectable, NgZone} from '@angular/core';
-import {ContentScriptMessage, ContentScriptMessageType, DevtoolsMessage, DevtoolsMessageType} from '../../messages';
+import {ContentScriptMessage, ContentScriptMessageType, DevtoolsMessage, DevtoolsMessageType} from '../../../backend/src/messages';
 import {BehaviorSubject} from 'rxjs';
 import {EagerSingleton} from '../eager-singletons';
 
