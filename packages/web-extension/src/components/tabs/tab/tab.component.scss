@@ -1,0 +1,31 @@
+:host.selected {
+  background-color: var(--color5);
+}
+
+:host {
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--foreground-color);
+  border: 0;
+  box-sizing: border-box;
+  font-size: 12px;
+  padding: 2px 4px 4px 2px;
+  border-bottom: 1px var(--color5) solid;
+  font-family: var(--font-family);
+
+  &:hover {
+    background-color: var(--color5-darken-1);
+  }
+
+  &:active {
+    background-color: var(--color5-darken-2);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+:host:not(:first-child) {
+  margin-left: 4px
+}

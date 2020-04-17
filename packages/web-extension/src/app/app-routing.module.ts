@@ -3,11 +3,13 @@ import {RouterModule, Routes} from '@angular/router';
 import {HomeComponent} from './home/home.component';
 import {EventsComponent} from './events/events.component';
 import {PixiPlaygroundComponent} from './pixi-playground/pixi-playground.component';
+import {OverviewComponent} from './views/overview/overview.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    // component: HomeComponent,
+    component: OverviewComponent,
   },
   {
     path: 'events',
@@ -16,6 +18,10 @@ const routes: Routes = [
   {
     path: 'pixi',
     component: PixiPlaygroundComponent,
+  },
+  {
+    path: 'overview',
+    component: OverviewComponent,
   }
 ];
 

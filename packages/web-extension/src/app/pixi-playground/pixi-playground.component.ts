@@ -5,7 +5,37 @@ import {MotionPathPlugin} from 'gsap/MotionPathPlugin';
 import {asapScheduler, concat, fromEvent, of, Subject} from 'rxjs';
 import {observeOn, takeUntil} from 'rxjs/operators';
 
+
 gsap.registerPlugin(MotionPathPlugin);
+
+
+function bezierPart(x1, y1, bx1, by1, bx2, by2, x2, y2, t0, t1) {
+  const u0 = 1.0 - t0;
+  const u1 = 1.0 - t1;
+
+  const qxa = x1 * u0 * u0 + bx1 * 2 * t0 * u0 + bx2 * t0 * t0;
+  const qxb = x1 * u1 * u1 + bx1 * 2 * t1 * u1 + bx2 * t1 * t1;
+  const qxc = bx1 * u0 * u0 + bx2 * 2 * t0 * u0 + x2 * t0 * t0;
+  const qxd = bx1 * u1 * u1 + bx2 * 2 * t1 * u1 + x2 * t1 * t1;
+
+  const qya = y1 * u0 * u0 + by1 * 2 * t0 * u0 + by2 * t0 * t0;
+  const qyb = y1 * u1 * u1 + by1 * 2 * t1 * u1 + by2 * t1 * t1;
+  const qyc = by1 * u0 * u0 + by2 * 2 * t0 * u0 + y2 * t0 * t0;
+  const qyd = by1 * u1 * u1 + by2 * 2 * t1 * u1 + y2 * t1 * t1;
+
+  const xa = qxa * u0 + qxc * t0;
+  const xb = qxa * u1 + qxc * t1;
+  const xc = qxb * u0 + qxd * t0;
+  const xd = qxb * u1 + qxd * t1;
+
+  const ya = qya * u0 + qyc * t0;
+  const yb = qya * u1 + qyc * t1;
+  const yc = qyb * u0 + qyd * t0;
+  const yd = qyb * u1 + qyd * t1;
+
+  return [xa, ya, xb, yb, xc, yc, xd, yd];
+}
+
 
 @Component({
   selector: 'app-pixi-playground',
@@ -25,6 +55,7 @@ export class PixiPlaygroundComponent implements AfterViewInit, OnDestroy {
     this.app = new PIXI.Application({
       antialias: true,
     });
+    this.app.stage.angle
     this.elementRef.nativeElement.appendChild(this.app.view);
     concat(
       of(undefined).pipe(observeOn(asapScheduler)),
@@ -47,11 +78,6 @@ export class PixiPlaygroundComponent implements AfterViewInit, OnDestroy {
     const Ac = {x: A.x + (B.x - A.x) * 0.5, y: A.y};
     const Bc = {x: B.x - (B.x - A.x) * 0.5, y: B.y};
 
-    const A1 = {...A};
-    const B1 = {...B};
-    const Ac1 = {...Ac};
-    const Bc1 = {...Bc};
-
     const points: PIXI.Graphics[] = [];
     [A, B, Ac, Bc].forEach(({x, y}) => {
       const point = new PIXI.Graphics();
@@ -66,17 +92,20 @@ export class PixiPlaygroundComponent implements AfterViewInit, OnDestroy {
     bezier.moveTo(A.x, A.y);
     bezier.bezierCurveTo(Ac.x, Ac.y, Bc.x, Bc.y, B.x, B.y);
 
-    gsap.fromTo(Ac1, A, {...Ac, duration: 10, ease: 'power2.out'});
-    gsap.fromTo(Bc1, Ac, {...Bc, duration: 10, ease: 'power2.out'});
-    gsap.fromTo(B1, Bc, {...B, duration: 10, ease: 'power2.out'});
+
+    const t = {value: 0};
+
+    gsap.fromTo(t, {value: 0}, {value: 1, duration: 10, ease: 'power2.out'});
 
     this.app.ticker.add(() => {
+      const [xa, ya, xb, yb, xc, yc, xd, yd] = bezierPart(A.x, A.y, Ac.x, Ac.y, Bc.x, Bc.y, B.x, B.y, 0, t.value);
       bezier.clear();
       bezier.lineStyle(2, 0xff0000, 1);
-      bezier.moveTo(A1.x, A1.y);
-      bezier.bezierCurveTo(Ac1.x, Ac1.y, Bc1.x, Bc1.y, B1.x, B1.y);
 
-      [A1, B1, Ac1, Bc1].forEach(({x, y}, index) => {
+      bezier.moveTo(xa, ya);
+      bezier.bezierCurveTo(xb, yb, xc, yc, xd, yd);
+
+      [[xa, ya], [xb, yb], [xc, yc], [xd, yd]].forEach(([x, y], index) => {
         const point = points[index];
         point.x = x;
         point.y = y;

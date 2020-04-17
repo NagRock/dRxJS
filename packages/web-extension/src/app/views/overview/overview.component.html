@@ -1,0 +1,33 @@
+<dr-tabs [(selected)]="selected">
+  <button [dr-tab]="search" *ngFor="let search of searches">
+    <dr-icon icon="file-o" size="small"></dr-icon>
+    {{search}}
+
+    <ng-container *drTabContent>
+      <p>{{search}}</p>
+      <p>{{search}}</p>
+      <p>{{search}}</p>
+    </ng-container>
+  </button>
+  <button [dr-tab]="'new'">
+    <dr-icon icon="search" size="small"></dr-icon>
+    New search
+  </button>
+</dr-tabs>
+<h1>{{selected}}</h1>
+
+<!--<ng-container *ngIf="context$ | async as context">-->
+<!--  <p>-->
+<!--    Captured-->
+<!--    {{context.stats.definitions}} observables,-->
+<!--    {{context.stats.instances}} subscriptions,-->
+<!--    {{context.stats.events}} events,-->
+<!--    and {{context.stats.tasks}} tasks.-->
+<!--  </p>-->
+<!--</ng-container>-->
+
+<!--<pre>-->
+<!--<code>-->
+<!--  {{content$ | async}}-->
+<!--</code>-->
+<!--</pre>-->

@@ -223,9 +223,9 @@ export type Event
   | Call;
 
 export interface Model {
-  definitions: Index<Definition>;
-  instances: Index<Instance>;
-  events: Index<Event>;
-  tasks: Index<Task>;
+  definitions: Array<Definition>;
+  instances: Array<Instance>;
+  events: Array<Event>;
+  tasks: Array<Task>;
   currentTask: Task | undefined;
 }
