@@ -1,0 +1,8 @@
+<pre class="lines">
+  <code *ngFor="let line of lines"><button dr-button class="marker" size="small" display="inline" variant="secondary" *ngFor="let marker of line.markers">{{marker.name}}</button>{{line.number}}</code>
+</pre>
+
+<pre>
+<code [innerHTML]="highlightedContent"></code>
+</pre>
+

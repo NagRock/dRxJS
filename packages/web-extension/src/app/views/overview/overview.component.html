@@ -16,6 +16,18 @@
 </dr-tabs>
 <h1>{{selected}}</h1>
 
+<!--<h1>Res:</h1>-->
+<!--<p *ngFor="let r of res$ | async">-->
+<!-- url: {{r.url}}-->
+<!--</p>-->
+
+<!--<h1>Files:</h1>-->
+<!--<p *ngFor="let f of files$ | async">-->
+<!--  url: {{f}}-->
+<!--</p>-->
+
+<app-source-selector [content]="content$ | async" [markers]="markers$ | async"></app-source-selector>
+
 <!--<ng-container *ngIf="context$ | async as context">-->
 <!--  <p>-->
 <!--    Captured-->

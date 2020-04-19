@@ -1,4 +1,8 @@
-import {ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostBinding, Input, OnChanges, OnInit, ViewEncapsulation} from '@angular/core';
+
+export type ButtonSize = 'small' | 'medium' | 'large';
+export type ButtonDisplay = 'inline' | 'block';
+export type ButtonVariant = 'primary' | 'secondary';
 
 @Component({
   selector: 'button[dr-button]',
@@ -6,11 +10,26 @@ import {ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation} from '@an
   styleUrls: ['./button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ButtonComponent implements OnInit {
+export class ButtonComponent implements OnChanges {
 
-  constructor() { }
 
-  ngOnInit() {
+  @Input()
+  size: ButtonSize = 'medium';
+
+  @Input()
+  display: ButtonDisplay = 'block';
+
+  @Input()
+  variant: ButtonVariant = 'primary';
+
+  @Input()
+  class: string;
+
+  @HostBinding('class')
+  classList: string;
+
+  ngOnChanges(): void {
+    this.classList = `${this.class} ${this.size} ${this.display} ${this.variant}`;
   }
 
 }

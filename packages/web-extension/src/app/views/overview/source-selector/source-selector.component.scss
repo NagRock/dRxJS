@@ -1,0 +1,18 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: var(--foreground-color);
+}
+
+.marker {
+  margin-right: 8px;
+}

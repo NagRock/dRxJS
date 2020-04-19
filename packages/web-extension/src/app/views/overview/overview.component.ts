@@ -3,6 +3,8 @@ import {ModelService} from '../../services/model.service';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, switchMap, tap} from 'rxjs/operators';
 import {Definition, Model} from '../../model/model';
+import {ResourcesService} from '../../services/resources.service';
+import {Marker} from './source-selector/source-selector.component';
 
 interface SourceSearch {
   kind: 'source';
@@ -33,21 +35,24 @@ function filterModel(model: Model, search: string) {
 export class OverviewComponent {
 
   private readonly searchSubject = new BehaviorSubject<string | undefined>(undefined);
-  private content$ = new Observable<chrome.devtools.inspectedWindow.Resource[]>(
-    (observer) => chrome.devtools.inspectedWindow.getResources((resources) => {
-      observer.next(resources);
-      chrome.devtools.inspectedWindow.onResourceAdded.addListener((r) => observer.next([r]));
-    })).pipe(
-    tap(console.log),
-    map((resources) => {
-      return resources.find((resource) => resource.url === 'webpack:///./src/app/examples.ts');
-    }),
-    filter(Boolean),
-    switchMap((resource: chrome.devtools.inspectedWindow.Resource) => new Observable(o => resource.getContent((content) => {
-      o.next(content);
-      o.complete();
-    })))
-  );
+  content$ = this.resourcesService.getContent('webpack:///./src/app/examples.ts');
+  markers$ = this.modelService.model$
+    .pipe(map((model) => {
+      const markers: Marker<Definition[]>[] = [];
+      model.definitions.forEach((definition) => {
+        if (definition.position.file.endsWith('examples.ts')) {
+          const marker = markers.find((m) => m.line === definition.position.line && m.column === definition.position.column);
+          if (marker) {
+            marker.data.push(definition);
+          } else {
+            const newMarker = {name: definition.name, line: definition.position.line, column: definition.position.column, data: [definition]};
+            markers.push(newMarker);
+          }
+
+        }
+      });
+      return markers;
+    }));
 
   readonly context$ = combineLatest([
     this.searchSubject,
@@ -63,8 +68,16 @@ export class OverviewComponent {
   searches = ['examples.ts', 'main.ts', 'asd.ts'];
   selected = 'new';
 
+  res$ = this.resourcesService.resources$;
+  files$ = this.modelService.model$.pipe(map(x => {
+    console.log(x);
+    return x.definitions.map((d => d.position.file));
+  }));
+
   constructor(
     private readonly modelService: ModelService,
+    private readonly resourcesService: ResourcesService,
   ) {
+    // this.modelService.model$.subscribe(model => console.log({model}));
   }
 }
