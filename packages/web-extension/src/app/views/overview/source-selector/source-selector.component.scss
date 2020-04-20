@@ -1,18 +1,33 @@
 :host {
-  display: flex;
-  flex-direction: row;
-  font-size: 12px;
+  display: grid;
+  grid-template-columns: [start] min-content min-content auto [end];
+  grid-template-rows: auto;
 }
 
-.lines {
+.markers {
   display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.marker {
+  margin-right: 8px;
+}
+
+.number {
   text-align: right;
   padding-left: 8px;
   padding-right: 8px;
   color: var(--foreground-color);
 }
 
-.marker {
-  margin-right: 8px;
+.content {
+  white-space: pre;
+  line-height: 16px;
 }
+
+.expandable {
+  grid-column: start / end;
+}
+
+
+

@@ -12,15 +12,16 @@ export interface Marker<T> {
 
 interface Line {
   number: number;
+  content: string;
   markers: Marker<unknown>[];
 }
 
 function getLines(content: string, markers: Marker<unknown>[]): Line[] {
   return content ?
-    new Array(content.match(/\n/g).length + 1).fill(0).map((v, i) => {
+    content.split(/\n/).map((lineContent, i) => {
       const line = i + 1;
       const lineMarkers = markers ? sortBy((marker) => marker.column, markers.filter((m) => m.line === line)) : [];
-      return {number: line, markers: lineMarkers};
+      return {number: line, markers: lineMarkers, content: lineContent};
     })
     : [];
 }
@@ -49,9 +50,8 @@ export class SourceSelectorComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.content) {
-      this.highlightedContent = this.content ? highlightAuto(this.content).value : undefined;
-
+      this.highlightedContent = this.content ? highlightAuto(this.content).value : '';
     }
-    this.lines = getLines(this.content, this.markers);
+    this.lines = getLines(this.highlightedContent, this.markers);
   }
 }
