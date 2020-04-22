@@ -1,4 +1,6 @@
 :host {
+  color: var(--code-color-foreground);
+  background-color: var(--code-color-background);
   display: grid;
   grid-template-columns: [start] min-content min-content auto [end];
   grid-template-rows: auto;

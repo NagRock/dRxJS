@@ -1,26 +1,29 @@
-$arrow-short: 4px;
-$arrow-long: 6px;
+$arrow-short: 0.4em;
+$arrow-long: 0.6em;
 
 :host {
   display: block;
   font-family: monospace;
-  font-size: 12px;
   cursor: default;
+}
+
+:host.expandable {
+  cursor: pointer;
 }
 
 .key {
   &.primary {
-    color: deeppink;
+    color: var(--code-color-built_in);
   }
 
   &:not(.primary) {
-    color: pink;
+    color: var(--code-color-meta);
   }
 
-  &::after {
+  &:not(:empty)::after {
     display: inline;
     content: ': ';
-    color: black;
+    color: var(--code-color-meta);
   }
 
   &::before {
@@ -31,17 +34,17 @@ $arrow-long: 6px;
     margin-right: (2 * $arrow-long);
   }
 
-  &.expandable:not(.expanded)::before {
+  :host.expandable:not(.expanded) > span >  &::before {
     border-top: $arrow-short solid transparent;
     border-bottom: $arrow-short solid transparent;
-    border-left: $arrow-long solid black;
+    border-left: $arrow-long solid var(--code-color-meta);
     margin-right: $arrow-long;
   }
 
-  &.expandable.expanded::before {
+  :host.expandable.expanded > span > &::before {
     border-left: $arrow-short solid transparent;
     border-right: $arrow-short solid transparent;
-    border-top: $arrow-long solid black;
+    border-top: $arrow-long solid var(--code-color-meta);
     margin-right: $arrow-short;
   }
 }

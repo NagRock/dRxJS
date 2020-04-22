@@ -4,7 +4,7 @@ import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, switchMap, tap} from 'rxjs/operators';
 import {Definition, Model} from '../../model/model';
 import {ResourcesService} from '../../services/resources.service';
-import {Marker} from './source-selector/source-selector.component';
+import {SourcecodeMarker} from './source-selector/sourcecode-marker';
 
 interface SourceSearch {
   kind: 'source';
@@ -38,7 +38,7 @@ export class OverviewComponent {
   content$ = this.resourcesService.getContent('webpack:///./src/app/examples.ts');
   markers$ = this.modelService.model$
     .pipe(map((model) => {
-      const markers: Marker<Definition[]>[] = [];
+      const markers: SourcecodeMarker<Definition[]>[] = [];
       model.definitions.forEach((definition) => {
         if (definition.position.file.endsWith('examples.ts')) {
           const marker = markers.find((m) => m.line === definition.position.line && m.column === definition.position.column);

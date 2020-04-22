@@ -1,33 +1,30 @@
 .null,
-.undefined {
-  color: gray;
+.undefined,
+.boolean {
+  color: var(--code-color-literal);
 }
 
-.boolean,
-.number {
-  color: blue;
+
+.number,
+.bigint {
+  color: var(--code-color-number);
+}
+
+.bigint::after {
+  display: inline;
+  content: 'n';
 }
 
 .string {
-  color: red;
+  color: var(--code-color-string);
 }
 
 .string::before,
 .string::after {
   display: inline;
   content: '"';
-  color: black;
 }
 
 .symbol {
-  color: red;
-}
-
-.bigint {
-  color: green;
-}
-
-.bigint::after {
-  display: inline;
-  content: 'n';
+  color: var(--code-color-symbol);
 }

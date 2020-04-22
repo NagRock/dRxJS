@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Property, Reference} from '@doctor-rxjs/events';
-import {inspectedWindowEval} from '../inspected-window-eval';
+import {inspectedWindowEval} from 'web-extension/src/app/utils/inspected-window-eval';
 
 @Injectable({
   providedIn: 'root',

@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SourceSelectorComponent } from './source-selector.component';
+import { SourcecodeComponent } from './sourcecode.component';
 import {ButtonModule} from '../../../../components/button/button.module';
+import { SourcecodeMarkerDetailsDirective } from './sourcecode-marker-details.directive';
 
 @NgModule({
-  declarations: [SourceSelectorComponent],
+  declarations: [SourcecodeComponent, SourcecodeMarkerDetailsDirective],
   exports: [
-    SourceSelectorComponent
+    SourcecodeComponent,
+    SourcecodeMarkerDetailsDirective,
   ],
   imports: [
     CommonModule,

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ContentChild, Directive, Input, TemplateRef} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ContentChild, Directive, Input, TemplateRef, HostBinding} from '@angular/core';
 
 @Directive({
   selector: '[drPropertyExpand]'
@@ -27,8 +27,10 @@ export class PropertyComponent {
   @ContentChild(PropertyExpandDirective, {static: true})
   expand: PropertyExpandDirective;
 
+  @HostBinding('class.expanded')
   expanded = false;
 
+  @HostBinding('class.expandable')
   get expandable() {
     return this.expand !== undefined;
   }

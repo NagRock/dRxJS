@@ -1,0 +1,8 @@
+<ng-container *ngIf="definitions.length > 0">
+  <h1>{{definitions[0].name}}</h1>
+  <p *ngFor="let definition of definitions">
+    <code>{{definition.name}}(
+      <dr-reference-property *ngFor="let arg of definition.args;" [reference]="arg"></dr-reference-property>
+      )</code>
+  </p>
+</ng-container>

@@ -1,15 +1,16 @@
 .name {
-  color: black;
+  color: var(--code-color-foreground);
   font-style: italic;
 
   &::before {
     display: inline;
     content: 'f ';
-    color: blue;
+    color: var(--code-color-addition);
   }
 
   &::after {
     display: inline;
     content: '()';
+    color: var(--code-color-addition);
   }
 }

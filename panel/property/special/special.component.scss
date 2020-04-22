@@ -1,16 +1,16 @@
 .value {
-  color: black;
+  color: var(--code-color-name);
   font-style: italic;
 
   &::before {
     display: inline;
     content: attr(data-prefix);
-    color: darkgreen;
+    color: var(--code-color-addition);
   }
 
   &::after {
     display: inline;
     content: attr(data-suffix);
-    color: darkgreen;
+    color: var(--code-color-addition);
   }
 }

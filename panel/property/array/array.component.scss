@@ -1,12 +1,15 @@
 .length {
   display: inline;
   content: attr(data-prefix);
-  color: blue;
+  color: var(--code-color-meta);
 }
 
 .proto {
+  color: var(--code-color-foreground);
+
   &::after {
     display: inline;
     content: '[\2026]';
+    color: var(--code-color-addition);
   }
 }

@@ -1,0 +1,169 @@
+$code-color-background: #2b2b2b;
+$code-color-foreground: #bababa;
+$code-color-strong: #a8a8a2;
+$code-color-emphasis: #a8a8a2;
+$code-color-bullet: #6896ba;
+$code-color-quote: #6896ba;
+$code-color-link: #6896ba;
+$code-color-number: #6896ba;
+$code-color-regexp: #6896ba;
+$code-color-literal: #6896ba;
+$code-color-code: #a6e22e;
+$code-color-selector-class: #a6e22e;
+$code-color-keyword: #cb7832;
+$code-color-selector-tag: #cb7832;
+$code-color-section: #cb7832;
+$code-color-attribute: #cb7832;
+$code-color-name: #cb7832;
+$code-color-variable: #cb7832;
+$code-color-params: #b9b9b9;
+$code-color-string: #6a8759;
+$code-color-subst: #e0c46c;
+$code-color-type: #e0c46c;
+$code-color-built_in: #e0c46c;
+$code-color-builtin-name: #e0c46c;
+$code-color-symbol: #e0c46c;
+$code-color-selector-id: #e0c46c;
+$code-color-selector-attr: #e0c46c;
+$code-color-selector-pseudo: #e0c46c;
+$code-color-template-tag: #e0c46c;
+$code-color-template-variable: #e0c46c;
+$code-color-addition: #e0c46c;
+$code-color-comment: #7f7f7f;
+$code-color-deletion: #7f7f7f;
+$code-color-meta: #7f7f7f;
+
+:root {
+  --code-color-background: #{$code-color-background};
+  --code-color-foreground: #{$code-color-foreground};
+  --code-color-strong: #{$code-color-strong};
+  --code-color-emphasis: #{$code-color-emphasis};
+  --code-color-bullet: #{$code-color-bullet};
+  --code-color-quote: #{$code-color-quote};
+  --code-color-link: #{$code-color-link};
+  --code-color-number: #{$code-color-number};
+  --code-color-regexp: #{$code-color-regexp};
+  --code-color-literal: #{$code-color-literal};
+  --code-color-code: #{$code-color-code};
+  --code-color-selector-class: #{$code-color-selector-class};
+  --code-color-keyword: #{$code-color-keyword};
+  --code-color-selector-tag: #{$code-color-selector-tag};
+  --code-color-section: #{$code-color-section};
+  --code-color-attribute: #{$code-color-attribute};
+  --code-color-name: #{$code-color-name};
+  --code-color-variable: #{$code-color-variable};
+  --code-color-params: #{$code-color-params};
+  --code-color-string: #{$code-color-string};
+  --code-color-subst: #{$code-color-subst};
+  --code-color-type: #{$code-color-type};
+  --code-color-built_in: #{$code-color-built_in};
+  --code-color-builtin-name: #{$code-color-builtin-name};
+  --code-color-symbol: #{$code-color-symbol};
+  --code-color-selector-id: #{$code-color-selector-id};
+  --code-color-selector-attr: #{$code-color-selector-attr};
+  --code-color-selector-pseudo: #{$code-color-selector-pseudo};
+  --code-color-template-tag: #{$code-color-template-tag};
+  --code-color-template-variable: #{$code-color-template-variable};
+  --code-color-addition: #{$code-color-addition};
+  --code-color-comment: #{$code-color-comment};
+  --code-color-deletion: #{$code-color-deletion};
+  --code-color-meta: #{$code-color-meta};
+}
+
+.hljs-strong {
+  color: var(--code-color-strong);
+}
+.hljs-emphasis {
+  color: var(--code-color-emphasis);
+  font-style: italic;
+}
+.hljs-bullet {
+  color: var(--code-color-bullet);
+}
+.hljs-quote {
+  color: var(--code-color-quote);
+}
+.hljs-link {
+  color: var(--code-color-link);
+}
+.hljs-number {
+  color: var(--code-color-number);
+}
+.hljs-regexp {
+  color: var(--code-color-regexp);
+}
+.hljs-literal {
+  color: var(--code-color-literal);
+}
+.hljs-code {
+  color: var(--code-color-code);
+}
+.hljs-selector-class {
+  color: var(--code-color-selector-class);
+}
+.hljs-keyword {
+  color: var(--code-color-keyword);
+}
+.hljs-selector-tag {
+  color: var(--code-color-selector-tag);
+}
+.hljs-section {
+  color: var(--code-color-section);
+}
+.hljs-attribute {
+  color: var(--code-color-attribute);
+}
+.hljs-name {
+  color: var(--code-color-name);
+}
+.hljs-variable {
+  color: var(--code-color-variable);
+}
+.hljs-params {
+  color: var(--code-color-params);
+}
+.hljs-string {
+  color: var(--code-color-string);
+}
+.hljs-subst {
+  color: var(--code-color-subst);
+}
+.hljs-type {
+  color: var(--code-color-type);
+}
+.hljs-built_in {
+  color: var(--code-color-built_in);
+}
+.hljs-builtin-name {
+  color: var(--code-color-builtin-name);
+}
+.hljs-symbol {
+  color: var(--code-color-symbol);
+}
+.hljs-selector-id {
+  color: var(--code-color-selector-id);
+}
+.hljs-selector-attr {
+  color: var(--code-color-selector-attr);
+}
+.hljs-selector-pseudo {
+  color: var(--code-color-selector-pseudo);
+}
+.hljs-template-tag {
+  color: var(--code-color-template-tag);
+}
+.hljs-template-variable {
+  color: var(--code-color-template-variable);
+}
+.hljs-addition {
+  color: var(--code-color-addition);
+}
+.hljs-comment {
+  color: var(--code-color-comment);
+}
+.hljs-deletion {
+  color: var(--code-color-deletion);
+}
+.hljs-meta {
+  color: var(--code-color-meta);
+}

@@ -1,0 +1,14 @@
+<ng-container *ngFor="let line of lines">
+  <code class="markers">
+    <button dr-button class="marker" size="small" display="inline" [variant]="isMarkerExpanded(marker) ? 'primary' : 'secondary'"
+            *ngFor="let marker of line.markers" (click)="toggleMarker(marker)">{{marker.name}}</button>
+  </code>
+  <code class="number">{{line.number}}</code>
+  <code class="content" [innerHTML]="line.content"></code>
+  <ng-container class="expandable" *ngFor="let marker of line.markers">
+    <div *ngIf="markerDetails && isMarkerExpanded(marker)" class="expandable">
+      <ng-container [ngTemplateOutlet]="markerDetails.templateRef" [ngTemplateOutletContext]="{$implicit: marker}"></ng-container>
+    </div>
+  </ng-container>
+</ng-container>
+

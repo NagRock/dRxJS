@@ -26,7 +26,11 @@
 <!--  url: {{f}}-->
 <!--</p>-->
 
-<app-source-selector [content]="content$ | async" [markers]="markers$ | async"></app-source-selector>
+<dr-sourcecode [content]="content$ | async" [markers]="markers$ | async">
+  <ng-container *drSourcecodeMarkerDetails="let marker">
+    <dr-definition-list [definitions]="marker.data"></dr-definition-list>
+  </ng-container>
+</dr-sourcecode>
 
 <!--<ng-container *ngIf="context$ | async as context">-->
 <!--  <p>-->

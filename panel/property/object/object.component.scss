@@ -1,6 +1,9 @@
 .proto {
+  color: var(--code-color-foreground);
+
   &::after {
     display: inline;
     content: '{\2026}';
+    color: var(--code-color-addition);
   }
 }

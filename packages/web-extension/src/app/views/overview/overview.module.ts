@@ -4,6 +4,7 @@ import { OverviewComponent } from './overview.component';
 import {TabsModule} from '../../../components/tabs/tabs.module';
 import {IconModule} from '../../../components/icon/icon.module';
 import {SourceSelectorModule} from './source-selector/source-selector.module';
+import {DefinitionListModule} from './definition-list/definition-list.module';
 
 @NgModule({
   declarations: [OverviewComponent],
@@ -11,7 +12,8 @@ import {SourceSelectorModule} from './source-selector/source-selector.module';
     CommonModule,
     TabsModule,
     IconModule,
-    SourceSelectorModule
+    SourceSelectorModule,
+    DefinitionListModule
   ]
 })
 export class OverviewModule { }

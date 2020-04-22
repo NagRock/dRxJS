@@ -87,8 +87,8 @@ export class RefsStorage {
 
   private store(value: Object): number {
     const ref = this.nextRef++;
-    // todo: uncomment
-    // this.refs[ref] = value;
+    // todo: implement TTL for refs
+    this.refs[ref] = value;
     return ref;
   }
 
