@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DefinitionListComponent } from './definition-list.component';
-import {PropertyModule, ValueModule} from '../../../../../../../panel/property';
-import {ReferencePropertyModule} from '../../../../../../../panel/reference-property';
+import {PropertyModule, ValueModule} from '../../../../components/property';
+import {ReferencePropertyModule} from '../../../../components/reference-property';
 
 @NgModule({
   declarations: [DefinitionListComponent],

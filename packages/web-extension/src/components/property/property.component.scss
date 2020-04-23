@@ -1,5 +1,6 @@
 $arrow-short: 0.4em;
 $arrow-long: 0.6em;
+$indent: 1.2em;
 
 :host {
   display: block;
@@ -31,24 +32,24 @@ $arrow-long: 0.6em;
     content: '';
     width: 0;
     height: 0;
-    margin-right: (2 * $arrow-long);
+    margin-right: $indent;
   }
 
   :host.expandable:not(.expanded) > span >  &::before {
     border-top: $arrow-short solid transparent;
     border-bottom: $arrow-short solid transparent;
     border-left: $arrow-long solid var(--code-color-meta);
-    margin-right: $arrow-long;
+    margin-right: $arrow-short;
   }
 
   :host.expandable.expanded > span > &::before {
     border-left: $arrow-short solid transparent;
     border-right: $arrow-short solid transparent;
     border-top: $arrow-long solid var(--code-color-meta);
-    margin-right: $arrow-short;
+    margin-right: $arrow-long;
   }
 }
 
 .expand {
-  margin-left: 8px;
+  margin-left: 1.2em;
 }
