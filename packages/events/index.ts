@@ -33,10 +33,16 @@ export interface LazyReference {
   property: string;
 }
 
+export interface DefinitionReference {
+  kind: 'definition';
+  id: number;
+}
+
 export type Reference
   = ValueReference
   | ObjectReference
-  | LazyReference;
+  | LazyReference
+  | DefinitionReference;
 
 export interface Property<R extends Reference = Reference> {
   readonly name: string;

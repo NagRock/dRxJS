@@ -39,14 +39,14 @@ $indent: 1.2em;
     border-top: $arrow-short solid transparent;
     border-bottom: $arrow-short solid transparent;
     border-left: $arrow-long solid var(--code-color-meta);
-    margin-right: $arrow-short;
+    margin-right: $arrow-long;
   }
 
   :host.expandable.expanded > span > &::before {
     border-left: $arrow-short solid transparent;
     border-right: $arrow-short solid transparent;
     border-top: $arrow-long solid var(--code-color-meta);
-    margin-right: $arrow-long;
+    margin-right: $arrow-short;
   }
 }
 

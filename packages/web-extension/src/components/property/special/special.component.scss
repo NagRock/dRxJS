@@ -6,11 +6,13 @@
     display: inline;
     content: attr(data-prefix);
     color: var(--code-color-addition);
+    margin-right: 0.4em;
   }
 
   &::after {
     display: inline;
     content: attr(data-suffix);
     color: var(--code-color-addition);
+    margin-left: 0.4em;
   }
 }

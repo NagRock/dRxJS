@@ -29,6 +29,11 @@ export class RefsStorage {
             kind: 'value',
             value: null,
           };
+        } else if (value.__doctor__definition_id !== undefined) {
+          return {
+            kind: 'definition',
+            id: value.__doctor__definition_id,
+          };
         } else {
           return {
             kind: 'object',
