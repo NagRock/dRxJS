@@ -4,10 +4,10 @@ import {SourcecodeMarker} from './sourcecode-marker';
 @Directive({
   selector: '[drSourcecodeMarkerDetails]'
 })
-export class SourcecodeMarkerDetailsDirective<T> {
+export class SourcecodeMarkerDetailsDirective {
 
   constructor(
-    readonly templateRef: TemplateRef<SourcecodeMarker<T>>
+    readonly templateRef: TemplateRef<SourcecodeMarker>
   ) { }
 
 }

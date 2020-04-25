@@ -1,15 +1,23 @@
 import {ObjectReference, Reference} from '@doctor-rxjs/events';
 import {Set} from 'immutable';
 
-export interface Index<T> {
-  [index: number]: T;
-}
-
-export interface SourcePosition {
+export interface SourceFilePosition {
   file: string;
   line: number;
   column: number;
   functionName: string;
+}
+
+export interface SourceFileMarker {
+  name: string;
+  line: number;
+  column: number;
+  declarations: Declaration[];
+}
+
+export interface SourceFile {
+  url: string;
+  markers: SourceFileMarker[];
 }
 
 export interface Task {
@@ -20,59 +28,67 @@ export interface Task {
   events: Event[];
 }
 
-export interface CreatorDefinition {
-  kind: 'creator-definition';
+export interface ConstructorDeclaration {
+  kind: 'constructor-declaration';
   name: string;
   id: number;
-  function: ObjectReference;
+  ctor: ObjectReference;
   args: Reference[];
-  position: SourcePosition;
+  position: SourceFilePosition;
+  observable: ObservableFromConstructor;
+}
+
+export interface ObservableFromConstructor {
+  kind: 'observable-from-constructor';
+  id: number;
+  constructor: ConstructorDeclaration;
   instances: Instance[];
 }
 
-export interface OperatorDefinition {
-  kind: 'operator-definition';
+export interface OperatorDeclaration {
+  kind: 'operator-declaration';
   name: string;
   id: number;
-  function: ObjectReference;
+  func: ObjectReference;
   args: Reference[];
-  position: SourcePosition;
+  position: SourceFilePosition;
+  observables: ObservableFromOperator[];
+}
+
+export interface ObservableFromOperator {
+  kind: 'observable-from-constructor';
+  id: number;
+  source: Observable;
+  operator: OperatorDeclaration;
   instances: Instance[];
 }
 
-export interface SubscribeDefinition {
-  kind: 'subscribe-definition';
+export interface SubscribeDeclaration {
+  kind: 'subscribe-declaration';
   name: string;
   id: number;
   args: Reference[];
-  position: SourcePosition;
-  instances: Instance[];
+  position: SourceFilePosition;
+  observable: ObservableFromSubscribe;
 }
 
-export interface SubjectDefinition {
-  kind: 'subject-definition';
-  name: string;
+export interface ObservableFromSubscribe {
+  kind: 'observable-from-subscribe';
   id: number;
-  constructor: ObjectReference;
-  args: Reference[];
-  position: SourcePosition;
+  source: Observable;
+  subscribe: SubscribeDeclaration;
   instances: Instance[];
 }
 
-export interface UnknownDefinition {
-  kind: 'unknown-definition';
-  name: string;
-  id: number;
-  position: SourcePosition;
-  instances: Instance[];
-}
+export type Declaration
+  = ConstructorDeclaration
+  | OperatorDeclaration
+  | SubscribeDeclaration;
 
-export type Definition
-  = CreatorDefinition
-  | OperatorDefinition
-  | SubscribeDefinition
-  | SubjectDefinition
-  | UnknownDefinition;
+export type Observable
+  = ObservableFromConstructor
+  | ObservableFromOperator
+  | ObservableFromSubscribe;
 
 export interface InstanceSnapshot {
   readonly vtimestamp: number;
@@ -85,7 +101,7 @@ export interface InstanceSnapshot {
 export interface Instance {
   kind: 'instance';
   id: number;
-  definition: Definition;
+  observable: Observable;
   events: Event[];
   snapshots: InstanceSnapshot[];
 }
@@ -223,9 +239,13 @@ export type Event
   | Call;
 
 export interface Model {
-  definitions: Array<Definition>;
-  instances: Array<Instance>;
-  events: Array<Event>;
-  tasks: Array<Task>;
+  files: {
+    [url: string]: SourceFile;
+  };
+  declarations: Declaration[];
+  observables: Observable[];
+  instances: Instance[];
+  events: Event[];
+  tasks: Task[];
   currentTask: Task | undefined;
 }

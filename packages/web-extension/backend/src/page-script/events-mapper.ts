@@ -24,14 +24,12 @@ export class EventsMapper {
   }
 
   async map(event: DispatchedEvents.TrackEvent): Promise<Events.MessageEvent> {
-    if (DispatchedEvents.isDefinitionEvent(event)) {
+    if (DispatchedEvents.isDeclarationEvent(event)) {
       const {file: fileName, line: lineNumber, column: columnNumber} = event.position;
       const cacheKey = `${fileName}:${lineNumber}:${columnNumber}`;
 
       let position: Events.SourcePosition;
-      if (fileName === 'unknown') {
-        position = unknownPosition;
-      } else if (this.cache.has(cacheKey)) {
+      if (this.cache.has(cacheKey)) {
         position = this.cache.get(cacheKey);
       } else {
         try {
@@ -45,41 +43,27 @@ export class EventsMapper {
         this.cache.set(cacheKey, position);
       }
       switch (event.kind) {
-        case 'creator-definition':
+        case 'constructor-declaration':
           return {
-            kind: 'creator-definition',
+            kind: 'constructor-declaration',
             id: event.id,
-            function: this.refsStorage.create(event.function),
+            ctor: this.refsStorage.create(event.ctor),
             args: event.args.map((arg) => this.refsStorage.create(arg)),
             position,
           };
-        case 'operator-definition':
+        case 'operator-declaration':
           return {
-            kind: 'operator-definition',
+            kind: 'operator-declaration',
             id: event.id,
-            function: this.refsStorage.create(event.function),
+            func: this.refsStorage.create(event.func),
             args: event.args.map((arg) => this.refsStorage.create(arg)),
             position,
           };
-        case 'subject-definition':
+        case 'subscribe-declaration':
           return {
-            kind: 'subject-definition',
-            id: event.id,
-            constructor: this.refsStorage.create(event.constructor),
-            args: event.args.map((arg) => this.refsStorage.create(arg)),
-            position,
-          };
-        case 'subscribe-definition':
-          return {
-            kind: 'subscribe-definition',
+            kind: 'subscribe-declaration',
             id: event.id,
             args: event.args.map((arg) => this.refsStorage.create(arg)),
-            position,
-          };
-        case 'unknown-definition':
-          return {
-            kind: 'unknown-definition',
-            id: event.id,
             position,
           };
       }

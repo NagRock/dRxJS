@@ -1,7 +1,6 @@
-export interface SourcecodeMarker<T> {
+export interface SourcecodeMarker {
   name: string;
   line: number;
   column: number;
-  data: T;
 }
 

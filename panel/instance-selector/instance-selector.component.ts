@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Instance, SourcePosition} from '../state';
+import {Instance, SourceFilePosition} from '../state';
 import {BehaviorSubject, combineLatest} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -60,7 +60,7 @@ export class InstanceSelectorComponent {
     this.hideEmptyReceiversSubject.next(state);
   }
 
-  getFormattedPosition(position: SourcePosition) {
+  getFormattedPosition(position: SourceFilePosition) {
     const items : Array<string | number> = [position.file];
 
     if (position.line > 0) {

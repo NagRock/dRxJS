@@ -1,0 +1,8 @@
+<ng-container *ngIf="declarations.length > 0">
+  <h1>{{declarations[0].name}}</h1>
+  <p *ngFor="let declaration of declarations">
+    <code>{{declaration.name}}(
+      <dr-reference-property *ngFor="let arg of declaration.args;" [reference]="arg"></dr-reference-property>
+      )</code>
+  </p>
+</ng-container>

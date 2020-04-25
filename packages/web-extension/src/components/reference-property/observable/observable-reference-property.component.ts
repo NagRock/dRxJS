@@ -1,17 +1,17 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {DefinitionReference} from '@doctor-rxjs/events';
+import {ObservableReference} from '@doctor-rxjs/events';
 import {ModelService} from '../../../app/services/model.service';
 import {Observable} from 'rxjs';
-import {Definition} from '../../../app/model/model';
+import {Observable as ObservableModel} from '../../../app/model/model';
 import {map} from 'rxjs/operators';
 
 @Component({
-  selector: 'dr-definition-reference-property',
-  templateUrl: './definition-reference-property.component.html',
-  styleUrls: ['./definition-reference-property.component.scss'],
+  selector: 'dr-observable-reference-property',
+  templateUrl: './observable-reference-property.component.html',
+  styleUrls: ['./observable-reference-property.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DefinitionReferencePropertyComponent implements OnChanges {
+export class ObservableReferencePropertyComponent implements OnChanges {
 
   @Input()
   name: string;
@@ -20,18 +20,17 @@ export class DefinitionReferencePropertyComponent implements OnChanges {
   enumerable: boolean;
 
   @Input()
-  reference: DefinitionReference;
+  reference: ObservableReference;
 
-  definition$: Observable<Definition>;
+  observable$: Observable<ObservableModel>;
 
   constructor(private readonly modelService: ModelService) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.reference) {
-      this.definition$ = this.modelService.model$.pipe(map((model) => {
-        console.log({model, id: this.reference.id});
-        return model.definitions[this.reference.id];
+      this.observable$ = this.modelService.model$.pipe(map((model) => {
+        return model.observables[this.reference.id];
       }));
     }
   }

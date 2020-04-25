@@ -6,7 +6,7 @@ export class RefsStorage {
   private nextRef = 0;
 
   create(value: Value): ValueReference;
-  create(object: Object): ObjectReference;
+  create(object: object): ObjectReference;
   create(value: any): Reference {
     switch (typeof value) {
       case 'undefined':
@@ -29,10 +29,10 @@ export class RefsStorage {
             kind: 'value',
             value: null,
           };
-        } else if (value.__doctor__definition_id !== undefined) {
+        } else if (value.__doctor__observable_id !== undefined) {
           return {
-            kind: 'definition',
-            id: value.__doctor__definition_id,
+            kind: 'observable',
+            id: value.__doctor__observable_id,
           };
         } else {
           return {
@@ -90,14 +90,14 @@ export class RefsStorage {
     return this.create(this.load(ref)[property]);
   }
 
-  private store(value: Object): number {
+  private store(value: object): number {
     const ref = this.nextRef++;
     // todo: implement TTL for refs
     this.refs[ref] = value;
     return ref;
   }
 
-  private load(ref: number): Object {
+  private load(ref: number): object {
     return this.refs[ref];
   }
 }

@@ -1,7 +1,7 @@
 import {Component, HostListener} from '@angular/core';
 import {asapScheduler, BehaviorSubject, combineLatest} from 'rxjs';
 import {debounceTime, map} from 'rxjs/operators';
-import {getEvents, SourcePosition} from './state';
+import {getEvents, SourceFilePosition} from './state';
 import {StateService} from './state/state.service';
 import {MessageEvent} from '@doctor-rxjs/events';
 
@@ -45,7 +45,7 @@ export class PanelComponent {
     this.selectedInstanceIdSubject.next(instanceId);
   }
 
-  getFormattedPosition(position: SourcePosition) {
+  getFormattedPosition(position: SourceFilePosition) {
     const items: Array<string | number> = [position.file];
 
     if (position.line > 0) {

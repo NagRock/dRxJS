@@ -33,8 +33,13 @@ export interface LazyReference {
   property: string;
 }
 
-export interface DefinitionReference {
-  kind: 'definition';
+export interface ObservableReference {
+  kind: 'observable';
+  id: number;
+}
+
+export interface DeclarationReference {
+  kind: 'declaration';
   id: number;
 }
 
@@ -42,7 +47,8 @@ export type Reference
   = ValueReference
   | ObjectReference
   | LazyReference
-  | DefinitionReference;
+  | ObservableReference
+  | DeclarationReference;
 
 export interface Property<R extends Reference = Reference> {
   readonly name: string;
@@ -57,54 +63,63 @@ export interface TaskEvent {
   source: string;
 }
 
-export interface CreatorDefinitionEvent {
-  kind: 'creator-definition';
+export interface ConstructorDeclarationEvent {
+  kind: 'constructor-declaration';
   id: number;
-  function: ObjectReference;
+  ctor: ObjectReference;
   args: Reference[];
   position: SourcePosition;
 }
 
-export interface OperatorDefinitionEvent {
-  kind: 'operator-definition';
+export interface ObservableFromConstructorEvent {
+  kind: 'observable-from-constructor';
   id: number;
-  function: ObjectReference;
+  constructor: number;
+}
+
+export interface OperatorDeclarationEvent {
+  kind: 'operator-declaration';
+  id: number;
+  func: ObjectReference;
   args: Reference[];
   position: SourcePosition;
 }
 
-export interface SubscribeDefinitionEvent {
-  kind: 'subscribe-definition';
+export interface ObservableFromOperatorEvent {
+  kind: 'observable-from-operator';
   id: number;
-  args: Reference[],
-  position: SourcePosition;
+  source: number;
+  operator: number;
 }
 
-export interface SubjectDefinitionEvent {
-  kind: 'subject-definition';
+export interface SubscribeDeclarationEvent {
+  kind: 'subscribe-declaration';
   id: number;
-  constructor: ObjectReference;
   args: Reference[];
   position: SourcePosition;
 }
 
-export interface UnknownDefinitionEvent {
-  kind: 'unknown-definition';
+export interface ObservableFromSubscribeEvent {
+  kind: 'observable-from-subscribe';
   id: number;
-  position: SourcePosition;
+  source: number;
+  subscribe: number;
 }
 
-export type DefinitionEvent
-  = CreatorDefinitionEvent
-  | OperatorDefinitionEvent
-  | SubscribeDefinitionEvent
-  | SubjectDefinitionEvent
-  | UnknownDefinitionEvent;
+export type DeclarationEvent
+    = ConstructorDeclarationEvent
+    | OperatorDeclarationEvent
+    | SubscribeDeclarationEvent;
+
+export type ObservableEvent
+    = ObservableFromConstructorEvent
+    | ObservableFromOperatorEvent
+    | ObservableFromSubscribeEvent;
 
 export interface InstanceEvent {
   kind: 'instance';
   id: number;
-  definition: number;
+  observable: number;
 }
 
 export interface SubscribeEvent {
@@ -212,7 +227,8 @@ export type SubjectEvent
 
 export type MessageEvent
   = TaskEvent
-  | DefinitionEvent
+  | DeclarationEvent
+  | ObservableEvent
   | InstanceEvent
   | SubscribeEvent
   | UnsubscribeEvent

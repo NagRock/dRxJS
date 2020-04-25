@@ -1,4 +1,7 @@
 {
   "extends": "../tslint.json",
-  "rules": {}
+  "rules": {
+    "variable-name": false,
+    "class-name": false
+  }
 }

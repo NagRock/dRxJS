@@ -1,20 +1,23 @@
-import {getNextDefinitionId, getNextInstanceId, getNextEventId, getNextTaskId} from './ids';
+import {getNextDeclarationId, getNextInstanceId, getNextEventId, getNextTaskId, getNextObservableId} from './ids';
 import {
   CompleteNotificationEvent,
   ConnectEvent,
-  CreatorDefinitionEvent, TrackEvent,
+  TrackEvent,
   ErrorNotificationEvent,
   InstanceEvent,
   NextNotificationEvent,
-  OperatorDefinitionEvent,
   SourcePosition,
   SubjectCompleteEvent,
-  SubjectDefinitionEvent,
   SubjectErrorEvent,
   SubjectNextEvent,
-  SubscribeDefinitionEvent,
-  SubscribeEvent, TaskEvent, UnknownDefinitionEvent,
-  UnsubscribeEvent
+  SubscribeEvent,
+  TaskEvent,
+  UnsubscribeEvent,
+  ConstructorDeclarationEvent,
+  OperatorDeclarationEvent,
+  ObservableFromConstructorEvent,
+  ObservableFromOperatorEvent,
+  SubscribeDeclarationEvent, ObservableFromSubscribeEvent
 } from './track-events';
 import * as StackTrace from 'stacktrace-js';
 import {SimpleSubject} from './simple-observables';
@@ -66,13 +69,13 @@ export function trackTask(task): number {
   return id;
 }
 
-export function trackCreatorDefinition(func: (...args: any[]) => any, args: any[]): number {
-  const id = getNextDefinitionId();
+export function trackConstructorDeclaration(ctor: any, args: any[]): number {
+  const id = getNextDeclarationId();
 
-  const event: CreatorDefinitionEvent = {
-    kind: 'creator-definition',
+  const event: ConstructorDeclarationEvent = {
+    kind: 'constructor-declaration',
     id,
-    function: func,
+    ctor,
     args,
     position: getSourcePosition(2),
   };
@@ -82,13 +85,27 @@ export function trackCreatorDefinition(func: (...args: any[]) => any, args: any[
   return id;
 }
 
-export function trackOperatorDefinition(func: (...args: any[]) => any, args: any[]): number {
-  const id = getNextDefinitionId();
+export function trackObservableFromConstructor(constructor: number): number {
+  const id = getNextObservableId();
 
-  const event: OperatorDefinitionEvent = {
-    kind: 'operator-definition',
+  const event: ObservableFromConstructorEvent = {
+    kind: 'observable-from-constructor',
     id,
-    function: func,
+    constructor,
+  };
+
+  trackEvents.next(event);
+
+  return id;
+}
+
+export function trackOperatorDeclaration(func: (...args: any[]) => any, args: any[]): number {
+  const id = getNextDeclarationId();
+
+  const event: OperatorDeclarationEvent = {
+    kind: 'operator-declaration',
+    id,
+    func,
     args,
     position: getSourcePosition(2),
   };
@@ -98,11 +115,26 @@ export function trackOperatorDefinition(func: (...args: any[]) => any, args: any
   return id;
 }
 
-export function trackSubscribeDefinition(args: any[]) {
-  const id = getNextDefinitionId();
+export function trackObservableFromOperator(operator: number, source: number): number {
+  const id = getNextObservableId();
 
-  const event: SubscribeDefinitionEvent = {
-    kind: 'subscribe-definition',
+  const event: ObservableFromOperatorEvent = {
+    kind: 'observable-from-operator',
+    id,
+    operator,
+    source,
+  };
+
+  trackEvents.next(event);
+
+  return id;
+}
+
+export function trackSubscribeDeclaration(args: any[]) {
+  const id = getNextDeclarationId();
+
+  const event: SubscribeDeclarationEvent = {
+    kind: 'subscribe-declaration',
     id,
     args,
     position: getSourcePosition(3),
@@ -113,15 +145,14 @@ export function trackSubscribeDefinition(args: any[]) {
   return id;
 }
 
-export function trackSubjectDefinition(constructor: any, args: any[]) {
-  const id = getNextDefinitionId();
+export function trackObservableFromSubscribe(subscribe: number, source: number) {
+  const id = getNextObservableId();
 
-  const event: SubjectDefinitionEvent = {
-    kind: 'subject-definition',
-    constructor,
-    args,
+  const event: ObservableFromSubscribeEvent = {
+    kind: 'observable-from-subscribe',
     id,
-    position: getSourcePosition(2),
+    subscribe,
+    source,
   };
 
   trackEvents.next(event);
@@ -129,26 +160,12 @@ export function trackSubjectDefinition(constructor: any, args: any[]) {
   return id;
 }
 
-export function trackUnknownDefinition() {
-  const id = getNextDefinitionId();
-
-  const event: UnknownDefinitionEvent = {
-    kind: 'unknown-definition',
-    id,
-    position: unknownSourcePosition,
-  };
-
-  trackEvents.next(event);
-
-  return id;
-}
-
-export function trackInstance(definition: number): number {
+export function trackInstance(observable: number): number {
   const id = getNextInstanceId();
 
   const event: InstanceEvent = {
     kind: 'instance',
-    definition,
+    observable,
     id,
   };
 

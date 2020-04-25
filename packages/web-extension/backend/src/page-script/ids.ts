@@ -1,10 +1,15 @@
-let nextDefinitionId = 0;
+let nextDeclarationId = 0;
+let nextObservableId = 0;
 let nextInstanceId = 0;
 let nextEventId = 0;
 let nextTaskId = 0;
 
-export function getNextDefinitionId() {
-  return nextDefinitionId++;
+export function getNextDeclarationId() {
+  return nextDeclarationId++;
+}
+
+export function getNextObservableId() {
+  return nextObservableId++;
 }
 
 export function getNextInstanceId() {

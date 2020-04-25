@@ -1,7 +1,3 @@
-export type Observable = any;
-
-export type OperatorFunction = (source: Observable) => Observable;
-
 export interface SourcePosition {
   file: string;
   line: number;
@@ -15,54 +11,63 @@ export interface TaskEvent {
   source: string;
 }
 
-export interface CreatorDefinitionEvent {
-  kind: 'creator-definition';
+export interface ConstructorDeclarationEvent {
+  kind: 'constructor-declaration';
   id: number;
-  function: (...args: any[]) => Observable;
+  ctor: (...args: any[]) => any;
   args: any[];
   position: SourcePosition;
 }
 
-export interface OperatorDefinitionEvent {
-  kind: 'operator-definition';
+export interface ObservableFromConstructorEvent {
+  kind: 'observable-from-constructor';
   id: number;
-  function: (...args: any[]) => OperatorFunction;
+  constructor: number;
+}
+
+export interface OperatorDeclarationEvent {
+  kind: 'operator-declaration';
+  id: number;
+  func: (...args: any[]) => any;
   args: any[];
   position: SourcePosition;
 }
 
-export interface SubscribeDefinitionEvent {
-  kind: 'subscribe-definition';
+export interface ObservableFromOperatorEvent {
+  kind: 'observable-from-operator';
   id: number;
-  args: any[],
-  position: SourcePosition;
+  source: number;
+  operator: number;
 }
 
-export interface SubjectDefinitionEvent {
-  kind: 'subject-definition';
+export interface SubscribeDeclarationEvent {
+  kind: 'subscribe-declaration';
   id: number;
-  constructor: new (...args: any) => void;
   args: any[];
   position: SourcePosition;
 }
 
-export interface UnknownDefinitionEvent {
-  kind: 'unknown-definition';
+export interface ObservableFromSubscribeEvent {
+  kind: 'observable-from-subscribe';
   id: number;
-  position: SourcePosition;
+  source: number;
+  subscribe: number;
 }
 
-export type DefinitionEvent
-  = CreatorDefinitionEvent
-  | OperatorDefinitionEvent
-  | SubscribeDefinitionEvent
-  | SubjectDefinitionEvent
-  | UnknownDefinitionEvent;
+export type DeclarationEvent
+  = ConstructorDeclarationEvent
+  | OperatorDeclarationEvent
+  | SubscribeDeclarationEvent;
+
+export type ObservableEvent
+  = ObservableFromConstructorEvent
+  | ObservableFromOperatorEvent
+  | ObservableFromSubscribeEvent;
 
 export interface InstanceEvent {
   kind: 'instance';
   id: number;
-  definition: number;
+  observable: number;
 }
 
 export interface SubscribeEvent {
@@ -170,7 +175,8 @@ export type SubjectEvent
 
 export type TrackEvent
   = TaskEvent
-  | DefinitionEvent
+  | DeclarationEvent
+  | ObservableEvent
   | InstanceEvent
   | SubscribeEvent
   | UnsubscribeEvent
@@ -178,13 +184,11 @@ export type TrackEvent
   | SubjectEvent
   | ConnectEvent;
 
-export function isDefinitionEvent(x: TrackEvent): x is DefinitionEvent {
+export function isDeclarationEvent(x: TrackEvent): x is DeclarationEvent {
   switch (x.kind) {
-    case 'creator-definition':
-    case 'operator-definition':
-    case 'subject-definition':
-    case 'subscribe-definition':
-    case 'unknown-definition':
+    case 'constructor-declaration':
+    case 'operator-declaration':
+    case 'subscribe-declaration':
       return true;
     default:
       return false;

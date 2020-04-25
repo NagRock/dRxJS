@@ -4,18 +4,18 @@ import * as _rxjsOperators from 'rxjs/operators';
 import {
   trackCompleteNotification,
   trackConnect,
-  trackCreatorDefinition,
+  trackConstructorDeclaration,
   trackErrorNotification,
   trackInstance,
   trackNextNotification,
-  trackOperatorDefinition,
+  trackObservableFromConstructor,
+  trackObservableFromOperator, trackObservableFromSubscribe,
+  trackOperatorDeclaration,
   trackSubjectComplete,
-  trackSubjectDefinition,
   trackSubjectError,
   trackSubjectNext,
   trackSubscribe,
-  trackSubscribeDefinition,
-  trackUnknownDefinition,
+  trackSubscribeDeclaration,
   trackUnsubscribe
 } from './track';
 
@@ -33,9 +33,10 @@ interface InstrumentationContext {
   originalRxjsOperators: RxJSOperators;
 }
 
-function trackSubscribeInstance(args: any[]) {
-  const definitionId = trackSubscribeDefinition(args);
-  return trackInstance(definitionId);
+function trackSubscribeInstance(args: any[], source: number) {
+  const declarationId = trackSubscribeDeclaration(args);
+  const observableId = trackObservableFromSubscribe(declarationId, source);
+  return trackInstance(observableId);
 }
 
 function fork(instanceId: number, eventId: number) {
@@ -49,11 +50,11 @@ function fork(instanceId: number, eventId: number) {
 }
 
 function isSourcePrototype(observable: any) {
-  return observable.source && observable.source.__doctor__definition_id === observable.__doctor__definition_id;
+  return observable.source && observable.source.__doctor__observable_id === observable.__doctor__observable_id;
 }
 
 function isInternal(observable: any) {
-  return observable.__doctor__definition_id === undefined || isSourcePrototype(observable);
+  return observable.__doctor__observable_id === undefined || isSourcePrototype(observable);
 }
 
 function instrumentSubscribe<T extends Observable<unknown>>({originalRxjs}: InstrumentationContext, observable: T) {
@@ -76,11 +77,11 @@ function instrumentSubscribe<T extends Observable<unknown>>({originalRxjs}: Inst
         }
         const instanceId =
           this.__doctor__instance_id // Subject or multicast
-          || trackInstance(this.__doctor__definition_id); // unicast
+          || trackInstance(this.__doctor__observable_id); // unicast
         const destinationInstanceId =
           (observerOrNext && (observerOrNext as any).__doctor__instance_id) // Subject
           || getZoneProperty('__doctor__instance_id') // subscriber that called this subscribe
-          || trackSubscribeInstance([observerOrNext, error, complete]); // direct subscribe call
+          || trackSubscribeInstance([observerOrNext, error, complete], this.__doctor__observable_id); // direct subscribe call
 
         const subscriber = instrumentSubscriber(
           toSubscriber(originalRxjs, observerOrNext, error, complete),
@@ -110,13 +111,13 @@ function instrumentSubjects(context: InstrumentationContext) {
 
   subjects.forEach((subject: any) => {
     class __doctor__subject extends subject {
-      __doctor__definition_id: number;
+      __doctor__observable_id: number;
       __doctor__instance_id: number;
 
       constructor(...args) {
         super(...args);
-        this.__doctor__definition_id = trackSubjectDefinition(subject, args);
-        this.__doctor__instance_id = trackInstance(this.__doctor__definition_id);
+        this.__doctor__observable_id = trackObservableFromConstructor(trackConstructorDeclaration(subject, args));
+        this.__doctor__instance_id = trackInstance(this.__doctor__observable_id);
         instrumentSubscribe(context, this as any);
       }
 
@@ -279,9 +280,8 @@ function instrumentCreators(context: InstrumentationContext) {
 
   creators.forEach((func: any) => {
     const instrumentedCreator = (...args) => {
-      const definitionId = trackCreatorDefinition(func, args);
       const resultStream = deoptimize(func(...args), originalRxjs);
-      (resultStream as any).__doctor__definition_id = definitionId;
+      (resultStream as any).__doctor__observable_id = trackObservableFromConstructor(trackConstructorDeclaration(func, args));
       instrumentSubscribe(context, resultStream);
       return resultStream;
     };
@@ -427,12 +427,13 @@ function instrumentOperators(context: InstrumentationContext) {
 
   operators.forEach(([func, {multicast = false} = {}]: any) => {
     const instrumentedOperator = (...args) => {
-      const definitionId = trackOperatorDefinition(func, args);
+      const declarationId = trackOperatorDeclaration(func, args);
       return (stream: Observable<unknown>) => {
         const resultStream = deoptimize(func(...args)(stream), originalRxjs);
-        (resultStream as any).__doctor__definition_id = definitionId;
+        const observableId = trackObservableFromOperator(declarationId, (stream as any).__doctor__observable_id);
+        (resultStream as any).__doctor__observable_id = observableId;
         if (multicast) {
-          (resultStream as any).__doctor__instance_id = trackInstance(definitionId);
+          (resultStream as any).__doctor__instance_id = trackInstance(observableId);
         }
 
         instrumentSubscribe(context, resultStream);
@@ -456,21 +457,24 @@ function instrumentObservables(context: InstrumentationContext) {
   const {Observable, ConnectableObservable} = originalRxjs;
 
   class __doctor__observable extends Observable<unknown> {
-    __doctor__definition_id = trackUnknownDefinition();
+    __doctor__observable_id: number;
 
     constructor(...args) {
       super(...args);
+      this.__doctor__observable_id = trackObservableFromConstructor(trackConstructorDeclaration(originalRxjs.Observable, args));
       instrumentSubscribe(context, this);
     }
   }
 
   class __doctor__connectable_observable extends ConnectableObservable<unknown> {
-    __doctor__definition_id = trackUnknownDefinition();
-    __doctor__instance_id = trackInstance(this.__doctor__definition_id);
+    __doctor__observable_id: number;
+    __doctor__instance_id: number;
 
     constructor(...args) {
       // @ts-ignore
       super(...args);
+      this.__doctor__observable_id = trackObservableFromConstructor(trackConstructorDeclaration(originalRxjs.ConnectableObservable, args));
+      this.__doctor__instance_id = trackInstance(this.__doctor__observable_id);
       instrumentSubscribe(context, this);
       instrumentConnect(context, this);
     }

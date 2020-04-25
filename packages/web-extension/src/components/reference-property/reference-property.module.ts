@@ -9,7 +9,7 @@ import {ObjectModule} from '../property/object';
 import {ArrayModule} from '../property/array';
 import {FunctionModule} from '../property/function';
 import {ValueModule} from '../property/value';
-import { DefinitionReferencePropertyComponent } from './definition';
+import { ObservableReferencePropertyComponent } from './observable';
 import {SpecialModule} from '../property/special';
 
 @NgModule({
@@ -18,7 +18,7 @@ import {SpecialModule} from '../property/special';
     ValueReferencePropertyComponent,
     ObjectReferencePropertyComponent,
     LazyReferencePropertyComponent,
-    DefinitionReferencePropertyComponent,
+    ObservableReferencePropertyComponent,
   ],
   exports: [
     ReferencePropertyComponent,

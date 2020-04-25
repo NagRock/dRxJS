@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DefinitionListComponent } from './definition-list.component';
+import { DeclarationListComponent } from './declaration-list.component';
 import {PropertyModule, ValueModule} from '../../../../components/property';
 import {ReferencePropertyModule} from '../../../../components/reference-property';
 
 @NgModule({
-  declarations: [DefinitionListComponent],
+  declarations: [DeclarationListComponent],
   exports: [
-    DefinitionListComponent
+    DeclarationListComponent
   ],
   imports: [
     CommonModule,

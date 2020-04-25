@@ -8,10 +8,10 @@ import {SourcecodeMarkerDetailsDirective} from './sourcecode-marker-details.dire
 interface Line {
   number: number;
   content: string;
-  markers: SourcecodeMarker<unknown>[];
+  markers: SourcecodeMarker[];
 }
 
-function getLines(content: string, markers: SourcecodeMarker<unknown>[]): Line[] {
+function getLines(content: string, markers: SourcecodeMarker[]): Line[] {
   return content ?
     content.split(/\n/).map((lineContent, i) => {
       const line = i + 1;
@@ -26,16 +26,16 @@ function getLines(content: string, markers: SourcecodeMarker<unknown>[]): Line[]
   templateUrl: './sourcecode.component.html',
   styleUrls: ['./sourcecode.component.scss']
 })
-export class SourcecodeComponent<T> implements OnInit, OnChanges {
+export class SourcecodeComponent implements OnInit, OnChanges {
 
   @Input()
   content: string | undefined;
 
   @Input()
-  markers: SourcecodeMarker<T>[] = [];
+  markers: SourcecodeMarker[] = [];
 
   @ContentChild(SourcecodeMarkerDetailsDirective, {static: false})
-  markerDetails: SourcecodeMarkerDetailsDirective<T>;
+  markerDetails: SourcecodeMarkerDetailsDirective;
 
   highlightedContent: string | undefined;
   lines: Line[] = [];
@@ -55,7 +55,7 @@ export class SourcecodeComponent<T> implements OnInit, OnChanges {
     this.lines = getLines(this.highlightedContent, this.markers);
   }
 
-  toggleMarker(marker: SourcecodeMarker<T>) {
+  toggleMarker(marker: SourcecodeMarker) {
     const key = this.getMarkerKey(marker);
     if (this.expandedMarkers.has(key)) {
       this.expandedMarkers.delete(key);
@@ -64,11 +64,11 @@ export class SourcecodeComponent<T> implements OnInit, OnChanges {
     }
   }
 
-  isMarkerExpanded(marker: SourcecodeMarker<T>) {
+  isMarkerExpanded(marker: SourcecodeMarker) {
     return this.expandedMarkers.has(this.getMarkerKey(marker));
   }
 
-  getMarkerKey(marker: SourcecodeMarker<T>) {
+  getMarkerKey(marker: SourcecodeMarker) {
     return `${marker.line}:${marker.column}`;
   }
 }

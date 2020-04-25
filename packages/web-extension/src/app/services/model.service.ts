@@ -15,7 +15,9 @@ export class ModelService {
     scan<MessageEvent, Model>(
       handleEvent,
       {
-        definitions: [],
+        files: {},
+        declarations: [],
+        observables: [],
         instances: [],
         events: [],
         tasks: [],

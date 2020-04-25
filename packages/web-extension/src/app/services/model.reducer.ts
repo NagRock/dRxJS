@@ -15,97 +15,145 @@ function handleTask(model: Model.Model, event: Event.TaskEvent) {
   return model;
 }
 
-function handleCreatorDefinition(model: Model.Model, event: Event.CreatorDefinitionEvent) {
-  const definition: Model.CreatorDefinition = {
-    kind: 'creator-definition',
-    name: event.function.name,
+function addDeclaration(model: Model.Model, declaration: Model.Declaration) {
+  model.declarations[declaration.id] = declaration;
+
+  const {file: url, line, column} = declaration.position;
+  let file: Model.SourceFile = model.files[url];
+  if (file === undefined) {
+    file = {
+      url,
+      markers: [],
+    };
+    model.files[url] = file;
+  }
+  let marker: Model.SourceFileMarker = file.markers.find((m) => m.line === line && m.column === column);
+  if (marker === undefined) {
+    marker = {
+      name: declaration.name,
+      line,
+      column,
+      declarations: [],
+    };
+  }
+  marker.declarations.push(declaration);
+}
+
+function handleConstructorDeclaration(model: Model.Model, event: Event.ConstructorDeclarationEvent) {
+  const declaration: Model.ConstructorDeclaration = {
+    kind: 'constructor-declaration',
+    name: event.ctor.name,
     id: event.id,
-    function: event.function,
+    ctor: event.ctor,
     args: event.args,
     position: event.position,
-    instances: [],
+    observable: undefined,
   };
 
-  model.definitions[definition.id] = definition;
+  addDeclaration(model, declaration);
 
   return model;
 }
 
-function handleOperatorDefinition(model: Model.Model, event: Event.OperatorDefinitionEvent) {
-  const definition: Model.OperatorDefinition = {
-    kind: 'operator-definition',
-    name: event.function.name,
+function handleObservableFromConstructor(model: Model.Model, event: Event.ObservableFromConstructorEvent) {
+  const constructor = model.declarations[event.constructor] as Model.ConstructorDeclaration;
+
+  const observable: Model.ObservableFromConstructor = {
+    kind: 'observable-from-constructor',
     id: event.id,
-    function: event.function,
-    args: event.args,
-    position: event.position,
+    constructor,
     instances: [],
   };
 
-  model.definitions[definition.id] = definition;
+  constructor.observable = observable;
+
+  model.observables.push(observable);
 
   return model;
 }
 
-function handleSubscribeDefinition(model: Model.Model, event: Event.SubscribeDefinitionEvent) {
-  const definition: Model.SubscribeDefinition = {
-    kind: 'subscribe-definition',
+function handleOperatorDeclaration(model: Model.Model, event: Event.OperatorDeclarationEvent) {
+  const declaration: Model.OperatorDeclaration = {
+    kind: 'operator-declaration',
+    name: event.func.name,
+    id: event.id,
+    func: event.func,
+    args: event.args,
+    position: event.position,
+    observables: [],
+  };
+
+  addDeclaration(model, declaration);
+
+  return model;
+}
+
+function handleObservableFromOperator(model: Model.Model, event: Event.ObservableFromOperatorEvent) {
+  const source = model.observables[event.source];
+  const operator = model.declarations[event.operator] as Model.OperatorDeclaration;
+
+  const observable: Model.ObservableFromOperator = {
+    kind: 'observable-from-constructor',
+    id: event.id,
+    source,
+    operator,
+    instances: [],
+  };
+
+  operator.observables.push(observable);
+
+  model.observables.push(observable);
+
+  return model;
+}
+
+function handleSubscribeDeclaration(model: Model.Model, event: Event.SubscribeDeclarationEvent) {
+  const declaration: Model.SubscribeDeclaration = {
+    kind: 'subscribe-declaration',
     name: 'subscribe',
     id: event.id,
     args: event.args,
     position: event.position,
-    instances: [],
+    observable: undefined,
   };
 
-  model.definitions[definition.id] = definition;
+  addDeclaration(model, declaration);
 
   return model;
 }
 
+function handleObservableFromSubscribe(model: Model.Model, event: Event.ObservableFromSubscribeEvent) {
+  const source = model.observables[event.source];
+  const subscribe = model.declarations[event.subscribe] as Model.SubscribeDeclaration;
 
-function handleSubjectDefinition(model: Model.Model, event: Event.SubjectDefinitionEvent) {
-  const definition: Model.SubjectDefinition = {
-    kind: 'subject-definition',
-    name: event.constructor.name,
+  const observable: Model.ObservableFromSubscribe = {
+    kind: 'observable-from-subscribe',
     id: event.id,
-    constructor: event.constructor,
-    args: event.args,
-    position: event.position,
+    source,
+    subscribe,
     instances: [],
   };
 
-  model.definitions[definition.id] = definition;
+  subscribe.observable = observable;
 
-  return model;
-}
-
-function handleUnknownDefinition(model: Model.Model, event: Event.UnknownDefinitionEvent) {
-  const definition: Model.UnknownDefinition = {
-    kind: 'unknown-definition',
-    name: 'unknown',
-    id: event.id,
-    position: event.position,
-    instances: [],
-  };
-
-  model.definitions[definition.id] = definition;
+  model.observables.push(observable);
 
   return model;
 }
 
 function handleInstance(model: Model.Model, event: Event.InstanceEvent) {
-  const definition = model.definitions[event.definition];
+  const observable = model.observables[event.observable];
   const instance: Model.Instance = {
     kind: 'instance',
     id: event.id,
-    definition,
+    observable,
     snapshots: [],
     events: [],
   };
 
   model.instances[instance.id] = instance;
 
-  definition.instances.push(instance);
+  observable.instances.push(instance);
 
   return model;
 }
@@ -320,16 +368,18 @@ export const handleEvent = (model: Model.Model, event: Event.MessageEvent): Mode
   switch (event.kind) {
     case 'task':
       return handleTask(model, event);
-    case 'creator-definition':
-      return handleCreatorDefinition(model, event);
-    case 'operator-definition':
-      return handleOperatorDefinition(model, event);
-    case 'subscribe-definition':
-      return handleSubscribeDefinition(model, event);
-    case 'subject-definition':
-      return handleSubjectDefinition(model, event);
-    case 'unknown-definition':
-      return handleUnknownDefinition(model, event);
+    case 'constructor-declaration':
+      return handleConstructorDeclaration(model, event);
+    case 'observable-from-constructor':
+      return handleObservableFromConstructor(model, event);
+    case 'operator-declaration':
+      return handleOperatorDeclaration(model, event);
+    case 'observable-from-operator':
+      return handleObservableFromOperator(model, event);
+    case 'subscribe-declaration':
+      return handleSubscribeDeclaration(model, event);
+    case 'observable-from-subscribe':
+      return handleObservableFromSubscribe(model, event);
     case 'instance':
       return handleInstance(model, event);
     case 'subscribe':

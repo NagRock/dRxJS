@@ -1,7 +1,7 @@
 <dr-property
   [key]="name"
   [primary]="enumerable"
-  *ngIf="definition$ | async as definition"
+  *ngIf="observable$ | async as definition"
 >
   <dr-special [value]="definition.name" prefix="Observable" [suffix]="'#' + reference.id"></dr-special>
 
