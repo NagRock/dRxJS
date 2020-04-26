@@ -17,7 +17,7 @@ export class OverviewComponent {
   markers$ = this.modelService.model$
     .pipe(map((model) => {
       const file = model.files['webpack:///src/app/examples.ts'];
-      return file ? file.markers : [];
+      return file ? [...file.markers] : [];
     }));
 
   // readonly context$ = combineLatest([

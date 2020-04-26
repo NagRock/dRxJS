@@ -33,11 +33,12 @@
   padding: 0 8px;
   margin-top: 8px;
   border-top: 1px solid var(--color5);
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--color5);
 
   .expandable + & {
-    margin-top: 0;
-    margin-bottom: 8px;
-    border-bottom: 1px solid var(--color5);
+    margin-top: -8px;
+    border-top: 0;
   }
 }
 
