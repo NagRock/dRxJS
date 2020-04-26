@@ -8,6 +8,6 @@
   >{{key}}</span>
   <dr-property-outlet [type]="type" [data]="data"></dr-property-outlet>
 </span>
-<div *ngIf="expandable && expanded" class="expand">
+<div *ngIf="expand && expanded" class="expand">
   <ng-container [ngTemplateOutlet]="expand.templateRef"></ng-container>
 </div>
