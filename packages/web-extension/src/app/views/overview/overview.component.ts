@@ -15,7 +15,10 @@ export class OverviewComponent {
   // private readonly searchSubject = new BehaviorSubject<string | undefined>(undefined);
   content$ = this.resourcesService.getContent('webpack:///./src/app/examples.ts');
   markers$ = this.modelService.model$
-    .pipe(map((model) => model.files['webpack:///src/app/examples.ts'].markers));
+    .pipe(map((model) => {
+      const file = model.files['webpack:///src/app/examples.ts'];
+      return file ? file.markers : [];
+    }));
 
   // readonly context$ = combineLatest([
   //   this.searchSubject,

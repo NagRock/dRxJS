@@ -35,6 +35,7 @@ function addDeclaration(model: Model.Model, declaration: Model.Declaration) {
       column,
       declarations: [],
     };
+    file.markers.push(marker);
   }
   marker.declarations.push(declaration);
 }

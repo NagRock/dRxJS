@@ -1,20 +1,21 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {Component, Inject} from '@angular/core';
+import {DATA, Property} from '../property';
 import {Reference} from '@doctor-rxjs/events';
 
+@Property()
 @Component({
   selector: 'dr-reference-property',
-  templateUrl: './reference-property.component.html',
-  styleUrls: ['./reference-property.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  template: `
+    <dr-property-outlet [type]="reference.kind + '-reference'" [data]="reference"></dr-property-outlet>
+  `,
+  styles: []
 })
 export class ReferencePropertyComponent {
 
-  @Input()
-  name: string;
+  static readonly TYPE = 'reference';
 
-  @Input()
-  enumerable: boolean = true;
-
-  @Input()
-  reference: Reference;
+  constructor(
+    @Inject(DATA) readonly reference: Reference,
+  ) {
+  }
 }

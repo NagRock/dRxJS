@@ -15,8 +15,12 @@ export class EventsService {
   constructor(
     private readonly instrumentationStateService: InstrumentationStateService,
   ) {
-    const pageLoaded$ = instrumentationStateService.state$.pipe(filter((state) => state === InstrumentationState.PAGE_LOADED));
-    const pageInstrumented$ = instrumentationStateService.state$.pipe(filter((state) => state === InstrumentationState.PAGE_INSTRUMENTED));
+    const pageLoaded$ = instrumentationStateService.state$.pipe(
+      filter((state) => state === InstrumentationState.PAGE_LOADED),
+    );
+    const pageInstrumented$ = instrumentationStateService.state$.pipe(
+      filter((state) => state === InstrumentationState.PAGE_INSTRUMENTED),
+    );
 
     this.events$ = pageInstrumented$.pipe(
       switchMapTo(

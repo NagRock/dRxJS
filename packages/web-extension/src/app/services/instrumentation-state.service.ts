@@ -33,12 +33,14 @@ export class InstrumentationStateService implements EagerSingleton {
   private onMessage(request: ContentScriptMessage, sendResponse: (response: DevtoolsMessage) => void) {
     switch (request.message) {
       case ContentScriptMessageType.LOADED:
+        console.log('ContentScriptMessageType.LOADED');
         this.stateSubject.next(InstrumentationState.PAGE_LOADED);
         sendResponse({
           message: DevtoolsMessageType.READY,
         });
         break;
       case ContentScriptMessageType.INSTRUMENTED:
+        console.log('ContentScriptMessageType.INSTRUMENTED');
         this.stateSubject.next(InstrumentationState.PAGE_INSTRUMENTED);
         break;
     }

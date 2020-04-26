@@ -113,13 +113,7 @@ export class EventsMapper {
             trigger: event.trigger,
             error: this.refsStorage.create(event.error),
           };
-        case 'task':
-        case 'connect':
-        case 'instance':
-        case 'subscribe':
-        case 'unsubscribe':
-        case 'complete':
-        case 'subject-complete':
+        default:
           return event;
       }
     }

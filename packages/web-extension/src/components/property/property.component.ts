@@ -1,12 +1,32 @@
-import {ChangeDetectionStrategy, Component, ContentChild, Directive, Input, TemplateRef, HostBinding} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Directive,
+  HostBinding,
+  InjectionToken,
+  Input,
+  OnDestroy,
+  TemplateRef
+} from '@angular/core';
+
+export const DATA = new InjectionToken<any>('DATA');
 
 @Directive({
   selector: '[drPropertyExpand]'
 })
-export class PropertyExpandDirective {
+export class PropertyExpandDirective implements OnDestroy {
   constructor(
+    private readonly parent: PropertyComponent,
     readonly templateRef: TemplateRef<{}>,
   ) {
+    parent.expand = this;
+    parent.cdr.markForCheck();
+  }
+
+  ngOnDestroy(): void {
+    this.parent.expand = undefined;
+    this.parent.cdr.markForCheck();
   }
 }
 
@@ -22,10 +42,15 @@ export class PropertyComponent {
   key: string;
 
   @Input()
-  primary: boolean = true;
+  primary = true;
 
-  @ContentChild(PropertyExpandDirective, {static: true})
-  expand: PropertyExpandDirective;
+  @Input()
+  type: string;
+
+  @Input()
+  data: any;
+
+  expand?: PropertyExpandDirective;
 
   @HostBinding('class.expanded')
   expanded = false;
@@ -33,5 +58,10 @@ export class PropertyComponent {
   @HostBinding('class.expandable')
   get expandable() {
     return this.expand !== undefined;
+  }
+
+  constructor(
+    readonly cdr: ChangeDetectorRef,
+  ) {
   }
 }

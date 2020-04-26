@@ -1,7 +1,9 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject} from '@angular/core';
 import {LazyReference, Reference} from '@doctor-rxjs/events';
 import {ReferenceService} from '../reference.service';
+import {DATA, Property} from '../../property';
 
+@Property()
 @Component({
   selector: 'dr-lazy-reference-property',
   templateUrl: './lazy-reference-property.component.html',
@@ -10,22 +12,17 @@ import {ReferenceService} from '../reference.service';
 })
 export class LazyReferencePropertyComponent {
 
-  @Input()
-  name: string;
-
-  @Input()
-  enumerable: boolean;
-
-  @Input()
-  reference: LazyReference;
-
-  constructor(
-    private readonly refs: ReferenceService,
-    private readonly cdr: ChangeDetectorRef,
-  ) {}
+  static readonly TYPE = 'lazy-reference';
 
   evaluationResult: Reference;
   evaluationError: any;
+
+  constructor(
+    @Inject(DATA) readonly reference: LazyReference,
+    private readonly refs: ReferenceService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {
+  }
 
   async evaluate() {
     try {

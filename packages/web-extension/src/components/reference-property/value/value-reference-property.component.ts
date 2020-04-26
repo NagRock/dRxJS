@@ -1,20 +1,20 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
+import {Property} from '../../property';
+import {DATA} from '../../property';
 import {ValueReference} from '@doctor-rxjs/events';
 
+@Property()
 @Component({
   selector: 'dr-value-reference-property',
   templateUrl: './value-reference-property.component.html',
-  styleUrls: ['./value-reference-property.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ValueReferencePropertyComponent {
 
-  @Input()
-  name: string;
+  static readonly TYPE = 'value-reference';
 
-  @Input()
-  enumerable: boolean;
-
-  @Input()
-  reference: ValueReference;
+  constructor(
+    @Inject(DATA) readonly reference: ValueReference,
+  ) {
+  }
 }

@@ -9,6 +9,7 @@ import {EAGER_SINGLETON, EagerSingletonsModule} from './eager-singletons';
 import {InstrumentationStateService} from './services/instrumentation-state.service';
 import {HomeModule} from './home/home.module';
 import {InstrumentationStateRouterConnector} from './services/instrumentation-state-router-connector';
+import {ReferencePropertyModule} from '../components/reference-property';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import {InstrumentationStateRouterConnector} from './services/instrumentation-st
     HttpClientModule,
     EagerSingletonsModule.forRoot(),
     HomeModule,
+    ReferencePropertyModule.forRoot(),
   ],
   providers: [
     {

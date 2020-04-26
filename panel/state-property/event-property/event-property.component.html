@@ -1,22 +1,22 @@
-<dr-property [key]="key">
-  <dr-special [value]="value" [suffix]="suffix"></dr-special>
+<!--<dr-property [key]="key">-->
+<!--  <dr-special [value]="value" [suffix]="suffix"></dr-special>-->
 
-  <ng-container *drPropertyExpand>
-    <dr-property
-      *ngIf="event.hasOwnProperty('id')"
-      [key]="'id'"
-    >
-      <dr-value [value]="event.id"></dr-value>
-    </dr-property>
-    <dr-reference-property
-      *ngIf="event.hasOwnProperty('value')"
-      [name]="'value'" [reference]="event.value"
-    ></dr-reference-property>
-    <dr-reference-property
-      *ngIf="event.hasOwnProperty('error')"
-      [name]="'error'" [reference]="event.error"
-    ></dr-reference-property>
-    <dr-instance-property [key]="'sender'" [instance]="event.sender"></dr-instance-property>
-    <dr-instance-property [key]="'receiver'" [instance]="event.receiver"></dr-instance-property>
-  </ng-container>
-</dr-property>
+<!--  <ng-container *drPropertyExpand>-->
+<!--    <dr-property-->
+<!--      *ngIf="event.hasOwnProperty('id')"-->
+<!--      [key]="'id'"-->
+<!--    >-->
+<!--      <dr-value [value]="event.id"></dr-value>-->
+<!--    </dr-property>-->
+<!--    <dr-reference-property-->
+<!--      *ngIf="event.hasOwnProperty('value')"-->
+<!--      [name]="'value'" [reference]="event.value"-->
+<!--    ></dr-reference-property>-->
+<!--    <dr-reference-property-->
+<!--      *ngIf="event.hasOwnProperty('error')"-->
+<!--      [name]="'error'" [reference]="event.error"-->
+<!--    ></dr-reference-property>-->
+<!--    <dr-instance-property [key]="'sender'" [instance]="event.sender"></dr-instance-property>-->
+<!--    <dr-instance-property [key]="'receiver'" [instance]="event.receiver"></dr-instance-property>-->
+<!--  </ng-container>-->
+<!--</dr-property>-->

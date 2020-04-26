@@ -38,17 +38,11 @@ export interface ObservableReference {
   id: number;
 }
 
-export interface DeclarationReference {
-  kind: 'declaration';
-  id: number;
-}
-
 export type Reference
   = ValueReference
   | ObjectReference
   | LazyReference
-  | ObservableReference
-  | DeclarationReference;
+  | ObservableReference;
 
 export interface Property<R extends Reference = Reference> {
   readonly name: string;

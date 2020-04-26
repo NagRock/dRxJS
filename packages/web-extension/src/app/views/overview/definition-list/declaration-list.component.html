@@ -2,7 +2,7 @@
   <h1>{{declarations[0].name}}</h1>
   <p *ngFor="let declaration of declarations">
     <code>{{declaration.name}}(
-      <dr-reference-property *ngFor="let arg of declaration.args;" [reference]="arg"></dr-reference-property>
+      <dr-property *ngFor="let arg of declaration.args;" type="reference" [data]="arg"></dr-property>
       )</code>
   </p>
 </ng-container>

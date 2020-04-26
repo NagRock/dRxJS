@@ -25,6 +25,7 @@ export const instrument = (rxjs, rxjsOperators) => {
 
 export const getEvents = () => {
   const ret = messageEvents;
+  console.log(ret);
   messageEvents = [];
   return ret;
 };
