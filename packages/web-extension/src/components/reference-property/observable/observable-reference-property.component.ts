@@ -4,7 +4,7 @@ import {ModelService} from '../../../app/services/model.service';
 import {Observable} from 'rxjs';
 import {Observable as ObservableModel} from '../../../app/model/model';
 import {map} from 'rxjs/operators';
-import {DATA, Property} from '../../property';
+import {PROPERTY_VALUE, Property} from '../../property';
 
 @Property()
 @Component({
@@ -19,7 +19,7 @@ export class ObservableReferencePropertyComponent implements OnChanges {
   observable$: Observable<ObservableModel>;
 
   constructor(
-    @Inject(DATA) readonly reference: ObservableReference,
+    @Inject(PROPERTY_VALUE) readonly reference: ObservableReference,
     private readonly modelService: ModelService,
   ) {
   }

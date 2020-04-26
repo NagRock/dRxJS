@@ -11,7 +11,7 @@ import {
   TemplateRef
 } from '@angular/core';
 
-export const DATA = new InjectionToken<any>('DATA');
+export const PROPERTY_VALUE = new InjectionToken<any>('PROPERTY_VALUE');
 
 @Directive({
   selector: '[drPropertyExpand]'

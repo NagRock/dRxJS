@@ -10,6 +10,7 @@ import {InstrumentationStateService} from './services/instrumentation-state.serv
 import {HomeModule} from './home/home.module';
 import {InstrumentationStateRouterConnector} from './services/instrumentation-state-router-connector';
 import {ReferencePropertyModule} from '../components/reference-property';
+import {DefaultPropertyModule} from '../components/default-property/default-property.module';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import {ReferencePropertyModule} from '../components/reference-property';
     HttpClientModule,
     EagerSingletonsModule.forRoot(),
     HomeModule,
-    ReferencePropertyModule.forRoot(),
+    // ReferencePropertyModule.forRoot(),
+    DefaultPropertyModule.forRoot(),
   ],
   providers: [
     {

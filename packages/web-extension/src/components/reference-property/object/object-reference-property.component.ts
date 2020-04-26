@@ -3,7 +3,7 @@ import {ObjectReference, Property} from '@doctor-rxjs/events';
 import {defer, Observable} from 'rxjs';
 import {ReferenceService} from '../reference.service';
 import {shareReplay} from 'rxjs/operators';
-import {DATA, Property as PropertyDecorator} from '../../property';
+import {PROPERTY_VALUE, Property as PropertyDecorator} from '../../property';
 
 @PropertyDecorator()
 @Component({
@@ -18,7 +18,7 @@ export class ObjectReferencePropertyComponent {
   properties: Observable<Property[]>;
 
   constructor(
-    @Inject(DATA) readonly reference: ObjectReference,
+    @Inject(PROPERTY_VALUE) readonly reference: ObjectReference,
     private readonly refs: ReferenceService,
   ) {
     this.properties = defer(() => this.refs.get(reference.ref)).pipe(shareReplay(1));

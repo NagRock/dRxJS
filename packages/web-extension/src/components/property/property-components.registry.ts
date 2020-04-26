@@ -1,4 +1,4 @@
-import {Inject, Injectable, InjectionToken} from '@angular/core';
+import {Inject, Injectable, InjectionToken, Optional} from '@angular/core';
 import {PropertyComponentType} from './property-component-type';
 
 export const PROPERTY_COMPONENT = new InjectionToken<PropertyComponentType>('PROPERTY_COMPONENT');
@@ -9,12 +9,14 @@ export class PropertyComponentsRegistry {
   private readonly components: Record<string, PropertyComponentType> = {};
 
   constructor(
-    @Inject(PROPERTY_COMPONENT) components: PropertyComponentType[],
+    @Optional() @Inject(PROPERTY_COMPONENT) components: PropertyComponentType[],
   ) {
-    this.components = components.reduce((cs, c) => {
-      cs[c.TYPE] = c;
-      return cs;
-    }, {});
+    this.components = components !== null
+      ? components.reduce((cs, c) => {
+        cs[c.TYPE] = c;
+        return cs;
+      }, {})
+      : [];
   }
 
   get(type: string) {

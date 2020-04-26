@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Injector, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {PropertyComponentType} from './property-component-type';
 import {PropertyComponentsRegistry} from './property-components.registry';
-import {DATA} from './property.component';
+import {PROPERTY_VALUE} from './property.component';
 
 @Component({
   selector: 'dr-property-outlet',
@@ -35,7 +35,7 @@ export class PropertyOutletComponent implements OnChanges {
       this.componentInjector = Injector.create({
         parent: this.injector,
         providers: [
-          {provide: DATA, useValue: this.data},
+          {provide: PROPERTY_VALUE, useValue: this.data},
         ],
       });
     }

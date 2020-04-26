@@ -1,0 +1,20 @@
+<ng-container *ngIf="type === 'value'; else complex">
+  <dr-value [value]="value"></dr-value>
+</ng-container>
+<ng-template #complex>
+  <ng-container [ngSwitch]="type">
+    <dr-object *ngSwitchCase="'object'" [proto]="value?.constructor?.name"></dr-object>
+    <dr-array *ngSwitchCase="'array'" [proto]="value?.constructor?.name"></dr-array>
+    <dr-function *ngSwitchCase="'function'" [name]="value.name"></dr-function>
+  </ng-container>
+  <ng-container *ngIf="properties">
+    <ng-container *drPropertyExpand>
+      <dr-property
+        *ngFor="let property of properties"
+        [key]="property.name"
+        [primary]="property.enumerable"
+        [data]="property.value"
+      ></dr-property>
+    </ng-container>
+  </ng-container>
+</ng-template>

@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {DATA, Property} from '../property';
+import {PROPERTY_VALUE, Property} from '../property';
 import {Reference} from '@doctor-rxjs/events';
 
 @Property()
@@ -15,7 +15,7 @@ export class ReferencePropertyComponent {
   static readonly TYPE = 'reference';
 
   constructor(
-    @Inject(DATA) readonly reference: Reference,
+    @Inject(PROPERTY_VALUE) readonly reference: Reference,
   ) {
   }
 }

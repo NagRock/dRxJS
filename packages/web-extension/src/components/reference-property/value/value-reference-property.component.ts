@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
 import {Property} from '../../property';
-import {DATA} from '../../property';
+import {PROPERTY_VALUE} from '../../property';
 import {ValueReference} from '@doctor-rxjs/events';
 
 @Property()
@@ -14,7 +14,7 @@ export class ValueReferencePropertyComponent {
   static readonly TYPE = 'value-reference';
 
   constructor(
-    @Inject(DATA) readonly reference: ValueReference,
+    @Inject(PROPERTY_VALUE) readonly reference: ValueReference,
   ) {
   }
 }

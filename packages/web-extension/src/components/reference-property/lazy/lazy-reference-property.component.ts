@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject} from '@angular/core';
 import {LazyReference, Reference} from '@doctor-rxjs/events';
 import {ReferenceService} from '../reference.service';
-import {DATA, Property} from '../../property';
+import {PROPERTY_VALUE, Property} from '../../property';
 
 @Property()
 @Component({
@@ -18,7 +18,7 @@ export class LazyReferencePropertyComponent {
   evaluationError: any;
 
   constructor(
-    @Inject(DATA) readonly reference: LazyReference,
+    @Inject(PROPERTY_VALUE) readonly reference: LazyReference,
     private readonly refs: ReferenceService,
     private readonly cdr: ChangeDetectorRef,
   ) {
