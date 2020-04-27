@@ -15,7 +15,7 @@ import {
 } from 'rxjs';
 import {
   concatAll,
-  concatMap,
+  concatMap, delay,
   delayWhen,
   distinctUntilChanged,
   expand,
@@ -27,7 +27,7 @@ import {
   repeat,
   share,
   subscribeOn,
-  take,
+  take, tap,
   withLatestFrom
 } from 'rxjs/operators';
 
@@ -121,8 +121,8 @@ export const runNestedSubscribeWithSubjectProxyExample = () => {
 export const runWithLatestFromExample = () => {
   interval(66).pipe(
     withLatestFrom(
-      interval(99).pipe(mapTo('a')),
-      interval(33).pipe(mapTo('b')),
+      interval(99).pipe(mapTo('a'), delay(1000)),
+      interval(33).pipe(mapTo('b'), delay(1000), tap(console.log)),
     ),
     take(10),
   ).subscribe();

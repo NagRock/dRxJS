@@ -1,6 +1,6 @@
 import * as Event from '@doctor-rxjs/events';
 import * as Model from '../model/model';
-import {InstanceSnapshot} from '../model/model';
+import {InstanceSnapshot, SourceFilePosition} from '../model/model';
 import {Set} from 'immutable';
 import {createRef, createRefs} from './reference.service';
 
@@ -47,7 +47,7 @@ function handleConstructorDeclaration(model: Model.Model, event: Event.Construct
     event.id,
     createRef(event.ctor),
     createRefs(event.args),
-    event.position,
+    new SourceFilePosition(event.position.file, event.position.line, event.position.column, event.position.functionName),
     undefined,
   );
 
@@ -78,7 +78,7 @@ function handleOperatorDeclaration(model: Model.Model, event: Event.OperatorDecl
     event.id,
     createRef(event.func),
     createRefs(event.args),
-    event.position,
+    new SourceFilePosition(event.position.file, event.position.line, event.position.column, event.position.functionName),
     [],
   );
 
@@ -105,12 +105,16 @@ function handleObservableFromOperator(model: Model.Model, event: Event.Observabl
   return model;
 }
 
+function createSourceFilePosition(position: Event.SourcePosition) {
+  return new SourceFilePosition(position.file, position.line, position.column, position.functionName);
+}
+
 function handleSubscribeDeclaration(model: Model.Model, event: Event.SubscribeDeclarationEvent) {
   const declaration = new Model.SubscribeDeclaration(
     'subscribe',
     event.id,
     createRefs(event.args),
-    event.position,
+    createSourceFilePosition(event.position),
     undefined,
   );
 

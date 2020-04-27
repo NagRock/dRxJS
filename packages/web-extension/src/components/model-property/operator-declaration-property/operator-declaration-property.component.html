@@ -1,0 +1,9 @@
+<dr-special [value]="declaration.name" [suffix]="'#' + declaration.id"></dr-special>
+
+<ng-container *drPropertyExpand>
+  <dr-property key="name" [data]="declaration.name"></dr-property>
+  <dr-property key="location" [data]="declaration.position"></dr-property>
+  <dr-property key="function" [data]="declaration.func"></dr-property>
+  <dr-property key="arguments" [data]="declaration.args"></dr-property>
+  <dr-property key="observables" [data]="declaration.observables"></dr-property>
+</ng-container>

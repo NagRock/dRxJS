@@ -11,6 +11,7 @@ import {HomeModule} from './home/home.module';
 import {InstrumentationStateRouterConnector} from './services/instrumentation-state-router-connector';
 import {ReferencePropertyModule} from '../components/reference-property';
 import {DefaultPropertyModule} from '../components/default-property/default-property.module';
+import {ModelPropertyModule} from '../components/model-property/model-property.module';
 
 @NgModule({
   declarations: [
@@ -24,8 +25,9 @@ import {DefaultPropertyModule} from '../components/default-property/default-prop
     HttpClientModule,
     EagerSingletonsModule.forRoot(),
     HomeModule,
-    ReferencePropertyModule.forRoot(),
     DefaultPropertyModule.forRoot(),
+    ModelPropertyModule.forRoot(),
+    ReferencePropertyModule.forRoot(),
   ],
   providers: [
     {

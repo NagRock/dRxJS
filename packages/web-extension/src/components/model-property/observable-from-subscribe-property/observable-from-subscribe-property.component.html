@@ -1,0 +1,8 @@
+<dr-special [value]="name" prefix="Subscribe" [suffix]="'#' + observable.id"></dr-special>
+
+<ng-container *drPropertyExpand>
+  <dr-property key="source" [data]="observable.source"></dr-property>
+  <dr-property key="subscribe" [data]="observable.subscribe"></dr-property>
+  <dr-property key="instances" [data]="observable.instances"></dr-property>
+</ng-container>
+

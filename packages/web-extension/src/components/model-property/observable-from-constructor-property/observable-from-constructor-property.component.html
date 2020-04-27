@@ -1,0 +1,6 @@
+<dr-special [value]="observable.constructor.name" prefix="Observable" [suffix]="'#' + observable.id"></dr-special>
+
+<ng-container *drPropertyExpand>
+  <dr-property key="constructor" [data]="observable.constructor"></dr-property>
+  <dr-property key="instances" [data]="observable.instances"></dr-property>
+</ng-container>
