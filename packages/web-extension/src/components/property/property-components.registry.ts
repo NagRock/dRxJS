@@ -3,6 +3,10 @@ import {PropertyComponentClassType} from './property-component-class';
 
 export const PROPERTY_COMPONENT = new InjectionToken<PropertyComponentClassType>('PROPERTY_COMPONENT');
 
+function coerce(value: number | boolean): number {
+  return typeof value === 'number' ? value : (value ? 1 : -Infinity);
+}
+
 @Injectable({providedIn: 'root'})
 export class PropertyComponentsRegistry {
 
@@ -13,7 +17,7 @@ export class PropertyComponentsRegistry {
 
   get(value: any) {
     const component = this.components.reduce((max, comp) => {
-      const test = comp.TEST(value);
+      const test = coerce(comp.TEST(value));
       return test > max.test ? {test, comp} : max;
     }, {test: -Infinity, comp: undefined} as {test: number, comp: PropertyComponentClassType | undefined});
     if (component.comp) {

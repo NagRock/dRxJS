@@ -1,7 +1,7 @@
 import {Type} from '@angular/core';
 
 export interface PropertyComponentClassType extends Type<unknown> {
-  readonly TEST: (value: any) => number | undefined;
+  readonly TEST: (value: any) => number | boolean;
 }
 
 export function PropertyComponentClass() {

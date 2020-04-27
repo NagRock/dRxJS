@@ -2,6 +2,7 @@ import * as Event from '@doctor-rxjs/events';
 import * as Model from '../model/model';
 import {InstanceSnapshot} from '../model/model';
 import {Set} from 'immutable';
+import {createRef, createRefs} from './reference.service';
 
 function handleTask(model: Model.Model, event: Event.TaskEvent) {
   const task: Model.Task = {
@@ -45,8 +46,8 @@ function handleConstructorDeclaration(model: Model.Model, event: Event.Construct
     kind: 'constructor-declaration',
     name: event.ctor.name,
     id: event.id,
-    ctor: event.ctor,
-    args: event.args,
+    ctor: createRef(event.ctor),
+    args: createRefs(event.args),
     position: event.position,
     observable: undefined,
   };
@@ -78,8 +79,8 @@ function handleOperatorDeclaration(model: Model.Model, event: Event.OperatorDecl
     kind: 'operator-declaration',
     name: event.func.name,
     id: event.id,
-    func: event.func,
-    args: event.args,
+    func: createRef(event.func),
+    args: createRefs(event.args),
     position: event.position,
     observables: [],
   };
@@ -113,7 +114,7 @@ function handleSubscribeDeclaration(model: Model.Model, event: Event.SubscribeDe
     kind: 'subscribe-declaration',
     name: 'subscribe',
     id: event.id,
-    args: event.args,
+    args: createRefs(event.args),
     position: event.position,
     observable: undefined,
   };
@@ -280,8 +281,8 @@ function handleNotification(model: Model.Model, event: Event.NotificationEvent) 
     receiver,
     trigger,
     triggered: [],
-    ...event.kind === 'next' ? {value: event.value} : {},
-    ...event.kind === 'error' ? {error: event.error} : {},
+    ...event.kind === 'next' ? {value: createRef(event.value)} : {},
+    ...event.kind === 'error' ? {error: createRef(event.error)} : {},
   };
   if (trigger) {
     trigger.triggered.push(notification);
@@ -313,8 +314,8 @@ function handleSubjectCall(model: Model.Model, event: Event.SubjectEvent) {
     receiver: subject,
     trigger,
     triggered: [],
-    ...event.kind === 'subject-next' ? {value: event.value} : {},
-    ...event.kind === 'subject-error' ? {error: event.error} : {},
+    ...event.kind === 'subject-next' ? {value: createRef(event.value)} : {},
+    ...event.kind === 'subject-error' ? {error: createRef(event.error)} : {},
   };
   if (trigger) {
     trigger.triggered.push(call);

@@ -10,18 +10,19 @@ import {FunctionModule} from '../property/function';
 import {ValueModule} from '../property/value';
 import {ObservableReferencePropertyComponent} from './observable';
 import {SpecialModule} from '../property/special';
-import { ReferencePropertyComponent } from './reference-property.component';
 
 @NgModule({
   declarations: [
-    ReferencePropertyComponent,
     ValueReferencePropertyComponent,
     ObjectReferencePropertyComponent,
     LazyReferencePropertyComponent,
     ObservableReferencePropertyComponent,
   ],
   entryComponents: [
-    ReferencePropertyComponent,
+    ValueReferencePropertyComponent,
+    ObjectReferencePropertyComponent,
+    LazyReferencePropertyComponent,
+    ObservableReferencePropertyComponent,
   ],
   imports: [
     CommonModule,
@@ -38,7 +39,10 @@ export class ReferencePropertyModule {
     return {
       ngModule: ReferencePropertyModule,
       providers: [
-        {provide: PROPERTY_COMPONENT, multi: true, useValue: ReferencePropertyComponent},
+        {provide: PROPERTY_COMPONENT, multi: true, useValue: ValueReferencePropertyComponent},
+        {provide: PROPERTY_COMPONENT, multi: true, useValue: ObjectReferencePropertyComponent},
+        {provide: PROPERTY_COMPONENT, multi: true, useValue: LazyReferencePropertyComponent},
+        {provide: PROPERTY_COMPONENT, multi: true, useValue: ObservableReferencePropertyComponent},
       ]
     };
   }

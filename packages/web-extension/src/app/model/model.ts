@@ -1,5 +1,42 @@
-import {ObjectReference, Reference} from '@doctor-rxjs/events';
 import {Set} from 'immutable';
+
+export class ValueRef {
+  constructor(
+    readonly value: any,
+  ) {
+  }
+}
+
+export class ObjectRef {
+  constructor(
+    readonly type: 'object' | 'array' | 'function',
+    readonly name: string,
+    readonly size: number | undefined,
+    readonly ref: number,
+  ) {
+  }
+}
+
+export class LazyRef {
+  constructor(
+    readonly ref: number,
+    readonly property: string,
+  ) {
+  }
+}
+
+export class ObservableRef {
+  constructor(
+    readonly id: number,
+  ) {
+  }
+}
+
+export type Ref
+  = ValueRef
+  | ObjectRef
+  | LazyRef
+  | ObservableRef;
 
 export interface SourceFilePosition {
   file: string;
@@ -32,8 +69,8 @@ export interface ConstructorDeclaration {
   kind: 'constructor-declaration';
   name: string;
   id: number;
-  ctor: ObjectReference;
-  args: Reference[];
+  ctor: Ref;
+  args: Ref[];
   position: SourceFilePosition;
   observable: ObservableFromConstructor;
 }
@@ -49,8 +86,8 @@ export interface OperatorDeclaration {
   kind: 'operator-declaration';
   name: string;
   id: number;
-  func: ObjectReference;
-  args: Reference[];
+  func: Ref;
+  args: Ref[];
   position: SourceFilePosition;
   observables: ObservableFromOperator[];
 }
@@ -67,7 +104,7 @@ export interface SubscribeDeclaration {
   kind: 'subscribe-declaration';
   name: string;
   id: number;
-  args: Reference[];
+  args: Ref[];
   position: SourceFilePosition;
   observable: ObservableFromSubscribe;
 }
@@ -140,7 +177,7 @@ export interface NextNotification {
   receiver: Instance;
   trigger: Event | undefined;
   triggered: Event[];
-  value: Reference;
+  value: Ref;
 }
 
 export interface ErrorNotification {
@@ -153,7 +190,7 @@ export interface ErrorNotification {
   receiver: Instance;
   trigger: Event | undefined;
   triggered: Event[];
-  error: Reference;
+  error: Ref;
 }
 
 export interface CompleteNotification {
@@ -183,7 +220,7 @@ export interface SubjectNextCall {
   receiver: Instance;
   trigger: Event | undefined;
   triggered: Event[];
-  value: Reference;
+  value: Ref;
 }
 
 export interface SubjectErrorCall {
@@ -196,7 +233,7 @@ export interface SubjectErrorCall {
   receiver: Instance;
   trigger: Event | undefined;
   triggered: Event[];
-  error: Reference;
+  error: Ref;
 }
 
 export interface SubjectCompleteCall {

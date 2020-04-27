@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
-import {ObjectReference, Property} from '@doctor-rxjs/events';
 import {defer, Observable} from 'rxjs';
-import {ReferenceService} from '../reference.service';
+import {Prop, ReferenceService} from '../../../app/services/reference.service';
 import {shareReplay} from 'rxjs/operators';
-import {PROPERTY_VALUE} from '../../property';
+import {PROPERTY_VALUE, PropertyComponentClass} from '../../property';
+import {ObjectRef} from '../../../app/model/model';
 
+@PropertyComponentClass()
 @Component({
   selector: 'dr-object-reference-property',
   templateUrl: './object-reference-property.component.html',
@@ -12,10 +13,12 @@ import {PROPERTY_VALUE} from '../../property';
 })
 export class ObjectReferencePropertyComponent {
 
-  properties: Observable<Property[]>;
+  static readonly TEST = (value) => value instanceof ObjectRef;
+
+  properties: Observable<Prop[]>;
 
   constructor(
-    @Inject(PROPERTY_VALUE) readonly reference: ObjectReference,
+    @Inject(PROPERTY_VALUE) readonly reference: ObjectRef,
     private readonly refs: ReferenceService,
   ) {
     this.properties = defer(() => this.refs.get(reference.ref)).pipe(shareReplay(1));
