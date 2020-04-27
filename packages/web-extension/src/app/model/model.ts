@@ -38,83 +38,106 @@ export type Ref
   | LazyRef
   | ObservableRef;
 
-export interface SourceFilePosition {
-  file: string;
-  line: number;
-  column: number;
-  functionName: string;
+export class SourceFilePosition {
+  constructor(
+    readonly file: string,
+    readonly line: number,
+    readonly column: number,
+    readonly functionName: string,
+  ) {
+  }
 }
 
-export interface SourceFileMarker {
-  name: string;
-  line: number;
-  column: number;
-  declarations: Declaration[];
+export class SourceFileMarker {
+  constructor(
+    readonly name: string,
+    readonly line: number,
+    readonly column: number,
+    readonly declarations: Declaration[],
+  ) {
+  }
 }
 
-export interface SourceFile {
-  url: string;
-  markers: SourceFileMarker[];
+export class SourceFile {
+  constructor(
+    readonly url: string,
+    readonly markers: SourceFileMarker[],
+  ) {
+  }
 }
 
-export interface Task {
-  kind: 'task';
-  id: number;
-  type: 'macroTask' | 'microTask' | 'eventTask';
-  source: string;
-  events: Event[];
+export class Task {
+  constructor(
+    readonly id: number,
+    readonly type: 'macroTask' | 'microTask' | 'eventTask',
+    readonly source: string,
+    readonly events: Event[],
+  ) {
+  }
 }
 
-export interface ConstructorDeclaration {
-  kind: 'constructor-declaration';
-  name: string;
-  id: number;
-  ctor: Ref;
-  args: Ref[];
-  position: SourceFilePosition;
-  observable: ObservableFromConstructor;
+export class ConstructorDeclaration {
+  constructor(
+    readonly name: string,
+    readonly id: number,
+    readonly ctor: Ref,
+    readonly args: Ref[],
+    readonly position: SourceFilePosition,
+    public observable: ObservableFromConstructor,
+  ) {
+  }
 }
 
-export interface ObservableFromConstructor {
-  kind: 'observable-from-constructor';
-  id: number;
-  constructor: ConstructorDeclaration;
-  instances: Instance[];
+export class ObservableFromConstructor {
+  constructor(
+    readonly id: number,
+    readonly constructor: ConstructorDeclaration,
+    readonly instances: Instance[],
+  ) {
+  }
 }
 
-export interface OperatorDeclaration {
-  kind: 'operator-declaration';
-  name: string;
-  id: number;
-  func: Ref;
-  args: Ref[];
-  position: SourceFilePosition;
-  observables: ObservableFromOperator[];
+export class OperatorDeclaration {
+  constructor(
+    readonly name: string,
+    readonly id: number,
+    readonly func: Ref,
+    readonly args: Ref[],
+    readonly position: SourceFilePosition,
+    readonly observables: ObservableFromOperator[],
+  ) {
+  }
 }
 
-export interface ObservableFromOperator {
-  kind: 'observable-from-constructor';
-  id: number;
-  source: Observable;
-  operator: OperatorDeclaration;
-  instances: Instance[];
+export class ObservableFromOperator {
+  constructor(
+    readonly id: number,
+    readonly source: Observable,
+    readonly operator: OperatorDeclaration,
+    readonly instances: Instance[],
+  ) {
+  }
 }
 
-export interface SubscribeDeclaration {
-  kind: 'subscribe-declaration';
-  name: string;
-  id: number;
-  args: Ref[];
-  position: SourceFilePosition;
-  observable: ObservableFromSubscribe;
+export class SubscribeDeclaration {
+  constructor(
+    readonly name: string,
+    readonly id: number,
+    readonly args: Ref[],
+    readonly position: SourceFilePosition,
+    public observable: ObservableFromSubscribe,
+  ) {
+  }
 }
 
-export interface ObservableFromSubscribe {
-  kind: 'observable-from-subscribe';
-  id: number;
-  source: Observable;
-  subscribe: SubscribeDeclaration;
-  instances: Instance[];
+export class ObservableFromSubscribe {
+  constructor(
+    readonly id: number,
+    readonly source: Observable,
+    readonly subscribe: SubscribeDeclaration,
+    readonly instances: Instance[],
+  ) {
+  }
 }
 
 export type Declaration
@@ -135,74 +158,86 @@ export interface InstanceSnapshot {
   readonly contextSenders: Set<Instance>;
 }
 
-export interface Instance {
-  kind: 'instance';
-  id: number;
-  observable: Observable;
-  events: Event[];
-  snapshots: InstanceSnapshot[];
+export class Instance {
+  constructor(
+    readonly id: number,
+    readonly observable: Observable,
+    readonly events: Event[],
+    readonly snapshots: InstanceSnapshot[],
+  ) {
+  }
 }
 
-export interface Subscribe {
-  kind: 'subscribe';
-  id: number;
-  timestamp: number;
-  vtimestamp: number;
-  task: Task;
-  sender: Instance;
-  receiver: Instance;
-  trigger: Event | undefined;
-  triggered: Event[];
+export class Subscribe {
+  constructor(
+    readonly id: number,
+    readonly timestamp: number,
+    readonly vtimestamp: number,
+    readonly task: Task,
+    readonly sender: Instance,
+    readonly receiver: Instance,
+    readonly trigger: Event | undefined,
+    readonly triggered: Event[],
+  ) {
+  }
 }
 
-export interface Unsubscribe {
-  kind: 'unsubscribe';
-  id: number;
-  timestamp: number;
-  vtimestamp: number;
-  task: Task;
-  sender: Instance;
-  receiver: Instance;
-  trigger: Event | undefined;
-  triggered: Event[];
+export class Unsubscribe {
+  constructor(
+    readonly id: number,
+    readonly timestamp: number,
+    readonly vtimestamp: number,
+    readonly task: Task,
+    readonly sender: Instance,
+    readonly receiver: Instance,
+    readonly trigger: Event | undefined,
+    readonly triggered: Event[],
+  ) {
+  }
 }
 
-export interface NextNotification {
-  kind: 'next';
-  id: number;
-  timestamp: number;
-  vtimestamp: number;
-  task: Task;
-  sender: Instance;
-  receiver: Instance;
-  trigger: Event | undefined;
-  triggered: Event[];
-  value: Ref;
+export class NextNotification {
+  constructor(
+    readonly id: number,
+    readonly timestamp: number,
+    readonly vtimestamp: number,
+    readonly task: Task,
+    readonly sender: Instance,
+    readonly receiver: Instance,
+    readonly trigger: Event | undefined,
+    readonly triggered: Event[],
+    readonly value: Ref,
+  ) {
+  }
 }
 
-export interface ErrorNotification {
-  kind: 'error';
-  id: number;
-  timestamp: number;
-  vtimestamp: number;
-  task: Task;
-  sender: Instance;
-  receiver: Instance;
-  trigger: Event | undefined;
-  triggered: Event[];
-  error: Ref;
+export class ErrorNotification {
+  constructor(
+    readonly id: number,
+    readonly timestamp: number,
+    readonly vtimestamp: number,
+    readonly task: Task,
+    readonly sender: Instance,
+    readonly receiver: Instance,
+    readonly trigger: Event | undefined,
+    readonly triggered: Event[],
+    readonly error: Ref,
+  ) {
+  }
 }
 
-export interface CompleteNotification {
-  kind: 'complete';
-  id: number;
-  timestamp: number;
-  vtimestamp: number;
-  task: Task;
-  sender: Instance;
-  receiver: Instance;
-  trigger: Event | undefined;
-  triggered: Event[];
+export class CompleteNotification {
+  constructor(
+    readonly id: number,
+    readonly timestamp: number,
+    readonly vtimestamp: number,
+    readonly task: Task,
+    readonly sender: Instance,
+    readonly receiver: Instance,
+    readonly trigger: Event | undefined,
+    readonly triggered: Event[],
+  ) {
+  }
 }
 
 export type Notification
@@ -210,42 +245,48 @@ export type Notification
   | ErrorNotification
   | CompleteNotification;
 
-export interface SubjectNextCall {
-  kind: 'subject-next';
-  id: number;
-  timestamp: number;
-  vtimestamp: number;
-  task: Task;
-  sender: Instance;
-  receiver: Instance;
-  trigger: Event | undefined;
-  triggered: Event[];
-  value: Ref;
+export class SubjectNextCall {
+  constructor(
+    readonly id: number,
+    readonly timestamp: number,
+    readonly vtimestamp: number,
+    readonly task: Task,
+    readonly sender: Instance,
+    readonly receiver: Instance,
+    readonly trigger: Event | undefined,
+    readonly triggered: Event[],
+    readonly value: Ref,
+  ) {
+  }
 }
 
-export interface SubjectErrorCall {
-  kind: 'subject-error';
-  id: number;
-  timestamp: number;
-  vtimestamp: number;
-  task: Task;
-  sender: Instance;
-  receiver: Instance;
-  trigger: Event | undefined;
-  triggered: Event[];
-  error: Ref;
+export class SubjectErrorCall {
+  constructor(
+    readonly id: number,
+    readonly timestamp: number,
+    readonly vtimestamp: number,
+    readonly task: Task,
+    readonly sender: Instance,
+    readonly receiver: Instance,
+    readonly trigger: Event | undefined,
+    readonly triggered: Event[],
+    readonly error: Ref,
+  ) {
+  }
 }
 
-export interface SubjectCompleteCall {
-  kind: 'subject-complete';
-  id: number;
-  timestamp: number;
-  vtimestamp: number;
-  task: Task;
-  sender: Instance;
-  receiver: Instance;
-  trigger: Event | undefined;
-  triggered: Event[];
+export class SubjectCompleteCall {
+  constructor(
+    readonly id: number,
+    readonly timestamp: number,
+    readonly vtimestamp: number,
+    readonly task: Task,
+    readonly sender: Instance,
+    readonly receiver: Instance,
+    readonly trigger: Event | undefined,
+    readonly triggered: Event[],
+  ) {
+  }
 }
 
 export type SubjectCall
@@ -253,16 +294,18 @@ export type SubjectCall
   | SubjectErrorCall
   | SubjectCompleteCall;
 
-export interface ConnectCall {
-  kind: 'connect';
-  id: number;
-  timestamp: number;
-  vtimestamp: number;
-  task: Task;
-  sender: undefined;
-  receiver: Instance;
-  trigger: Event | undefined;
-  triggered: Event[];
+export class ConnectCall {
+  constructor(
+    readonly id: number,
+    readonly timestamp: number,
+    readonly vtimestamp: number,
+    readonly task: Task,
+    readonly sender: undefined,
+    readonly receiver: Instance,
+    readonly trigger: Event | undefined,
+    readonly triggered: Event[],
+  ) {
+  }
 }
 
 export type Call

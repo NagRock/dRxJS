@@ -42,15 +42,14 @@ function addDeclaration(model: Model.Model, declaration: Model.Declaration) {
 }
 
 function handleConstructorDeclaration(model: Model.Model, event: Event.ConstructorDeclarationEvent) {
-  const declaration: Model.ConstructorDeclaration = {
-    kind: 'constructor-declaration',
-    name: event.ctor.name,
-    id: event.id,
-    ctor: createRef(event.ctor),
-    args: createRefs(event.args),
-    position: event.position,
-    observable: undefined,
-  };
+  const declaration = new Model.ConstructorDeclaration(
+    event.ctor.name,
+    event.id,
+    createRef(event.ctor),
+    createRefs(event.args),
+    event.position,
+    undefined,
+  );
 
   addDeclaration(model, declaration);
 
@@ -60,12 +59,11 @@ function handleConstructorDeclaration(model: Model.Model, event: Event.Construct
 function handleObservableFromConstructor(model: Model.Model, event: Event.ObservableFromConstructorEvent) {
   const constructor = model.declarations[event.constructor] as Model.ConstructorDeclaration;
 
-  const observable: Model.ObservableFromConstructor = {
-    kind: 'observable-from-constructor',
-    id: event.id,
+  const observable = new Model.ObservableFromConstructor(
+    event.id,
     constructor,
-    instances: [],
-  };
+    [],
+  );
 
   constructor.observable = observable;
 
@@ -75,15 +73,14 @@ function handleObservableFromConstructor(model: Model.Model, event: Event.Observ
 }
 
 function handleOperatorDeclaration(model: Model.Model, event: Event.OperatorDeclarationEvent) {
-  const declaration: Model.OperatorDeclaration = {
-    kind: 'operator-declaration',
-    name: event.func.name,
-    id: event.id,
-    func: createRef(event.func),
-    args: createRefs(event.args),
-    position: event.position,
-    observables: [],
-  };
+  const declaration = new Model.OperatorDeclaration(
+    event.func.name,
+    event.id,
+    createRef(event.func),
+    createRefs(event.args),
+    event.position,
+    [],
+  );
 
   addDeclaration(model, declaration);
 
@@ -94,13 +91,12 @@ function handleObservableFromOperator(model: Model.Model, event: Event.Observabl
   const source = model.observables[event.source];
   const operator = model.declarations[event.operator] as Model.OperatorDeclaration;
 
-  const observable: Model.ObservableFromOperator = {
-    kind: 'observable-from-constructor',
-    id: event.id,
+  const observable = new Model.ObservableFromOperator(
+    event.id,
     source,
     operator,
-    instances: [],
-  };
+    [],
+  );
 
   operator.observables.push(observable);
 
@@ -110,14 +106,13 @@ function handleObservableFromOperator(model: Model.Model, event: Event.Observabl
 }
 
 function handleSubscribeDeclaration(model: Model.Model, event: Event.SubscribeDeclarationEvent) {
-  const declaration: Model.SubscribeDeclaration = {
-    kind: 'subscribe-declaration',
-    name: 'subscribe',
-    id: event.id,
-    args: createRefs(event.args),
-    position: event.position,
-    observable: undefined,
-  };
+  const declaration = new Model.SubscribeDeclaration(
+    'subscribe',
+    event.id,
+    createRefs(event.args),
+    event.position,
+    undefined,
+  );
 
   addDeclaration(model, declaration);
 
@@ -128,13 +123,12 @@ function handleObservableFromSubscribe(model: Model.Model, event: Event.Observab
   const source = model.observables[event.source];
   const subscribe = model.declarations[event.subscribe] as Model.SubscribeDeclaration;
 
-  const observable: Model.ObservableFromSubscribe = {
-    kind: 'observable-from-subscribe',
-    id: event.id,
+  const observable = new Model.ObservableFromSubscribe(
+    event.id,
     source,
     subscribe,
-    instances: [],
-  };
+    [],
+  );
 
   subscribe.observable = observable;
 
@@ -145,13 +139,12 @@ function handleObservableFromSubscribe(model: Model.Model, event: Event.Observab
 
 function handleInstance(model: Model.Model, event: Event.InstanceEvent) {
   const observable = model.observables[event.observable];
-  const instance: Model.Instance = {
-    kind: 'instance',
-    id: event.id,
+  const instance = new Model.Instance(
+    event.id,
     observable,
-    snapshots: [],
-    events: [],
-  };
+    [],
+    [],
+  );
 
   model.instances[instance.id] = instance;
 
@@ -180,17 +173,16 @@ function handleSubscribe(model: Model.Model, event: Event.SubscribeEvent) {
   const sender = model.instances[event.sender];
   const receiver = model.instances[event.receiver];
   const trigger = model.events[event.trigger];
-  const subscribe: Model.Subscribe = {
-    kind: 'subscribe',
-    id: event.id,
-    timestamp: event.timestamp,
-    vtimestamp: event.id,
-    task: model.currentTask,
+  const subscribe = new Model.Subscribe(
+    event.id,
+    event.timestamp,
+    event.id,
+    model.currentTask,
     sender,
     receiver,
     trigger,
-    triggered: [],
-  };
+    [],
+  );
   if (trigger) {
     trigger.triggered.push(subscribe);
   }
@@ -225,17 +217,16 @@ function handleUnsubscribe(model: Model.Model, event: Event.UnsubscribeEvent) {
   const sender = model.instances[event.sender];
   const receiver = model.instances[event.receiver];
   const trigger = model.events[event.trigger];
-  const unsubscribe: Model.Unsubscribe = {
-    kind: 'unsubscribe',
-    id: event.id,
-    timestamp: event.timestamp,
-    vtimestamp: event.id,
-    task: model.currentTask,
+  const unsubscribe = new Model.Unsubscribe(
+    event.id,
+    event.timestamp,
+    event.id,
+    model.currentTask,
     sender,
     receiver,
     trigger,
-    triggered: [],
-  };
+    [],
+  );
   if (trigger) {
     trigger.triggered.push(unsubscribe);
   }
@@ -266,24 +257,53 @@ function handleUnsubscribe(model: Model.Model, event: Event.UnsubscribeEvent) {
   return model;
 }
 
+function createNotification(
+  event: Event.NotificationEvent, model: Model.Model, sender: Model.Instance, receiver: Model.Instance, trigger: Model.Event) {
+  switch (event.kind) {
+    case 'next':
+      return new Model.NextNotification(
+        event.id,
+        event.timestamp,
+        event.id,
+        model.currentTask,
+        sender,
+        receiver,
+        trigger,
+        [],
+        createRef(event.value),
+      );
+    case 'error':
+      return new Model.ErrorNotification(
+        event.id,
+        event.timestamp,
+        event.id,
+        model.currentTask,
+        sender,
+        receiver,
+        trigger,
+        [],
+        createRef(event.error),
+      );
+    case 'complete':
+      return new Model.CompleteNotification(
+        event.id,
+        event.timestamp,
+        event.id,
+        model.currentTask,
+        sender,
+        receiver,
+        trigger,
+        [],
+      );
+  }
+}
+
 function handleNotification(model: Model.Model, event: Event.NotificationEvent) {
   const sender = model.instances[event.sender];
   const receiver = model.instances[event.receiver];
   const trigger = model.events[event.trigger];
 
-  const notification: Model.Notification = {
-    kind: event.kind as any,
-    id: event.id,
-    timestamp: event.timestamp,
-    vtimestamp: event.id,
-    task: model.currentTask,
-    sender,
-    receiver,
-    trigger,
-    triggered: [],
-    ...event.kind === 'next' ? {value: createRef(event.value)} : {},
-    ...event.kind === 'error' ? {error: createRef(event.error)} : {},
-  };
+  const notification = createNotification(event, model, sender, receiver, trigger);
   if (trigger) {
     trigger.triggered.push(notification);
   }
@@ -299,24 +319,53 @@ function handleNotification(model: Model.Model, event: Event.NotificationEvent) 
 }
 
 
+function createSubjectCall(
+  event: Event.SubjectEvent, task: Model.Task, context: Model.Instance, subject: Model.Instance, trigger: Model.Event) {
+  switch (event.kind) {
+    case 'subject-next':
+      return new Model.SubjectNextCall(
+        event.id,
+        event.timestamp,
+        event.id,
+        task,
+        context,
+        subject,
+        trigger,
+        [],
+        createRef(event.value),
+      );
+    case 'subject-error':
+      return new Model.SubjectErrorCall(
+        event.id,
+        event.timestamp,
+        event.id,
+        task,
+        context,
+        subject,
+        trigger,
+        [],
+        createRef(event.error),
+      );
+    case 'subject-complete':
+      return new Model.SubjectCompleteCall(
+        event.id,
+        event.timestamp,
+        event.id,
+        task,
+        context,
+        subject,
+        trigger,
+        [],
+      );
+  }
+}
+
 function handleSubjectCall(model: Model.Model, event: Event.SubjectEvent) {
   const subject = model.instances[event.subject];
   const context: Model.Instance = model.instances[event.context];
   const trigger = model.events[event.trigger];
 
-  const call: Model.SubjectCall = {
-    kind: event.kind as any,
-    id: event.id,
-    timestamp: event.timestamp,
-    vtimestamp: event.id,
-    task: model.currentTask,
-    sender: context,
-    receiver: subject,
-    trigger,
-    triggered: [],
-    ...event.kind === 'subject-next' ? {value: createRef(event.value)} : {},
-    ...event.kind === 'subject-error' ? {error: createRef(event.error)} : {},
-  };
+  const call = createSubjectCall(event, model.currentTask, context, subject, trigger);
   if (trigger) {
     trigger.triggered.push(call);
   }
@@ -343,17 +392,16 @@ function handleConnectCall(model: Model.Model, event: Event.ConnectEvent) {
   const connectable = model.instances[event.connectable];
   const trigger = model.events[event.trigger];
 
-  const call: Model.SubjectCall = {
-    kind: event.kind as any,
-    id: event.id,
-    timestamp: event.timestamp,
-    vtimestamp: event.id,
-    task: model.currentTask,
-    sender: undefined,
-    receiver: connectable,
+  const call = new Model.ConnectCall(
+    event.id,
+    event.timestamp,
+    event.id,
+    model.currentTask,
+    undefined,
+    connectable,
     trigger,
-    triggered: [],
-  };
+    [],
+  );
   if (trigger) {
     trigger.triggered.push(call);
   }
