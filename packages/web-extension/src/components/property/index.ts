@@ -6,3 +6,4 @@ export * from './array';
 export * from './function';
 export * from './object';
 export * from './value';
+export * from './lazy';

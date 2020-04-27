@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {ValueReferencePropertyComponent} from './value';
 import {ObjectReferencePropertyComponent} from './object';
 import {LazyReferencePropertyComponent} from './lazy';
-import {PROPERTY_COMPONENT, PropertyModule} from '../property';
+import {LazyModule, PROPERTY_COMPONENT, PropertyModule} from '../property';
 import {ObjectModule} from '../property/object';
 import {ArrayModule} from '../property/array';
 import {FunctionModule} from '../property/function';
@@ -32,6 +32,7 @@ import {SpecialModule} from '../property/special';
     FunctionModule,
     ValueModule,
     SpecialModule,
+    LazyModule,
   ]
 })
 export class ReferencePropertyModule {

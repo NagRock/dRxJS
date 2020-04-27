@@ -5,11 +5,12 @@ import {ValueModule} from '../property/value';
 import {ObjectModule} from '../property/object';
 import {ArrayModule} from '../property/array';
 import {FunctionModule} from '../property/function';
-import {PROPERTY_COMPONENT, PropertyModule} from '../property';
+import {LazyModule, PROPERTY_COMPONENT, PropertyModule} from '../property';
+import { DefaultLazyPropertyComponent } from './lazy/default-lazy-property.component';
 
 @NgModule({
-  declarations: [DefaultPropertyComponent],
-  entryComponents: [DefaultPropertyComponent],
+  declarations: [DefaultPropertyComponent, DefaultLazyPropertyComponent],
+  entryComponents: [DefaultPropertyComponent, DefaultLazyPropertyComponent],
   imports: [
     CommonModule,
     ValueModule,
@@ -17,6 +18,7 @@ import {PROPERTY_COMPONENT, PropertyModule} from '../property';
     ArrayModule,
     FunctionModule,
     PropertyModule,
+    LazyModule,
   ]
 })
 export class DefaultPropertyModule {
@@ -25,6 +27,7 @@ export class DefaultPropertyModule {
       ngModule: DefaultPropertyModule,
       providers: [
         {provide: PROPERTY_COMPONENT, multi: true, useValue: DefaultPropertyComponent},
+        {provide: PROPERTY_COMPONENT, multi: true, useValue: DefaultLazyPropertyComponent},
       ],
     };
   }

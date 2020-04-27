@@ -1,13 +1,6 @@
 import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
-import {PropertyComponentClass, PROPERTY_VALUE} from '../property';
-
-class LazyProperty {
-  constructor(
-    readonly target: object,
-    readonly property: string,
-  ) {
-  }
-}
+import {PROPERTY_VALUE, PropertyComponentClass} from '../property';
+import {DefaultLazyProperty} from './lazy/default-lazy-property';
 
 interface Prop {
   name: string;
@@ -76,7 +69,7 @@ export class DefaultPropertyComponent {
         } else {
           const {get, set, enumerable} = descriptor;
           if (get !== undefined) {
-            const lazy = new LazyProperty(object, name);
+            const lazy = new DefaultLazyProperty(object, name);
             enumerableProperties.push({name, value: lazy, enumerable});
             accessors.push({name: `get ${name}`, value: get, enumerable: false});
           }
