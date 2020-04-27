@@ -1,18 +1,29 @@
 import {Component, Inject} from '@angular/core';
-import {PROPERTY_VALUE, Property} from '../property';
+import {PROPERTY_VALUE, PropertyComponentClass} from '../property';
 import {Reference} from '@doctor-rxjs/events';
 
-@Property()
+@PropertyComponentClass()
 @Component({
   selector: 'dr-reference-property',
   template: `
-    <dr-property-outlet [type]="reference.kind + '-reference'" [data]="reference"></dr-property-outlet>
+    <ng-container [ngSwitch]="reference.kind">
+        <dr-lazy-reference-property *ngSwitchCase="'lazy'"></dr-lazy-reference-property>
+        <dr-object-reference-property *ngSwitchCase="'object'"></dr-object-reference-property>
+        <dr-observable-reference-property *ngSwitchCase="'observable'"></dr-observable-reference-property>
+        <dr-value-reference-property *ngSwitchCase="'value'"></dr-value-reference-property>
+    </ng-container>
   `,
   styles: []
 })
 export class ReferencePropertyComponent {
 
-  static readonly TYPE = 'reference';
+  static readonly REFERENCE_KINDS = [
+    'lazy',
+    'object',
+    'observable',
+    'value',
+  ];
+  static readonly TEST = (value) => value && ReferencePropertyComponent.REFERENCE_KINDS.includes(value.kind) ? 1 : undefined;
 
   constructor(
     @Inject(PROPERTY_VALUE) readonly reference: Reference,

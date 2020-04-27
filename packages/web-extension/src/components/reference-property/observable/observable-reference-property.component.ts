@@ -4,17 +4,14 @@ import {ModelService} from '../../../app/services/model.service';
 import {Observable} from 'rxjs';
 import {Observable as ObservableModel} from '../../../app/model/model';
 import {map} from 'rxjs/operators';
-import {PROPERTY_VALUE, Property} from '../../property';
+import {PROPERTY_VALUE} from '../../property';
 
-@Property()
 @Component({
   selector: 'dr-observable-reference-property',
   templateUrl: './observable-reference-property.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ObservableReferencePropertyComponent implements OnChanges {
-
-  static readonly TYPE = 'observable-reference';
 
   observable$: Observable<ObservableModel>;
 

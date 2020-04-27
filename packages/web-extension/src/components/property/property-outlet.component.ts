@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Injector, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {PropertyComponentType} from './property-component-type';
+import {PropertyComponentClassType} from './property-component-class';
 import {PropertyComponentsRegistry} from './property-components.registry';
 import {PROPERTY_VALUE} from './property.component';
 
@@ -18,7 +18,7 @@ export class PropertyOutletComponent implements OnChanges {
   @Input()
   data: any;
 
-  component: PropertyComponentType;
+  component: PropertyComponentClassType;
   componentInjector: Injector;
 
   constructor(
@@ -28,10 +28,8 @@ export class PropertyOutletComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.type) {
-      this.component = this.registry.get(this.type);
-    }
     if (changes.data) {
+      this.component = this.registry.get(this.data);
       this.componentInjector = Injector.create({
         parent: this.injector,
         providers: [

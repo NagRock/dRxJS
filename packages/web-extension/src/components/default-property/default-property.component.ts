@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
-import {Property, PROPERTY_VALUE} from '../property';
+import {PropertyComponentClass, PROPERTY_VALUE} from '../property';
 
 class LazyProperty {
   constructor(
@@ -15,7 +15,7 @@ interface Prop {
   enumerable: boolean;
 }
 
-@Property()
+@PropertyComponentClass()
 @Component({
   selector: 'dr-default-property',
   templateUrl: './default-property.component.html',
@@ -23,7 +23,7 @@ interface Prop {
 })
 export class DefaultPropertyComponent {
 
-  static readonly TYPE = undefined;
+  static readonly TEST = () => 0;
 
   type: 'value' | 'object' | 'array' | 'function';
   properties?: Prop[];

@@ -3,17 +3,14 @@ import {ObjectReference, Property} from '@doctor-rxjs/events';
 import {defer, Observable} from 'rxjs';
 import {ReferenceService} from '../reference.service';
 import {shareReplay} from 'rxjs/operators';
-import {PROPERTY_VALUE, Property as PropertyDecorator} from '../../property';
+import {PROPERTY_VALUE} from '../../property';
 
-@PropertyDecorator()
 @Component({
   selector: 'dr-object-reference-property',
   templateUrl: './object-reference-property.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ObjectReferencePropertyComponent {
-
-  static readonly TYPE = 'object-reference';
 
   properties: Observable<Property[]>;
 

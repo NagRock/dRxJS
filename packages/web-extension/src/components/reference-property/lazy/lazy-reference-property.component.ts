@@ -1,9 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject} from '@angular/core';
 import {LazyReference, Reference} from '@doctor-rxjs/events';
 import {ReferenceService} from '../reference.service';
-import {PROPERTY_VALUE, Property} from '../../property';
+import {PROPERTY_VALUE} from '../../property';
 
-@Property()
 @Component({
   selector: 'dr-lazy-reference-property',
   templateUrl: './lazy-reference-property.component.html',
@@ -11,8 +10,6 @@ import {PROPERTY_VALUE, Property} from '../../property';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LazyReferencePropertyComponent {
-
-  static readonly TYPE = 'lazy-reference';
 
   evaluationResult: Reference;
   evaluationError: any;

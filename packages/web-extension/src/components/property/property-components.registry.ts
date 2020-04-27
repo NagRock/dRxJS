@@ -1,30 +1,25 @@
 import {Inject, Injectable, InjectionToken, Optional} from '@angular/core';
-import {PropertyComponentType} from './property-component-type';
+import {PropertyComponentClassType} from './property-component-class';
 
-export const PROPERTY_COMPONENT = new InjectionToken<PropertyComponentType>('PROPERTY_COMPONENT');
+export const PROPERTY_COMPONENT = new InjectionToken<PropertyComponentClassType>('PROPERTY_COMPONENT');
 
 @Injectable({providedIn: 'root'})
 export class PropertyComponentsRegistry {
 
-  private readonly components: Record<string, PropertyComponentType> = {};
-
   constructor(
-    @Optional() @Inject(PROPERTY_COMPONENT) components: PropertyComponentType[],
+    @Optional() @Inject(PROPERTY_COMPONENT) private readonly components: PropertyComponentClassType[],
   ) {
-    this.components = components !== null
-      ? components.reduce((cs, c) => {
-        cs[c.TYPE] = c;
-        return cs;
-      }, {})
-      : [];
   }
 
-  get(type: string) {
-    const component = this.components[type];
-    if (component) {
-      return component;
+  get(value: any) {
+    const component = this.components.reduce((max, comp) => {
+      const test = comp.TEST(value);
+      return test > max.test ? {test, comp} : max;
+    }, {test: -Infinity, comp: undefined} as {test: number, comp: PropertyComponentClassType | undefined});
+    if (component.comp) {
+      return component.comp;
     } else {
-      throw new Error(`Not found property component for type '${type}'`);
+      throw new Error(`Not found property component for value '${value}'`);
     }
   }
 }

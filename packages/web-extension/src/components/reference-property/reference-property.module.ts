@@ -22,10 +22,6 @@ import { ReferencePropertyComponent } from './reference-property.component';
   ],
   entryComponents: [
     ReferencePropertyComponent,
-    ValueReferencePropertyComponent,
-    ObjectReferencePropertyComponent,
-    LazyReferencePropertyComponent,
-    ObservableReferencePropertyComponent,
   ],
   imports: [
     CommonModule,
@@ -43,10 +39,6 @@ export class ReferencePropertyModule {
       ngModule: ReferencePropertyModule,
       providers: [
         {provide: PROPERTY_COMPONENT, multi: true, useValue: ReferencePropertyComponent},
-        {provide: PROPERTY_COMPONENT, multi: true, useValue: ValueReferencePropertyComponent},
-        {provide: PROPERTY_COMPONENT, multi: true, useValue: ObjectReferencePropertyComponent},
-        {provide: PROPERTY_COMPONENT, multi: true, useValue: LazyReferencePropertyComponent},
-        {provide: PROPERTY_COMPONENT, multi: true, useValue: ObservableReferencePropertyComponent},
       ]
     };
   }

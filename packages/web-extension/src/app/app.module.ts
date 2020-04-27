@@ -24,7 +24,7 @@ import {DefaultPropertyModule} from '../components/default-property/default-prop
     HttpClientModule,
     EagerSingletonsModule.forRoot(),
     HomeModule,
-    // ReferencePropertyModule.forRoot(),
+    ReferencePropertyModule.forRoot(),
     DefaultPropertyModule.forRoot(),
   ],
   providers: [
